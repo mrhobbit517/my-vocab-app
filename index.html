@@ -3,134 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>極簡生字卡 VocabCard</title>
+    <title>VocabCard Pro</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root {
-            --bg: #f8f9fa;
-            --text: #333;
-            --primary: #4a90e2;
-            --danger: #e74c3c;
-            --card-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
-        body { 
-            background-color: var(--bg); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", sans-serif;
-            margin: 0; color: var(--text);
-        }
-        .container {
-            width: 100%; max-width: 480px; min-height: 100vh;
-            margin: 0 auto; padding: 40px 20px; box-sizing: border-box;
-            display: flex; flex-direction: column;
-        }
-        h1 { font-weight: 300; letter-spacing: 2px; margin-bottom: 40px; text-align: center; }
-        
-        .btn {
-            background: #fff; border: 1px solid #ddd; padding: 14px;
-            margin: 10px 0; cursor: pointer; font-size: 1rem;
-            border-radius: 12px; transition: all 0.2s; width: 100%;
-            display: block; box-sizing: border-box; color: var(--text);
-            text-align: center; text-decoration: none; font-weight: 500;
-        }
-        .btn:active { background: #f0f0f0; transform: scale(0.98); }
-        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(74,144,226,0.3); }
+        :root { --bg: #f8f9fa; --text: #333; --primary: #4a90e2; --danger: #e74c3c; }
+        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); }
+        .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        h1 { font-weight: 300; text-align: center; margin-bottom: 30px; }
+        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; box-sizing: border-box; display: block; text-align: center; font-weight: 500; }
+        .btn-primary { background: var(--primary); color: white; border: none; }
         .btn-outline { color: var(--primary); border: 2px solid var(--primary); }
-        .btn-delete { color: var(--danger); border: 1px solid var(--danger); padding: 5px 12px; width: auto; font-size: 0.85rem; margin: 0; border-radius: 6px; }
-
-        .card {
-            background: #fff; border-radius: 20px; padding: 40px 25px;
-            margin: 20px 0; min-height: 250px; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; box-shadow: var(--card-shadow);
-            cursor: pointer; text-align: center; transition: transform 0.3s;
-        }
-        .card h2 { font-size: 2.5rem; margin: 0 0 10px 0; color: var(--primary); }
-        .card .pos-tag { font-size: 0.9rem; color: #999; text-transform: lowercase; font-style: italic; }
-        .card .translation { font-size: 1.4rem; margin: 15px 0; font-weight: 600; }
-        .card .example { font-size: 0.95rem; color: #666; line-height: 1.5; border-top: 1px solid #eee; padding-top: 15px; margin-top: 5px; }
-
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #888; font-weight: bold; }
-        input, textarea {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px;
-            box-sizing: border-box; font-size: 1rem; outline: none; transition: border-color 0.2s;
-        }
-        input:focus, textarea:focus { border-color: var(--primary); }
-
-        .vocab-list { width: 100%; margin-top: 20px; }
-        .vocab-item {
-            background: #fff; padding: 18px; border-radius: 15px;
-            margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .vocab-info { flex: 1; text-align: left; padding-right: 10px; }
-        .vocab-info strong { font-size: 1.15rem; color: var(--primary); }
-        .vocab-info small { color: #888; margin-left: 5px; }
-        
-        .nav-footer { margin-top: auto; padding-top: 30px; text-align: center; }
-        .status-msg { font-size: 0.9rem; color: var(--primary); margin: 5px 0; height: 1.5rem; font-weight: bold; }
+        .btn-delete { color: var(--danger); border: 1px solid var(--danger); padding: 4px 10px; width: auto; font-size: 0.8rem; border-radius: 6px; }
+        .card { background: #fff; border-radius: 20px; padding: 40px 20px; margin: 20px 0; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.1); text-align: center; }
+        .pos-tag { color: #999; font-style: italic; font-size: 0.9rem; }
+        .translation { font-size: 1.5rem; margin: 15px 0; font-weight: bold; color: var(--primary); }
+        .example { font-size: 0.95rem; color: #666; border-top: 1px solid #eee; padding-top: 15px; margin-top: 10px; line-height: 1.4; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-size: 0.85rem; color: #888; font-weight: bold; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
+        .vocab-item { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .status-msg { font-size: 0.9rem; color: var(--primary); text-align: center; height: 20px; margin-bottom: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div id="root"></div>
-
     <script type="text/babel">
         const { useState, useEffect } = React;
 
         const App = () => {
             const [view, setView] = useState('home');
-            const [wordBank, setWordBank] = useState(() => {
-                const saved = localStorage.getItem('pro_vocab_words_v3');
-                return saved ? JSON.parse(saved) : [];
-            });
-            const [history, setHistory] = useState([]);
+            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v4') || '[]'));
             const [currentWord, setCurrentWord] = useState(null);
             const [isFlipped, setIsFlipped] = useState(false);
             const [quizOptions, setQuizOptions] = useState([]);
             const [feedback, setFeedback] = useState("");
-            
-            const [inputEng, setInputEng] = useState("");
-            const [inputChi, setInputChi] = useState("");
-            const [inputPos, setInputPos] = useState("");
-            const [inputSent, setInputSent] = useState("");
+            const [form, setForm] = useState({ eng: "", chi: "", pos: "", sent: "" });
             const [status, setStatus] = useState("");
 
-            useEffect(() => {
-                localStorage.setItem('pro_vocab_words_v3', JSON.stringify(wordBank));
-            }, [wordBank]);
+            useEffect(() => { localStorage.setItem('vocab_v4', JSON.stringify(wordBank)); }, [wordBank]);
 
-            const speak = (text) => {
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u);
-            };
+            const speak = (t) => { const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; window.speechSynthesis.speak(u); };
 
-            const nextQuestion = (mode) => {
+            const startStudy = (mode) => {
                 if (wordBank.length === 0) return alert("請先新增生字！");
-                if (mode === 'quiz' && wordBank.length < 4) return alert("需要至少 4 個生字才能測驗！");
-                
-                const randomWord = wordBank[Math.floor(Math.random() * wordBank.length)];
-                if (currentWord) setHistory(prev => [...prev, currentWord]);
-                
-                setCurrentWord(randomWord);
+                if (mode === 'quiz' && wordBank.length < 4) return alert("至少需要 4 個生字！");
+                const word = wordBank[Math.floor(Math.random() * wordBank.length)];
+                setCurrentWord(word);
                 setIsFlipped(false);
                 setFeedback("");
-                
-                if (mode === 'card') speak(randomWord.english);
                 if (mode === 'quiz') {
-                    let opts = [randomWord.english];
-                    let pool = wordBank.filter(w => w.english !== randomWord.english);
-                    const shuffledPool = pool.sort(() => 0.5 - Math.random());
-                    opts.push(...shuffledPool.slice(0, 3).map(w => w.english));
+                    let opts = [word.eng];
+                    let others = wordBank.filter(w => w.eng !== word.eng).sort(() => 0.5 - Math.random());
+                    opts.push(...others.slice(0, 3).map(w => w.eng));
                     setQuizOptions(opts.sort(() => Math.random() - 0.5));
-                }
+                } else { speak(word.eng); }
+                setView(mode === 'card' ? 'study_card' : 'study_quiz');
             };
 
-            const autoTranslate = async () => {
-                const word = inputEng.trim();
-                if (!word) return setStatus("⚠️ 請先輸入英文");
-                setStatus("✨ 正在智能查詞...");
+            const handleAuto = async () => {
+                if (!form.eng) return setStatus("⚠️ 請輸入英文");
+                setStatus("✨ 查詢中...");
                 try {
-                    // 1. 抓取詞義與詞性 (Dictionary API)
-                    const dictRes = await fetch(`
+                    const [tRes, dRes] = await Promise.all([
+                        fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(form.eng)}&langpair=en|zh-TW`),
+                        fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(form.eng)}`)
+                    ]);
+                    const tData = await tRes.json();
+                    const dData = await dRes.json();
+                    
+                    let newPos = "n.", newSent = "No example found.";
+                    if (Array.isArray(dData)) {
+                        newPos = dData[0].meanings[0].partOfSpeech + ".";
+                        const d = dData[0].meanings[0].definitions.find(x => x.example);
+                        if (d) newSent = d.example;
+                    }
+                    setForm({ ...form, chi: tData.responseData.translatedText, pos: newPos, sent: newSent });
+                    setStatus("✅ 已生成");
+                } catch (e) { setStatus("❌ 失敗，請手動輸入"); }
+            };
+
+            const save = () => {
+                if (!form.eng || !form.chi) return alert("請填寫內容");
+                setWordBank([...wordBank, { ...form, id: Date.now() }]);
+                setForm({ eng: "", chi: "", pos: "", sent: "" });
+                setStatus("💾 已儲存！");
+            };
+
+            if (view === 'home') return (
+                <div className="container">
+                    <h1>VOCAB CARD</h1>
+                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>溫習 (Study)</button>
+                    <button className="btn" onClick={() => {setView('add'); setStatus("");}}>新增 (Add New)</button>
+                    <button className="btn" onClick={() => setView('list')}>已存 (Saved)</button>
+                </div>
+            );
+
+            if (view === 'study_menu') return (
+                <div className="container">
+                    <h1>模式選擇</h1>
+                    <button className="btn btn-outline" onClick={() => startStudy('card')}>生字卡 (Flashcard)</button>
+                    <button className="btn btn-outline" onClick={() => startStudy('quiz')}>選擇題 (Quiz)</button>
+                    <button className="btn" onClick={() => setView('home')}>返回</button>
+                </div>
+            );
+
+            if (view.startsWith('study_')) return (
+                <div className="container">
+                    <div className="card" onClick={() => view === 'study_card' && setIsFlipped(!isFlipped)}>
+                        {!isFlipped ? (
+                            <h2>{view === 'study_card' ? currentWord?.eng : currentWord?.chi}</h2>
+                        ) : (
+                            <div>
+                                <div className="pos-tag">[{currentWord?.pos}]</div>
+                                <div className="translation">{currentWord?.chi}</div>
+                                <div className="example">Example: {currentWord?.sent}</div>
+                                <button className="btn btn-outline" style={{width:'auto', padding:'5px 15px'}} onClick={(e)=>{e.stopPropagation(); speak(currentWord.eng);}}>🔊 朗讀</button>
+                            </div>
+                        )}
+                    </div>
+                    {view === 'study_quiz' && !isFlipped && quizOptions.map(o => (
+                        <button key={o} className="btn" onClick={() => { setFeedback(o === currentWord.eng ? "✅ 正確" : "❌ 錯誤"); setIsFlipped(true); if(o===currentWord.eng) speak(o); }}>{o}</button>
+                    ))}
+                    {feedback && <div style={{textAlign:'center', fontWeight:'bold', margin:'10px'}}>{feedback}</div>}
+                    <button className="btn btn-primary" onClick={() => startStudy(view === 'study_card' ? 'card' : 'quiz')}>下一個 ➔</button>
+                    <button className="btn" onClick={() => setView('home')}>離開</button>
+                </div>
+            );
+
+            if (view === 'add') return (
+                <div className="container">
+                    <h1>新增生字</h1>
+                    <div className="status-msg">{status}</div>
+                    <div className="input-group">
+                        <label>英文單字</label>
+                        <input value={form.eng} onChange={e => setForm({...form, eng: e.target.value})} placeholder="e.g. Apple" />
+                    </div>
+                    <button className="btn btn-outline" onClick={handleAuto}>✨ 自動獲取繁體翻譯/例句</button>
+                    <div style={{display:'flex', gap:'10px'}}>
+                        <input style={{flex:2}} value={form.chi} onChange={e => setForm({...form, chi: e.target.value})} placeholder="中文意思" />
+                        <input style={{flex:1}} value={form.pos} onChange={e => setForm({...form, pos: e.target.value})} placeholder="詞性" />
+                    </div>
+                    <textarea style={{marginTop:'15px'}} rows="3" value={form.sent} onChange={e => setForm({...form, sent: e.target.value})} placeholder="例句" />
+                    <button className="btn btn-primary" onClick={save}>💾 儲存</button>
+                    <button className="btn" onClick={() => setView('home')}>返回</button>
+                </div>
+            );
+
+            if (view === 'list') return (
+                <div className="container">
+                    <h1>已存生字 ({wordBank.length})</h1>
+                    {wordBank.map(w => (
+                        <div key={w.id} className="vocab-item">
+                            <div><strong>{w.eng}</strong> <small>[{w.pos}]</small><br/>{w.chi}</div>
+                            <button className="btn-delete" onClick={() => setWordBank(wordBank.filter(x => x.id !== w.id))}>移除</button>
+                        </div>
+                    ))}
+                    <button className="btn" onClick={() => setView('home')}>返回</button>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
