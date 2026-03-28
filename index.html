@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meow & Stationery Vocab App</title>
+    <!-- 引入 React 庫 -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { margin: 0; transition: 0.3s; }
+        .app-container { min-height: 100vh; padding: 20px; text-align: center; }
+        .card { 
+            position: relative; width: 300px; height: 200px; 
+            margin: 30px auto; display: flex; align-items: center; 
+            justify-content: center; cursor: pointer; transition: 0.3s;
+        }
+        /* 貓耳朵裝飾 */
+        .ear { width: 40px; height: 35px; position: absolute; top: -15px; border-radius: 50% 50% 0 0; z-index: -1; }
+        /* 文具膠紙裝飾 */
+        .tape { width: 80px; height: 30px; background: rgba(255,255,255,0.6); position: absolute; top: -15px; transform: rotate(-3deg); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .input-box { width: 80%; padding: 10px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; }
+        .btn { padding: 10px 20px; border-radius: 20px; border: none; cursor: pointer; margin: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const THEMES = {
+            cat: {
+                name: '貓貓喵喵 🐾', bg: '#fffcf2', primary: '#ff9aa2', secondary: '#b5ead7',
+                cardBg: '#ffffff', font: 'cursive', radius: '25px', border: '3px solid #f9dad0', showEars: true
+            },
+            stationery: {
+                name: '文具手寫 ✍️', bg: '#f4f1de', primary: '#3d405b', secondary: '#81b29a',
+                cardBg: '#f2cc8f', font: 'serif', radius: '2px', border: 'none', showTape: true
+            }
+        };
+
+        const App = () => {
+            const [theme, setTheme] = useState('cat');
+            const [mode, setMode] = useState(1); // 1:溫習, 2:測驗, 3:新增
+            const [wordBank, setWordBank] = useState(JSON.parse(localStorage.getItem('catVocab')) || []);
+            const [currentIdx, setCurrentIdx] = useState(0);
+            const [isFlipped, setIsFlipped] = useState(false);
+            
+            const curr = THEMES[theme];
+            const word = wordBank[currentIdx];
+
+            useEffect(() => {
+                localStorage.setItem('catVocab', JSON.stringify(wordBank));
+            }, [wordBank]);
+
+            const speak = (text) => {
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                window.speechSynthesis.speak(u);
+            };
+
+            const addWord = (e) => {
+                e.preventDefault();
+                const eng = e.target.eng.value;
+                const chi = e.target.chi.value;
+                if(!eng || !chi) return;
+                setWordBank([...wordBank, { english: eng, chinese: chi, id: Date.now() }]);
+                setMode(1);
+            };
+
+            return (
+                <div className="app-container" style={{ backgroundColor: curr.bg, fontFamily: curr.font }}>
+                    <div style={{ marginBottom: '20px' }}>
+                        <button className="btn" onClick={() => setTheme('cat')}>🐱 貓貓</button>
+                        <button className="btn" onClick={() => setTheme('stationery')}>📝 文具</button>
+                    </div>
+
+                    <h1 style={{ color: curr.primary }}>{curr.name}</h1>
+
+                    <div style={{ marginBottom: '20px' }}>
+                        <button className="btn" style={{backgroundColor: curr.secondary}} onClick={() => setMode(1)}>溫習</button>
+                        <button className="btn" style={{backgroundColor: curr.secondary}} onClick={() => setMode(3)}>+ 新增</button>
+                    </div>
+
+                    {mode === 3 ? (
+                        <form onSubmit={addWord} style={{ background: '#fff', padding: '20px', borderRadius: '15px', maxWidth: '300px', margin: 'auto' }}>
+                            <input name="eng" className="input-box" placeholder="英文生字" />
+                            <input name="chi" className="input-box" placeholder="中文翻譯" />
+                            <button className="btn" style={{ background: curr.primary, color: '#fff' }}>儲存卡片</button>
+                        </form>
+                    ) : (
+                        wordBank.length > 0 ? (
+                            <div>
+                                <div className="card" style={{ backgroundColor: curr.cardBg, borderRadius: curr.radius, border: curr.border }} onClick={() => { setIsFlipped(!isFlipped); if(!isFlipped) speak(word.english); }}>
+                                    {curr.showEars && <><div className="ear" style={{ left: '20px', background: curr.primary }}></div><div className="ear" style={{ right: '20px', background: curr.primary }}></div></>}
+                                    {curr.showTape && <div className="tape"></div>}
+                                    
+                                    {!isFlipped ? <h2>{word.english}</h2> : <div><h3>{word.chinese}</h3><p>🔊 已朗讀</p></div>}
+                                </div>
+                                <button className="btn" onClick={() => { setCurrentIdx((currentIdx + 1) % wordBank.length); setIsFlipped(false); }}>下一張 ➡️</button>
+                            </div>
+                        ) : <p>點擊上方 "+ 新增" 來建立第一張字卡喵！</p>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
