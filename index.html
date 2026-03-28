@@ -3,39 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VocabCard v7.1</title>
+    <title>Vocab Dungeon v8.0</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root { --bg: #f8f9fa; --primary: #0984e3; --text: #2d3436; --gray: #636e72; }
-        body { background: var(--bg); font-family: -apple-system, "Microsoft JhengHei", sans-serif; margin: 0; color: var(--text); }
+        :root { --bg: #1a1a2e; --card-bg: #16213e; --primary: #e94560; --text: #e9ecef; --danger: #ff4d4d; --success: #4cd137; }
+        body { background: var(--bg); font-family: 'Segoe UI', "Microsoft JhengHei", sans-serif; margin: 0; color: var(--text); }
         .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
         
-        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); background: #f1f2f6; }
-        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 10px rgba(9,132,227,0.2); }
-        .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: transparent; }
-        .btn-delete { color: #d63031; border: 1px solid #d63031; padding: 4px 12px; width: auto; font-size: 0.8rem; border-radius: 6px; }
-
-        /* 生字卡 */
-        .card { background: #fff; border-radius: 24px; padding: 30px; margin: 15px 0; min-height: 320px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; text-align: center; }
-        .card h2 { font-size: 2.2rem; margin: 0; color: var(--primary); line-height: 1.3; }
+        .btn { background: var(--card-bg); border: 1px solid #444; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; color: #fff; transition: 0.2s; }
+        .btn-primary { background: var(--primary); border: none; }
+        .btn-outline { border: 2px solid var(--primary); background: transparent; color: var(--primary); }
         
-        /* 選擇題 2x2 佈局 */
-        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .quiz-grid .btn { margin: 0; padding: 20px 10px; font-size: 1.1rem; }
-
-        /* 背面細節 */
-        .meaning-item { margin-bottom: 12px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; width: 100%; text-align: left; }
-        .pos-label { background: #e1f5fe; color: #0288d1; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-right: 8px; }
-        .example-text { font-size: 0.85rem; color: var(--gray); background: #f1f2f6; padding: 8px; border-radius: 8px; margin-top: 5px; font-style: italic; border-left: 3px solid #ced6e0; display: block; }
-
-        textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-size: 1rem; min-height: 180px; font-family: inherit; }
-        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-size: 1.2rem; margin-bottom: 10px; box-sizing: border-box; }
+        /* 地下城 UI */
+        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
+        .hp-bar { color: var(--danger); font-size: 1.2rem; font-weight: bold; }
+        .floor-badge { background: #0f3460; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; }
         
-        .progress-text { font-size: 0.8rem; color: var(--gray); text-align: center; margin-bottom: 5px; }
-        .status-bar { font-size: 0.85rem; color: var(--primary); font-weight: bold; text-align: center; margin-bottom: 10px; }
+        .dungeon-card { background: var(--card-bg); border-radius: 24px; padding: 40px 20px; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(233, 69, 96, 0.2); border: 2px solid #0f3460; text-align: center; margin-bottom: 20px; }
+        .monster-icon { font-size: 3rem; margin-bottom: 10px; }
+        .boss-text { color: var(--primary); font-weight: bold; font-size: 1.5rem; text-shadow: 0 0 10px var(--primary); }
+
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .boss-input { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid var(--primary); background: #0f3460; color: #fff; font-size: 1.2rem; text-align: center; margin-bottom: 10px; }
+
+        /* 通用清單 */
+        .list-item { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -45,187 +39,232 @@
 
         const App = () => {
             const [view, setView] = useState('home');
-            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v7_1') || '[]'));
-            const [studyQueue, setStudyQueue] = useState([]);
-            const [currentWord, setCurrentWord] = useState(null);
-            const [isFlipped, setIsFlipped] = useState(false);
-            const [quizOptions, setQuizOptions] = useState([]);
-            const [feedback, setFeedback] = useState("");
+            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v8') || '[]'));
             
+            // Dungeon States
+            const [dungeonLevel, setDungeonLevel] = useState(1);
+            const [hp, setHp] = useState(10);
+            const [maxHp, setMaxHp] = useState(10);
+            const [dungeonQueue, setDungeonQueue] = useState([]);
+            const [currentWord, setCurrentWord] = useState(null);
+            const [quizOptions, setQuizOptions] = useState([]);
+            const [bossInput, setBossInput] = useState("");
+            const [feedback, setFeedback] = useState("");
+
+            // Normal Study States
+            const [studyQueue, setStudyQueue] = useState([]);
+            const [isFlipped, setIsFlipped] = useState(false);
+
+            // Add Form States
             const [eng, setEng] = useState("");
             const [content, setContent] = useState("");
-            const [status, setStatus] = useState("");
 
-            useEffect(() => { localStorage.setItem('vocab_v7_1', JSON.stringify(wordBank)); }, [wordBank]);
+            useEffect(() => { localStorage.setItem('vocab_v8', JSON.stringify(wordBank)); }, [wordBank]);
 
-            const speak = (t) => { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); };
+            const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
 
-            const shuffle = (array) => {
-                let arr = [...array];
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
+            // --- Dungeon Logic ---
+            const startDungeon = (difficulty) => {
+                if (wordBank.length < 10) return alert("字庫至少需要 10 個生字才能進入地下城！");
+                let initialHp = 10;
+                if (difficulty === 'mid') initialHp = 7;
+                if (difficulty === 'high') initialHp = 5;
+
+                const fullList = shuffle(wordBank);
+                // 補足 50 個字 (如果字庫不夠則循環)
+                let finalQueue = [];
+                while(finalQueue.length < 50) {
+                    finalQueue = [...finalQueue, ...shuffle(wordBank)];
                 }
-                return arr;
+                finalQueue = finalQueue.slice(0, 50);
+
+                setHp(initialHp);
+                setMaxHp(initialHp);
+                setDungeonLevel(1);
+                setDungeonQueue(finalQueue);
+                setupLevel(1, finalQueue[0]);
+                setView('dungeon_play');
             };
 
-            const initStudy = (mode) => {
-                if (wordBank.length === 0) return alert("請先新增生字");
-                if (mode === 'quiz' && wordBank.length < 4) return alert("選擇題模式需要至少 4 個單字");
-                
-                const newQueue = shuffle(wordBank);
-                const firstWord = newQueue.shift();
-                
-                setStudyQueue(newQueue);
-                setCurrentWord(firstWord);
-                setIsFlipped(false);
+            const setupLevel = (level, word) => {
+                setCurrentWord(word);
+                setBossInput("");
                 setFeedback("");
-                
-                if (mode === 'quiz') generateQuizOptions(firstWord);
-                else speak(firstWord.eng);
-                
+                if (level !== 25 && level !== 50) {
+                    let opts = [word.eng];
+                    let others = wordBank.filter(w => w.eng !== word.eng).sort(() => Math.random() - 0.5);
+                    opts.push(...others.slice(0, 3).map(w => w.eng));
+                    setQuizOptions(shuffle(opts));
+                }
+            };
+
+            const handleAnswer = (isCorrect) => {
+                if (isCorrect) {
+                    setFeedback("⚔️ 擊殺怪物！");
+                    setTimeout(() => nextLevel(), 600);
+                } else {
+                    const newHp = hp - 1;
+                    setHp(newHp);
+                    setFeedback("💥 受到攻擊！扣血 1");
+                    if (newHp <= 0) {
+                        setTimeout(() => setView('dungeon_over'), 600);
+                    } else {
+                        setTimeout(() => nextLevel(), 800);
+                    }
+                }
+            };
+
+            const nextLevel = () => {
+                const nextLvl = dungeonLevel + 1;
+                if (nextLvl > 50) return setView('dungeon_win');
+                setDungeonLevel(nextLvl);
+                setupLevel(nextLvl, dungeonQueue[nextLvl - 1]);
+            };
+
+            // --- Normal Study Logic ---
+            const initNormalStudy = (mode) => {
+                if (wordBank.length === 0) return alert("字庫為空");
+                const q = shuffle(wordBank);
+                const first = q.shift();
+                setStudyQueue(q);
+                setCurrentWord(first);
+                setIsFlipped(false);
+                if (mode === 'quiz') setQuizOptions(shuffle([first.eng, ...wordBank.filter(w=>w.eng!==first.eng).slice(0,3).map(w=>w.eng)]));
                 setView(mode === 'card' ? 'study_card' : 'study_quiz');
             };
 
-            const nextWord = (mode) => {
-                if (studyQueue.length === 0) {
-                    alert("已完成本輪溫習！即將重新開始。");
-                    initStudy(mode);
-                    return;
-                }
-                const nextQueue = [...studyQueue];
-                const word = nextQueue.shift();
-                setStudyQueue(nextQueue);
+            const nextNormal = (mode) => {
+                if (studyQueue.length === 0) { alert("本輪結束"); return setView('home'); }
+                const nextQ = [...studyQueue];
+                const word = nextQ.shift();
+                setStudyQueue(nextQ);
                 setCurrentWord(word);
                 setIsFlipped(false);
-                setFeedback("");
-                if (mode === 'quiz') generateQuizOptions(word);
-                else speak(word.eng);
+                if (mode === 'quiz') setQuizOptions(shuffle([word.eng, ...wordBank.filter(w=>w.eng!==word.eng).slice(0,3).map(w=>w.eng)]));
             };
 
-            const generateQuizOptions = (word) => {
-                let opts = [word.eng];
-                let others = wordBank.filter(w => w.eng !== word.eng).sort(() => Math.random() - 0.5);
-                opts.push(...others.slice(0, 3).map(w => w.eng));
-                setQuizOptions(opts.sort(() => Math.random() - 0.5));
-            };
-
-            const fetchFullData = async () => {
-                if (!eng.trim()) return setStatus("⚠️ 請輸入單字");
-                setStatus("🔍 正在深度檢索...");
-                try {
-                    const [tRes, dRes] = await Promise.all([
-                        fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`),
-                        fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`)
-                    ]);
-                    const tData = await tRes.json();
-                    const dData = await dRes.json();
-
-                    let resStr = `【翻譯】: ${tData.responseData.translatedText}\n\n`;
-                    if (Array.isArray(dData)) {
-                        dData[0].meanings.forEach((m) => {
-                            const def = m.definitions[0];
-                            resStr += `[${m.partOfSpeech}] ${def.definition}\n`;
-                            if (def.example) resStr += `>> ${def.example.split('.')[0]}.\n`;
-                            resStr += `---\n`;
-                        });
-                    } else { resStr += "⚠️ 未找到詳細詞性。"; }
-                    setContent(resStr.trim());
-                    setStatus("✅ 已獲取資料");
-                } catch (e) { setStatus("❌ 請求失敗"); }
-            };
-
-            const save = () => {
-                if (!eng || !content) return alert("內容不足");
-                setWordBank([{ eng: eng.trim(), content, id: Date.now() }, ...wordBank]);
-                setEng(""); setContent(""); setStatus("💾 儲存成功！");
-            };
-
-            // 視圖渲染
+            // --- Home ---
             if (view === 'home') return (
                 <div className="container">
-                    <h1 style={{marginTop:'60px'}}>VOCAB CARD</h1>
-                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>溫習 (Study)</button>
-                    <button className="btn" onClick={() => {setView('add'); setStatus("");}}>新增 (Add New)</button>
-                    <button className="btn" onClick={() => setView('list')}>字庫 ({wordBank.length})</button>
+                    <h1 style={{marginTop:'40px', color:'var(--primary)'}}>VOCAB MASTER</h1>
+                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>進入溫習</button>
+                    <button className="btn" onClick={() => setView('add')}>新增生字</button>
+                    <button className="btn" onClick={() => setView('list')}>我的字庫 ({wordBank.length})</button>
                 </div>
             );
 
+            // --- Study Menu ---
             if (view === 'study_menu') return (
                 <div className="container">
-                    <h1>選擇模式</h1>
-                    <button className="btn btn-outline" onClick={() => initStudy('card')}>生字卡模式</button>
-                    <button className="btn btn-outline" onClick={() => initStudy('quiz')}>選擇題模式</button>
-                    <button className="btn" onClick={() => setView('home')}>返回主頁</button>
+                    <h2>溫習模式</h2>
+                    <button className="btn btn-outline" onClick={() => initNormalStudy('card')}>生字卡模式</button>
+                    <button className="btn btn-outline" onClick={() => initNormalStudy('quiz')}>選擇題模式</button>
+                    <hr style={{width:'100%', border:'0.5px solid #444', margin:'20px 0'}} />
+                    <h2 style={{color:'var(--primary)'}}>🏰 地下城挑戰</h2>
+                    <button className="btn" style={{borderColor:'#4cd137', color:'#4cd137'}} onClick={() => startDungeon('low')}>初級 (10 HP)</button>
+                    <button className="btn" style={{borderColor:'#fbc531', color:'#fbc531'}} onClick={() => startDungeon('mid')}>中級 (7 HP)</button>
+                    <button className="btn" style={{borderColor:'#e84118', color:'#e84118'}} onClick={() => startDungeon('high')}>高級 (5 HP)</button>
+                    <button className="btn" onClick={() => setView('home')}>返回</button>
                 </div>
             );
 
-            if (view.startsWith('study_')) return (
+            // --- Dungeon Play ---
+            if (view === 'dungeon_play') return (
                 <div className="container">
-                    <div className="progress-text">剩餘: {studyQueue.length + 1}</div>
-                    <div className="card" onClick={() => view === 'study_card' && setIsFlipped(!isFlipped)}>
-                        {!isFlipped ? (
-                            <h2>{view === 'study_card' ? currentWord?.eng : currentWord?.content.split('\n')[0].replace('【翻譯】: ', '')}</h2>
-                        ) : (
-                            <div style={{width:'100%', textAlign:'left'}}>
-                                <div style={{textAlign:'center', marginBottom:'15px'}}>
-                                    <strong style={{fontSize:'1.8rem', color: 'var(--primary)'}}>{currentWord?.eng}</strong>
-                                </div>
-                                {currentWord?.content.split('\n').map((line, i) => {
-                                    if (line.startsWith('[')) {
-                                        const parts = line.split(']');
-                                        return <div key={i} className="meaning-item"><span className="pos-label">{parts[0].replace('[','')}</span><span style={{fontSize:'0.95rem'}}>{parts[1]}</span></div>;
-                                    }
-                                    if (line.startsWith('>>')) return <div key={i} className="example-text">{line.replace('>>','Ex:')}</div>;
-                                    if (line.startsWith('【')) return <div key={i} style={{color: 'var(--primary)', fontWeight: 'bold', marginBottom:'8px'}}>{line}</div>;
-                                    return null;
-                                })}
-                                <button className="btn" style={{marginTop:'15px'}} onClick={(e)=>{e.stopPropagation(); speak(currentWord.eng);}}>🔊 朗讀</button>
-                            </div>
-                        )}
+                    <div className="status-header">
+                        <div className="hp-bar">{"❤️".repeat(hp)}</div>
+                        <div className="floor-badge">B {dungeonLevel} / 50</div>
+                    </div>
+                    
+                    <div className="dungeon-card">
+                        <div className="monster-icon">
+                            {dungeonLevel === 50 ? "🐉" : dungeonLevel === 25 ? "👹" : "👾"}
+                        </div>
+                        {(dungeonLevel === 25 || dungeonLevel === 50) && <div className="boss-text">BOSS CHALLENGE</div>}
+                        <h2 style={{fontSize: currentWord?.content.length > 20 ? '1.5rem' : '2.2rem'}}>
+                            {currentWord?.content.split('\n')[0].replace('【翻譯】: ', '')}
+                        </h2>
+                        {feedback && <div style={{marginTop:'10px', fontWeight:'bold', color: feedback.includes('⚔️') ? 'var(--success)' : 'var(--danger)'}}>{feedback}</div>}
                     </div>
 
-                    {view === 'study_quiz' && !isFlipped && (
+                    {dungeonLevel === 25 || dungeonLevel === 50 ? (
+                        <div>
+                            <input className="boss-input" autoFocus value={bossInput} onChange={e => setBossInput(e.target.value)} placeholder="輸入英文單字..." />
+                            <button className="btn btn-primary" onClick={() => handleAnswer(bossInput.toLowerCase().trim() === currentWord.eng.toLowerCase().trim())}>發動攻擊</button>
+                        </div>
+                    ) : (
                         <div className="quiz-grid">
                             {quizOptions.map(o => (
-                                <button key={o} className="btn btn-outline" onClick={() => { 
-                                    setFeedback(o === currentWord.eng ? "✅ 正確" : "❌ 錯誤"); 
-                                    setIsFlipped(true); 
-                                    if(o===currentWord.eng) speak(o); 
-                                }}>{o}</button>
+                                <button key={o} className="btn btn-outline" onClick={() => handleAnswer(o === currentWord.eng)}>{o}</button>
                             ))}
                         </div>
                     )}
-
-                    {feedback && <div style={{textAlign:'center', fontWeight:'bold', padding:'10px', color: feedback.includes('✅')?'#2ecc71':'#e74c3c'}}>{feedback}</div>}
-                    
-                    <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={() => nextWord(view === 'study_card' ? 'card' : 'quiz')}>下一個 ➔</button>
-                    <button className="btn" onClick={() => setView('home')}>離開</button>
                 </div>
             );
 
+            // --- Dungeon Over/Win ---
+            if (view === 'dungeon_over') return (
+                <div className="container" style={{textAlign:'center', justifyContent:'center'}}>
+                    <h1 style={{fontSize:'3rem', color:'var(--danger)'}}>GAME OVER</h1>
+                    <p>你在第 {dungeonLevel} 層倒下了...</p>
+                    <button className="btn btn-primary" onClick={() => setView('home')}>返回村莊</button>
+                </div>
+            );
+
+            if (view === 'dungeon_win') return (
+                <div className="container" style={{textAlign:'center', justifyContent:'center'}}>
+                    <h1 style={{fontSize:'3rem', color:'var(--success)'}}>VICTORY</h1>
+                    <p>你成功攻略了地下城 50 層！</p>
+                    <button className="btn btn-primary" onClick={() => setView('home')}>功成身退</button>
+                </div>
+            );
+
+            // --- Add & List (Reuse previous logic) ---
             if (view === 'add') return (
                 <div className="container">
-                    <h1>新增單字</h1>
-                    <div className="status-bar">{status}</div>
-                    <input value={eng} onChange={e => setEng(e.target.value)} placeholder="輸入英文..." />
-                    <button className="btn btn-outline" onClick={fetchFullData}>✨ 一鍵抓取資料</button>
-                    <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="生成的詳細內容..." />
-                    <button className="btn btn-primary" onClick={save}>💾 儲存</button>
+                    <h2>新增生字</h2>
+                    <input value={eng} onChange={e => setEng(e.target.value)} placeholder="英文..." />
+                    <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="內容..." style={{background:'#16213e', color:'#fff', border:'1px solid #444', borderRadius:'12px', padding:'10px', minHeight:'150px'}} />
+                    <button className="btn btn-primary" onClick={() => {
+                        setWordBank([...wordBank, {eng, content, id: Date.now()}]);
+                        setEng(""); setContent(""); alert("已儲存");
+                    }}>儲存</button>
                     <button className="btn" onClick={() => setView('home')}>返回</button>
                 </div>
             );
 
             if (view === 'list') return (
                 <div className="container">
-                    <h1>字庫 ({wordBank.length})</h1>
+                    <h2>字庫 ({wordBank.length})</h2>
                     {wordBank.map(w => (
-                        <div key={w.id} style={{background:'#fff', padding:'15px', borderRadius:'15px', marginBottom:'10px', display:'flex', justifyContent:'space-between', alignItems:'center', border:'1px solid #eee'}}>
-                            <div><strong>{w.eng}</strong><div style={{fontSize:'0.8rem', color:'#636e72'}}>{w.content.split('\n')[0]}</div></div>
-                            <button className="btn-delete" onClick={() => {if(confirm("確定移除？")) setWordBank(wordBank.filter(x => x.id !== w.id))}}>移除</button>
+                        <div key={w.id} className="list-item">
+                            <div><strong>{w.eng}</strong></div>
+                            <button className="btn" style={{width:'auto', color:'var(--danger)'}} onClick={() => setWordBank(wordBank.filter(x=>x.id!==w.id))}>刪除</button>
                         </div>
                     ))}
                     <button className="btn" onClick={() => setView('home')}>返回</button>
+                </div>
+            );
+
+            // --- Normal Study Render ---
+            if (view.startsWith('study_')) return (
+                <div className="container">
+                    <div className="progress-text">剩餘: {studyQueue.length + 1}</div>
+                    <div className="dungeon-card" style={{background:'#fff', color:'#000'}} onClick={() => view === 'study_card' && setIsFlipped(!isFlipped)}>
+                        {!isFlipped ? 
+                            <h2 style={{color:'var(--primary)'}}>{view === 'study_card' ? currentWord?.eng : currentWord?.content.split('\n')[0].replace('【翻譯】: ', '')}</h2> : 
+                            <div style={{textAlign:'left'}}>{currentWord?.content}</div>
+                        }
+                    </div>
+                    {view === 'study_quiz' && !isFlipped && (
+                        <div className="quiz-grid">
+                            {quizOptions.map(o => (
+                                <button key={o} className="btn btn-outline" style={{color:'#fff'}} onClick={() => { setIsFlipped(true); setFeedback(o===currentWord.eng?"Correct":"Wrong"); }}>{o}</button>
+                            ))}
+                        </div>
+                    )}
+                    <button className="btn btn-primary" onClick={() => nextNormal(view.split('_')[1])}>下一個</button>
+                    <button className="btn" onClick={() => setView('home')}>離開</button>
                 </div>
             );
         };
