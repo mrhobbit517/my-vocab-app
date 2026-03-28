@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VocabCard Pro v5.1</title>
+    <title>VocabCard v7.0 - 不重複溫習版</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root { --bg: #f4f7f6; --text: #2c3e50; --primary: #3498db; --danger: #e74c3c; }
+        :root { --bg: #f8f9fa; --primary: #0984e3; --text: #2d3436; --gray: #636e72; }
         body { background: var(--bg); font-family: -apple-system, "Microsoft JhengHei", sans-serif; margin: 0; color: var(--text); }
-        .container { width: 100%; max-width: 500px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
-        h1 { font-weight: 300; text-align: center; color: var(--primary); margin-bottom: 20px; }
+        .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
         
-        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; box-sizing: border-box; font-weight: 500; }
-        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 6px rgba(52,152,219,0.2); }
+        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; }
+        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 10px rgba(9,132,227,0.2); }
         .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: transparent; }
-        .btn-delete { color: var(--danger); border: 1px solid var(--danger); padding: 5px 12px; width: auto; font-size: 0.8rem; border-radius: 6px; }
+        .btn-delete { color: #d63031; border: 1px solid #d63031; padding: 4px 12px; width: auto; font-size: 0.8rem; border-radius: 6px; }
+
+        .card { background: #fff; border-radius: 24px; padding: 30px; margin: 15px 0; min-height: 380px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
+        .card h2 { font-size: 2.8rem; margin: 0; color: var(--primary); text-align: center; }
         
-        .card { background: #fff; border-radius: 24px; padding: 40px 25px; margin: 15px 0; min-height: 320px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; }
-        .card h2 { font-size: 2.8rem; margin: 0; color: var(--primary); }
-        .card-content { text-align: left; width: 100%; margin-top: 15px; font-size: 0.95rem; line-height: 1.6; }
+        .meaning-item { margin-bottom: 12px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; width: 100%; }
+        .pos-label { background: #e1f5fe; color: #0288d1; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-right: 8px; }
+        .example-text { font-size: 0.85rem; color: var(--gray); background: #f1f2f6; padding: 8px; border-radius: 8px; margin-top: 5px; font-style: italic; border-left: 3px solid #ced6e0; display: block; }
+
+        textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-size: 1rem; min-height: 180px; font-family: inherit; }
+        input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-size: 1.2rem; margin-bottom: 10px; box-sizing: border-box; }
         
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; font-size: 0.9rem; font-weight: bold; color: #7f8c8d; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #dcdde1; border-radius: 12px; box-sizing: border-box; font-size: 1rem; font-family: inherit; }
-        textarea { min-height: 180px; line-height: 1.5; }
-        
-        .vocab-item { background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .status-msg { font-size: 0.9rem; color: var(--primary); text-align: center; height: 24px; font-weight: bold; margin-bottom: 5px; }
+        .status-bar { font-size: 0.85rem; color: var(--primary); font-weight: bold; text-align: center; margin: 10px 0; }
+        .progress-text { font-size: 0.8rem; color: var(--gray); margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -38,43 +38,80 @@
 
         const App = () => {
             const [view, setView] = useState('home');
-            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v5_1') || '[]'));
+            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v7') || '[]'));
+            const [studyQueue, setStudyQueue] = useState([]); // 溫習隊列
             const [currentWord, setCurrentWord] = useState(null);
             const [isFlipped, setIsFlipped] = useState(false);
             const [quizOptions, setQuizOptions] = useState([]);
             const [feedback, setFeedback] = useState("");
             
             const [eng, setEng] = useState("");
-            const [fullContent, setFullContent] = useState("");
+            const [content, setContent] = useState("");
             const [status, setStatus] = useState("");
 
-            useEffect(() => { localStorage.setItem('vocab_v5_1', JSON.stringify(wordBank)); }, [wordBank]);
+            useEffect(() => { localStorage.setItem('vocab_v7', JSON.stringify(wordBank)); }, [wordBank]);
 
-            const speak = (t) => { 
-                const u = new SpeechSynthesisUtterance(t);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u); 
+            const speak = (t) => { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); };
+
+            // 洗牌算法
+            const shuffle = (array) => {
+                let arr = [...array];
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
             };
 
-            const startStudy = (mode) => {
-                if (wordBank.length === 0) return alert("請先新增生字！");
-                if (mode === 'quiz' && wordBank.length < 4) return alert("至少需要 4 個生字進行選擇題！");
-                const word = wordBank[Math.floor(Math.random() * wordBank.length)];
-                setCurrentWord(word);
+            // 初始化溫習
+            const initStudy = (mode) => {
+                if (wordBank.length === 0) return alert("請先新增生字");
+                if (mode === 'quiz' && wordBank.length < 4) return alert("需要至少4個字");
+                
+                const newQueue = shuffle(wordBank);
+                const firstWord = newQueue.shift();
+                
+                setStudyQueue(newQueue);
+                setCurrentWord(firstWord);
                 setIsFlipped(false);
                 setFeedback("");
-                if (mode === 'quiz') {
-                    let opts = [word.eng];
-                    let others = wordBank.filter(w => w.eng !== word.eng).sort(() => 0.5 - Math.random());
-                    opts.push(...others.slice(0, 3).map(w => w.eng));
-                    setQuizOptions(opts.sort(() => Math.random() - 0.5));
-                } else { speak(word.eng); }
+                
+                if (mode === 'quiz') generateQuizOptions(firstWord);
+                else speak(firstWord.eng);
+                
                 setView(mode === 'card' ? 'study_card' : 'study_quiz');
             };
 
+            // 下一個字 (從隊列中取)
+            const nextWord = (mode) => {
+                if (studyQueue.length === 0) {
+                    alert("漂亮！你已經完成了本輪所有生字的溫習。即將重新開始。");
+                    initStudy(mode);
+                    return;
+                }
+                
+                const nextQueue = [...studyQueue];
+                const word = nextQueue.shift();
+                
+                setStudyQueue(nextQueue);
+                setCurrentWord(word);
+                setIsFlipped(false);
+                setFeedback("");
+                
+                if (mode === 'quiz') generateQuizOptions(word);
+                else speak(word.eng);
+            };
+
+            const generateQuizOptions = (word) => {
+                let opts = [word.eng];
+                let others = wordBank.filter(w => w.eng !== word.eng).sort(() => Math.random() - 0.5);
+                opts.push(...others.slice(0, 3).map(w => w.eng));
+                setQuizOptions(opts.sort(() => Math.random() - 0.5));
+            };
+
             const fetchFullData = async () => {
-                if (!eng.trim()) return setStatus("⚠️ 請輸入英文");
-                setStatus("🔍 正在深度檢索多義詞...");
+                if (!eng.trim()) return setStatus("⚠️ 請輸入單字");
+                setStatus("🔍 正在深度檢索...");
                 try {
                     const [tRes, dRes] = await Promise.all([
                         fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`),
@@ -83,96 +120,90 @@
                     const tData = await tRes.json();
                     const dData = await dRes.json();
 
-                    let resultText = `【中文釋義】: ${tData.responseData.translatedText}\n\n`;
-
+                    let resStr = `【翻譯】: ${tData.responseData.translatedText}\n\n`;
                     if (Array.isArray(dData)) {
                         dData[0].meanings.forEach((m) => {
-                            resultText += `● [${m.partOfSpeech}]\n`;
-                            m.definitions.slice(0, 2).forEach((def, i) => {
-                                resultText += `  (${i+1}) ${def.definition}\n`;
-                                if (def.example) resultText += `      例句: "${def.example}"\n`;
-                            });
-                            resultText += `\n`;
+                            const def = m.definitions[0];
+                            resStr += `[${m.partOfSpeech}] ${def.definition}\n`;
+                            if (def.example) resStr += `>> ${def.example.split('.')[0]}.\n`;
+                            resStr += `---\n`;
                         });
-                    } else {
-                        resultText += "⚠️ 找不到詳細詞性定義，請自行補充。";
-                    }
-
-                    setFullContent(resultText);
-                    setStatus("✅ 內容已整合，你可以繼續編輯");
-                } catch (e) {
-                    setStatus("❌ 網路連線失敗，請重試");
-                }
+                    } else { resStr += "⚠️ 未找到詳細詞性。"; }
+                    setContent(resStr.trim());
+                    setStatus("✅ 已生成不重複多義詞");
+                } catch (e) { setStatus("❌ 請求失敗"); }
             };
 
             const save = () => {
-                if (!eng.trim() || !fullContent.trim()) return alert("英文或內容不能為空");
-                setWordBank([{ eng: eng.trim(), content: fullContent.trim(), id: Date.now() }, ...wordBank]);
-                setEng(""); setFullContent(""); setStatus("💾 儲存成功！");
+                if (!eng || !content) return alert("內容不足");
+                setWordBank([{ eng: eng.trim(), content, id: Date.now() }, ...wordBank]);
+                setEng(""); setContent(""); setStatus("💾 儲存成功！");
             };
 
-            // --- 視圖控制 ---
             if (view === 'home') return (
                 <div className="container">
-                    <h1>VOCAB CARD</h1>
-                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>溫習 (Study)</button>
-                    <button className="btn" onClick={() => {setView('add'); setStatus("");}}>新增 (Add New)</button>
-                    <button className="btn" onClick={() => setView('list')}>已存 (Saved)</button>
+                    <h1 style={{marginTop:'50px'}}>VOCAB CARD</h1>
+                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>進入溫習</button>
+                    <button className="btn" onClick={() => {setView('add'); setStatus("");}}>新增生字卡</button>
+                    <button className="btn" onClick={() => setView('list')}>我的字庫 ({wordBank.length})</button>
                 </div>
             );
 
             if (view === 'study_menu') return (
                 <div className="container">
                     <h1>模式選擇</h1>
-                    <button className="btn btn-outline" onClick={() => startStudy('card')}>生字卡 (Flashcard)</button>
-                    <button className="btn btn-outline" onClick={() => startStudy('quiz')}>選擇題 (Quiz)</button>
+                    <button className="btn btn-outline" onClick={() => initStudy('card')}>生字卡模式 (不重複)</button>
+                    <button className="btn btn-outline" onClick={() => initStudy('quiz')}>選擇題模式 (不重複)</button>
                     <button className="btn" onClick={() => setView('home')}>返回主頁</button>
                 </div>
             );
 
             if (view.startsWith('study_')) return (
                 <div className="container">
+                    <div className="progress-text">本輪剩餘: {studyQueue.length} 個生字</div>
                     <div className="card" onClick={() => view === 'study_card' && setIsFlipped(!isFlipped)}>
                         {!isFlipped ? (
-                            <h2>{view === 'study_card' ? currentWord?.eng : "猜猜這是哪個字？"}</h2>
+                            <h2>{view === 'study_card' ? currentWord?.eng : "這是哪個字？"}</h2>
                         ) : (
-                            <div className="card-content">
-                                <strong style={{fontSize:'1.3rem', color:'#3498db'}}>{currentWord?.eng}</strong>
-                                <pre style={{whiteSpace: 'pre-wrap', fontSize:'0.9rem', color:'#444', marginTop:'10px', fontFamily:'inherit'}}>
-                                    {currentWord?.content}
-                                </pre>
-                                <button className="btn btn-outline" style={{width:'auto', padding:'5px 15px'}} onClick={(e)=>{e.stopPropagation(); speak(currentWord.eng);}}>🔊 聽發音</button>
+                            <div style={{width:'100%'}}>
+                                <div style={{textAlign:'center', marginBottom:'15px'}}>
+                                    <strong style={{fontSize:'1.8rem', color: 'var(--primary)'}}>{currentWord?.eng}</strong>
+                                </div>
+                                {currentWord?.content.split('\n').map((line, i) => {
+                                    if (line.startsWith('[')) {
+                                        const parts = line.split(']');
+                                        return <div key={i} className="meaning-item"><span className="pos-label">{parts[0].replace('[','')}</span><span style={{fontSize:'0.95rem'}}>{parts[1]}</span></div>;
+                                    }
+                                    if (line.startsWith('>>')) return <div key={i} className="example-text">{line.replace('>>','Ex:')}</div>;
+                                    if (line.startsWith('【')) return <div key={i} style={{color: 'var(--primary)', fontWeight: 'bold', marginBottom:'8px'}}>{line}</div>;
+                                    return null;
+                                })}
+                                <button className="btn" style={{marginTop:'15px'}} onClick={(e)=>{e.stopPropagation(); speak(currentWord.eng);}}>🔊 朗讀</button>
                             </div>
                         )}
                     </div>
                     {view === 'study_quiz' && !isFlipped && (
                         <div>
-                            <p style={{textAlign:'center', fontSize:'0.9rem', color:'#7f8c8d'}}>根據以下釋義選擇：<br/>{currentWord?.content.split('\n')[0]}</p>
+                            <p style={{textAlign:'center', color:'#636e72', fontSize:'0.9rem'}}>提示：{currentWord?.content.split('\n')[0]}</p>
                             {quizOptions.map(o => (
                                 <button key={o} className="btn" onClick={() => { setFeedback(o === currentWord.eng ? "✅ 正確" : "❌ 錯誤"); setIsFlipped(true); if(o===currentWord.eng) speak(o); }}>{o}</button>
                             ))}
                         </div>
                     )}
-                    {feedback && <div style={{textAlign:'center', fontWeight:'bold', padding:'10px', color: feedback.includes('✅') ? '#2ecc71':'#e74c3c'}}>{feedback}</div>}
-                    <button className="btn btn-primary" onClick={() => startStudy(view === 'study_card' ? 'card' : 'quiz')}>下一個 ➔</button>
-                    <button className="btn" onClick={() => setView('home')}>結束溫習</button>
+                    {feedback && <div style={{textAlign:'center', fontWeight:'bold', padding:'10px', color: feedback.includes('✅')?'#2ecc71':'#e74c3c'}}>{feedback}</div>}
+                    <button className="btn btn-primary" onClick={() => nextWord(view === 'study_card' ? 'card' : 'quiz')}>下一個字 ➔</button>
+                    <button className="btn" onClick={() => setView('home')}>離開</button>
                 </div>
             );
 
             if (view === 'add') return (
                 <div className="container">
-                    <h1>新增生字</h1>
-                    <div className="status-msg">{status}</div>
-                    <div className="input-group">
-                        <label>英文單字 (English)</label>
-                        <input value={eng} onChange={e => setEng(e.target.value)} placeholder="例如: observe" />
-                    </div>
-                    <button className="btn btn-outline" onClick={fetchFullData}>✨ 一鍵獲取多義詞釋義</button>
-                    <div className="input-group">
-                        <label>詳細內容 (包含詞性與例句)</label>
-                        <textarea value={fullContent} onChange={e => setFullContent(e.target.value)} placeholder="內容會在這裡生成..." />
-                    </div>
-                    <button className="btn btn-primary" onClick={save}>💾 儲存到字庫</button>
+                    <h1>新增單字</h1>
+                    <div className="status-bar">{status}</div>
+                    <input value={eng} onChange={e => setEng(e.target.value)} placeholder="輸入英文..." />
+                    <button className="btn btn-outline" onClick={fetchFullData}>✨ 一鍵抓取多義詞</button>
+                    <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="生成的內容..." />
+                    <button className="btn btn-primary" onClick={save}>💾 確認儲存</button>
                     <button className="btn" onClick={() => setView('home')}>取消</button>
                 </div>
             );
@@ -181,17 +212,12 @@
                 <div className="container">
                     <h1>我的字庫 ({wordBank.length})</h1>
                     {wordBank.map(w => (
-                        <div key={w.id} className="vocab-item">
-                            <div style={{flex:1}}>
-                                <strong>{w.eng}</strong>
-                                <div style={{fontSize:'0.8rem', color:'#7f8c8d', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'250px'}}>
-                                    {w.content.replace(/\n/g, ' ')}
-                                </div>
-                            </div>
-                            <button className="btn-delete" onClick={() => {if(confirm("確定移除？")) setWordBank(wordBank.filter(x => x.id !== w.id))}}>移除</button>
+                        <div key={w.id} style={{background:'#fff', padding:'15px', borderRadius:'15px', marginBottom:'10px', display:'flex', justifyContent:'space-between', alignItems:'center', border:'1px solid #eee'}}>
+                            <div><strong>{w.eng}</strong><div style={{fontSize:'0.8rem', color:'#636e72'}}>{w.content.split('\n')[0]}</div></div>
+                            <button className="btn-delete" onClick={() => setWordBank(wordBank.filter(x => x.id !== w.id))}>移除</button>
                         </div>
                     ))}
-                    <button className="btn" onClick={() => setView('home')}>返回主頁</button>
+                    <button className="btn" onClick={() => setView('home')}>返回</button>
                 </div>
             );
         };
