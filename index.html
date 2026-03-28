@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VocabCard v7.0 - 不重複溫習版</title>
+    <title>VocabCard v7.1</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -12,23 +12,30 @@
         body { background: var(--bg); font-family: -apple-system, "Microsoft JhengHei", sans-serif; margin: 0; color: var(--text); }
         .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
         
-        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; }
+        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); background: #f1f2f6; }
         .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 10px rgba(9,132,227,0.2); }
         .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: transparent; }
         .btn-delete { color: #d63031; border: 1px solid #d63031; padding: 4px 12px; width: auto; font-size: 0.8rem; border-radius: 6px; }
 
-        .card { background: #fff; border-radius: 24px; padding: 30px; margin: 15px 0; min-height: 380px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; }
-        .card h2 { font-size: 2.8rem; margin: 0; color: var(--primary); text-align: center; }
+        /* 生字卡 */
+        .card { background: #fff; border-radius: 24px; padding: 30px; margin: 15px 0; min-height: 320px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); cursor: pointer; border: 1px solid #eee; text-align: center; }
+        .card h2 { font-size: 2.2rem; margin: 0; color: var(--primary); line-height: 1.3; }
         
-        .meaning-item { margin-bottom: 12px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; width: 100%; }
+        /* 選擇題 2x2 佈局 */
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .quiz-grid .btn { margin: 0; padding: 20px 10px; font-size: 1.1rem; }
+
+        /* 背面細節 */
+        .meaning-item { margin-bottom: 12px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; width: 100%; text-align: left; }
         .pos-label { background: #e1f5fe; color: #0288d1; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-right: 8px; }
         .example-text { font-size: 0.85rem; color: var(--gray); background: #f1f2f6; padding: 8px; border-radius: 8px; margin-top: 5px; font-style: italic; border-left: 3px solid #ced6e0; display: block; }
 
         textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-size: 1rem; min-height: 180px; font-family: inherit; }
         input { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 12px; font-size: 1.2rem; margin-bottom: 10px; box-sizing: border-box; }
         
-        .status-bar { font-size: 0.85rem; color: var(--primary); font-weight: bold; text-align: center; margin: 10px 0; }
-        .progress-text { font-size: 0.8rem; color: var(--gray); margin-bottom: 5px; }
+        .progress-text { font-size: 0.8rem; color: var(--gray); text-align: center; margin-bottom: 5px; }
+        .status-bar { font-size: 0.85rem; color: var(--primary); font-weight: bold; text-align: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -38,8 +45,8 @@
 
         const App = () => {
             const [view, setView] = useState('home');
-            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v7') || '[]'));
-            const [studyQueue, setStudyQueue] = useState([]); // 溫習隊列
+            const [wordBank, setWordBank] = useState(() => JSON.parse(localStorage.getItem('vocab_v7_1') || '[]'));
+            const [studyQueue, setStudyQueue] = useState([]);
             const [currentWord, setCurrentWord] = useState(null);
             const [isFlipped, setIsFlipped] = useState(false);
             const [quizOptions, setQuizOptions] = useState([]);
@@ -49,11 +56,10 @@
             const [content, setContent] = useState("");
             const [status, setStatus] = useState("");
 
-            useEffect(() => { localStorage.setItem('vocab_v7', JSON.stringify(wordBank)); }, [wordBank]);
+            useEffect(() => { localStorage.setItem('vocab_v7_1', JSON.stringify(wordBank)); }, [wordBank]);
 
             const speak = (t) => { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); };
 
-            // 洗牌算法
             const shuffle = (array) => {
                 let arr = [...array];
                 for (let i = arr.length - 1; i > 0; i--) {
@@ -63,10 +69,9 @@
                 return arr;
             };
 
-            // 初始化溫習
             const initStudy = (mode) => {
                 if (wordBank.length === 0) return alert("請先新增生字");
-                if (mode === 'quiz' && wordBank.length < 4) return alert("需要至少4個字");
+                if (mode === 'quiz' && wordBank.length < 4) return alert("選擇題模式需要至少 4 個單字");
                 
                 const newQueue = shuffle(wordBank);
                 const firstWord = newQueue.shift();
@@ -82,22 +87,18 @@
                 setView(mode === 'card' ? 'study_card' : 'study_quiz');
             };
 
-            // 下一個字 (從隊列中取)
             const nextWord = (mode) => {
                 if (studyQueue.length === 0) {
-                    alert("漂亮！你已經完成了本輪所有生字的溫習。即將重新開始。");
+                    alert("已完成本輪溫習！即將重新開始。");
                     initStudy(mode);
                     return;
                 }
-                
                 const nextQueue = [...studyQueue];
                 const word = nextQueue.shift();
-                
                 setStudyQueue(nextQueue);
                 setCurrentWord(word);
                 setIsFlipped(false);
                 setFeedback("");
-                
                 if (mode === 'quiz') generateQuizOptions(word);
                 else speak(word.eng);
             };
@@ -130,7 +131,7 @@
                         });
                     } else { resStr += "⚠️ 未找到詳細詞性。"; }
                     setContent(resStr.trim());
-                    setStatus("✅ 已生成不重複多義詞");
+                    setStatus("✅ 已獲取資料");
                 } catch (e) { setStatus("❌ 請求失敗"); }
             };
 
@@ -140,32 +141,33 @@
                 setEng(""); setContent(""); setStatus("💾 儲存成功！");
             };
 
+            // 視圖渲染
             if (view === 'home') return (
                 <div className="container">
-                    <h1 style={{marginTop:'50px'}}>VOCAB CARD</h1>
-                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>進入溫習</button>
-                    <button className="btn" onClick={() => {setView('add'); setStatus("");}}>新增生字卡</button>
-                    <button className="btn" onClick={() => setView('list')}>我的字庫 ({wordBank.length})</button>
+                    <h1 style={{marginTop:'60px'}}>VOCAB CARD</h1>
+                    <button className="btn btn-primary" onClick={() => setView('study_menu')}>溫習 (Study)</button>
+                    <button className="btn" onClick={() => {setView('add'); setStatus("");}}>新增 (Add New)</button>
+                    <button className="btn" onClick={() => setView('list')}>字庫 ({wordBank.length})</button>
                 </div>
             );
 
             if (view === 'study_menu') return (
                 <div className="container">
-                    <h1>模式選擇</h1>
-                    <button className="btn btn-outline" onClick={() => initStudy('card')}>生字卡模式 (不重複)</button>
-                    <button className="btn btn-outline" onClick={() => initStudy('quiz')}>選擇題模式 (不重複)</button>
+                    <h1>選擇模式</h1>
+                    <button className="btn btn-outline" onClick={() => initStudy('card')}>生字卡模式</button>
+                    <button className="btn btn-outline" onClick={() => initStudy('quiz')}>選擇題模式</button>
                     <button className="btn" onClick={() => setView('home')}>返回主頁</button>
                 </div>
             );
 
             if (view.startsWith('study_')) return (
                 <div className="container">
-                    <div className="progress-text">本輪剩餘: {studyQueue.length} 個生字</div>
+                    <div className="progress-text">剩餘: {studyQueue.length + 1}</div>
                     <div className="card" onClick={() => view === 'study_card' && setIsFlipped(!isFlipped)}>
                         {!isFlipped ? (
-                            <h2>{view === 'study_card' ? currentWord?.eng : "這是哪個字？"}</h2>
+                            <h2>{view === 'study_card' ? currentWord?.eng : currentWord?.content.split('\n')[0].replace('【翻譯】: ', '')}</h2>
                         ) : (
-                            <div style={{width:'100%'}}>
+                            <div style={{width:'100%', textAlign:'left'}}>
                                 <div style={{textAlign:'center', marginBottom:'15px'}}>
                                     <strong style={{fontSize:'1.8rem', color: 'var(--primary)'}}>{currentWord?.eng}</strong>
                                 </div>
@@ -182,16 +184,22 @@
                             </div>
                         )}
                     </div>
+
                     {view === 'study_quiz' && !isFlipped && (
-                        <div>
-                            <p style={{textAlign:'center', color:'#636e72', fontSize:'0.9rem'}}>提示：{currentWord?.content.split('\n')[0]}</p>
+                        <div className="quiz-grid">
                             {quizOptions.map(o => (
-                                <button key={o} className="btn" onClick={() => { setFeedback(o === currentWord.eng ? "✅ 正確" : "❌ 錯誤"); setIsFlipped(true); if(o===currentWord.eng) speak(o); }}>{o}</button>
+                                <button key={o} className="btn btn-outline" onClick={() => { 
+                                    setFeedback(o === currentWord.eng ? "✅ 正確" : "❌ 錯誤"); 
+                                    setIsFlipped(true); 
+                                    if(o===currentWord.eng) speak(o); 
+                                }}>{o}</button>
                             ))}
                         </div>
                     )}
+
                     {feedback && <div style={{textAlign:'center', fontWeight:'bold', padding:'10px', color: feedback.includes('✅')?'#2ecc71':'#e74c3c'}}>{feedback}</div>}
-                    <button className="btn btn-primary" onClick={() => nextWord(view === 'study_card' ? 'card' : 'quiz')}>下一個字 ➔</button>
+                    
+                    <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={() => nextWord(view === 'study_card' ? 'card' : 'quiz')}>下一個 ➔</button>
                     <button className="btn" onClick={() => setView('home')}>離開</button>
                 </div>
             );
@@ -201,20 +209,20 @@
                     <h1>新增單字</h1>
                     <div className="status-bar">{status}</div>
                     <input value={eng} onChange={e => setEng(e.target.value)} placeholder="輸入英文..." />
-                    <button className="btn btn-outline" onClick={fetchFullData}>✨ 一鍵抓取多義詞</button>
-                    <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="生成的內容..." />
-                    <button className="btn btn-primary" onClick={save}>💾 確認儲存</button>
-                    <button className="btn" onClick={() => setView('home')}>取消</button>
+                    <button className="btn btn-outline" onClick={fetchFullData}>✨ 一鍵抓取資料</button>
+                    <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="生成的詳細內容..." />
+                    <button className="btn btn-primary" onClick={save}>💾 儲存</button>
+                    <button className="btn" onClick={() => setView('home')}>返回</button>
                 </div>
             );
 
             if (view === 'list') return (
                 <div className="container">
-                    <h1>我的字庫 ({wordBank.length})</h1>
+                    <h1>字庫 ({wordBank.length})</h1>
                     {wordBank.map(w => (
                         <div key={w.id} style={{background:'#fff', padding:'15px', borderRadius:'15px', marginBottom:'10px', display:'flex', justifyContent:'space-between', alignItems:'center', border:'1px solid #eee'}}>
                             <div><strong>{w.eng}</strong><div style={{fontSize:'0.8rem', color:'#636e72'}}>{w.content.split('\n')[0]}</div></div>
-                            <button className="btn-delete" onClick={() => setWordBank(wordBank.filter(x => x.id !== w.id))}>移除</button>
+                            <button className="btn-delete" onClick={() => {if(confirm("確定移除？")) setWordBank(wordBank.filter(x => x.id !== w.id))}}>移除</button>
                         </div>
                     ))}
                     <button className="btn" onClick={() => setView('home')}>返回</button>
