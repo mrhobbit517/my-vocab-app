@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>手寫筆記生字卡</title>
+    <title>我的手寫生字本</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root { --paper-bg: #fdfdfd; --line-color: #e0e0e0; --ink-color: #334455; }
+        :root { 
+            --paper-bg: #fdfdfd; 
+            --line-color: #e0e0e0; 
+            --ink-color: #334455; 
+            --highlight: #fffae6;
+        }
         body { 
             background-color: #f0f0f0; 
             font-family: "Bradley Hand", "Marker Felt", "Comic Sans MS", cursive, sans-serif;
@@ -19,11 +24,251 @@
             background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
             background-size: 100% 30px;
             width: 100%; max-width: 500px; min-height: 100vh;
-            padding: 40px 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px 20px; box-shadow: 0 0 15px rgba(0,0,0,0.1);
             color: var(--ink-color); position: relative; box-sizing: border-box;
+            border-left: 5px double #ccc;
         }
-        h1 { border-bottom: 2px solid #555; display: inline-block; padding-bottom: 5px; }
+        h1 { border-bottom: 2px solid #555; display: inline-block; padding-bottom: 5px; margin-top: 0; }
         .btn { 
-            background: none; border: 1px solid var(--ink-color); padding: 10px 20px;
-            margin: 10px; cursor: pointer; font-family: inherit; font-size: 1.1rem;
-            border-radius: 5px; transition: 0.
+            background: #fff; border: 1px solid var(--ink-color); padding: 12px 25px;
+            margin: 10px 5px; cursor: pointer; font-family: inherit; font-size: 1.1rem;
+            border-radius: 4px; transition: 0.2s; box-shadow: 2px 2px 0px #888;
+        }
+        .btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #888; }
+        .btn:disabled { color: #ccc; border-color: #ccc; box-shadow: none; cursor: not-allowed; }
+        
+        .card {
+            border: 1px solid #999; padding: 30px; margin: 30px auto;
+            min-height: 180px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; background: var(--highlight);
+            box-shadow: 4px 4px 0px #ccc; cursor: pointer; text-align: center;
+        }
+        .option-btn {
+            display: block; width: 100%; padding: 12px; margin: 8px 0;
+            border: 1px solid #334455; background: #fff; cursor: pointer;
+            font-family: inherit; text-align: left; font-size: 1rem;
+            border-radius: 4px;
+        }
+        .option-btn:hover { background: #f0f7ff; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(255,255,255,0.5); }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; font-size: 0.95rem; }
+        th { background: #eee; }
+
+        input { 
+            width: 100%; padding: 12px; margin: 15px 0; box-sizing: border-box;
+            font-family: inherit; border: 1px solid #999; border-radius: 4px; font-size: 1.1rem;
+        }
+        .status-msg { font-style: italic; color: #666; margin: 10px 0; height: 20px; }
+        .nav-footer { margin-top: auto; padding-top: 40px; border-top: 1px dashed #bbb; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [view, setView] = useState('home'); // home, study_menu, study_a, study_b, add, list
+            const [wordBank, setWordBank] = useState(JSON.parse(localStorage.getItem('my_notebook_words')) || []);
+            const [history, setHistory] = useState([]); 
+            const [currentWord, setCurrentWord] = useState(null);
+            const [isFlipped, setIsFlipped] = useState(false);
+            const [quizOptions, setQuizOptions] = useState([]);
+            const [feedback, setFeedback] = useState("");
+            const [status, setStatus] = useState("");
+
+            useEffect(() => {
+                localStorage.setItem('my_notebook_words', JSON.stringify(wordBank));
+            }, [wordBank]);
+
+            const speak = (text) => {
+                if (!text) return;
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                window.speechSynthesis.speak(u);
+            };
+
+            // 隨機出題邏輯
+            const nextQuestion = (mode) => {
+                if (wordBank.length < 1) return alert("請先新增生字！");
+                if (mode === 'study_b' && wordBank.length < 4) return alert("需要至少 4 個生字才能進行選擇題測驗！");
+
+                const randomWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+                if (currentWord) setHistory(prev => [...prev, currentWord]);
+                
+                setCurrentWord(randomWord);
+                setIsFlipped(false);
+                setFeedback("");
+
+                if (mode === 'study_a') {
+                    speak(randomWord.english);
+                } else {
+                    let options = [randomWord.english];
+                    let pool = wordBank.filter(w => w.english !== randomWord.english);
+                    while (options.length < 4) {
+                        const randIdx = Math.floor(Math.random() * pool.length);
+                        options.push(pool.splice(randIdx, 1)[0].english);
+                    }
+                    setQuizOptions(options.sort(() => Math.random() - 0.5));
+                }
+            };
+
+            const goBack = () => {
+                if (history.length === 0) return;
+                const last = history[history.length - 1];
+                setHistory(prev => prev.slice(0, -1));
+                setCurrentWord(last);
+                setIsFlipped(false);
+                setFeedback("");
+            };
+
+            // 方案 A: 雲端自動生成
+            const handleAdd = async (e) => {
+                e.preventDefault();
+                const eng = e.target.eng.value.trim();
+                if (!eng) return;
+                
+                setStatus("正在查閱雲端字典... ⏳");
+
+                try {
+                    // 1. 獲取翻譯 (Lingva API)
+                    const resTrans = await fetch(`https://lingva.ml/api/v1/en/zh/${encodeURIComponent(eng)}`);
+                    const dataTrans = await resTrans.json();
+                    const chi = dataTrans.translation || "手動輸入翻譯";
+
+                    // 2. 獲取例句 (Free Dictionary API)
+                    const resDict = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
+                    const dataDict = await resDict.json();
+                    
+                    let sent = "尚未找到相關例句。";
+                    if (Array.isArray(dataDict)) {
+                        for (let meaning of dataDict[0].meanings) {
+                            const found = meaning.definitions.find(d => d.example);
+                            if (found) { sent = found.example; break; }
+                        }
+                    }
+
+                    const newWord = { english: eng, chinese: chi, sentence: sent, id: Date.now() };
+                    setWordBank(prev => [...prev, newWord]);
+                    setStatus(`✅ 已儲存 "${eng}"！`);
+                    e.target.reset();
+                } catch (err) {
+                    setStatus("❌ 自動填充失敗，請檢查網絡。");
+                }
+            };
+
+            // --- 介面渲染 ---
+
+            if (view === 'home') return (
+                <div className="notebook-page">
+                    <h1>手寫生字本 ✍️</h1>
+                    <div style={{marginTop: '50px'}}>
+                        <button className="btn" style={{display:'block', width:'100%'}} onClick={() => setView('study_menu')}>溫習 (Study)</button>
+                        <button className="btn" style={{display:'block', width:'100%'}} onClick={() => {setView('add'); setStatus("");}}>新增 (Add New)</button>
+                        <button className="btn" style={{display:'block', width:'100%'}} onClick={() => setView('list')}>已存 (Vocabulary)</button>
+                    </div>
+                </div>
+            );
+
+            if (view === 'study_menu') return (
+                <div className="notebook-page">
+                    <h1>選擇溫習模式</h1>
+                    <button className="btn" style={{display:'block', width:'100%'}} onClick={() => { setView('study_a'); nextQuestion('study_a'); }}>2a. 英 ➔ 中 (聽力翻卡)</button>
+                    <button className="btn" style={{display:'block', width:'100%'}} onClick={() => { setView('study_b'); nextQuestion('study_b'); }}>2b. 中 ➔ 英 (四選一)</button>
+                    <div className="nav-footer">
+                        <button className="btn" onClick={() => setView('home')}>離開</button>
+                    </div>
+                </div>
+            );
+
+            if (view === 'study_a' || view === 'study_b') return (
+                <div className="notebook-page">
+                    <h1>{view === 'study_a' ? "英 ➔ 中" : "中 ➔ 英"}</h1>
+                    
+                    <div className="card" onClick={() => view === 'study_a' && setIsFlipped(!isFlipped)}>
+                        {!isFlipped ? (
+                            view === 'study_a' ? <h2>{currentWord?.english}</h2> : <h2>{currentWord?.chinese}</h2>
+                        ) : (
+                            <div>
+                                <h2 style={{textDecoration:'underline'}}>{currentWord?.english}</h2>
+                                <p style={{fontSize:'1.2rem'}}>{currentWord?.chinese}</p>
+                                <p style={{fontSize:'0.9rem', color:'#666', fontStyle:'italic'}}>"{currentWord?.sentence}"</p>
+                                <button className="btn" onClick={(e) => {e.stopPropagation(); speak(currentWord.english)}}>🔊 朗讀</button>
+                            </div>
+                        )}
+                    </div>
+
+                    {view === 'study_b' && !isFlipped && (
+                        <div style={{marginTop:'20px'}}>
+                            {quizOptions.map(opt => (
+                                <button key={opt} className="option-btn" onClick={() => {
+                                    if(opt === currentWord.english) { setFeedback("✅ 正確！"); speak(opt); }
+                                    else { setFeedback("❌ 錯誤喵..."); }
+                                    setIsFlipped(true);
+                                }}>{opt}</button>
+                            ))}
+                        </div>
+                    )}
+
+                    {feedback && <div style={{fontSize:'1.2rem', margin:'10px 0', color: feedback.includes('✅')?'green':'red'}}>{feedback}</div>}
+
+                    <div style={{marginTop:'20px'}}>
+                        <button className="btn" onClick={() => nextQuestion(view)}>下一個 ➔</button>
+                    </div>
+
+                    <div className="nav-footer">
+                        <button className="btn" onClick={goBack} disabled={history.length === 0}>上一個</button>
+                        <button className="btn" onClick={() => {setView('home'); setCurrentWord(null); setHistory([]);}}>離開</button>
+                    </div>
+                </div>
+            );
+
+            if (view === 'add') return (
+                <div className="notebook-page">
+                    <h1>新增生字</h1>
+                    <div className="status-msg">{status}</div>
+                    <form onSubmit={handleAdd}>
+                        <p>請輸入英文生字：</p>
+                        <input name="eng" placeholder="e.g. delicious" autoComplete="off" required />
+                        <button type="submit" className="btn" style={{background:'#334455', color:'#fff'}}>儲存並自動翻譯</button>
+                    </form>
+                    <div className="nav-footer">
+                        <button className="btn" onClick={() => setView('home')}>離開</button>
+                    </div>
+                </div>
+            );
+
+            if (view === 'list') return (
+                <div className="notebook-page">
+                    <h1>已存生字庫 ({wordBank.length})</h1>
+                    <div style={{overflowX: 'auto'}}>
+                        <table>
+                            <thead>
+                                <tr><th>英文</th><th>中文</th><th>例句</th></tr>
+                            </thead>
+                            <tbody>
+                                {wordBank.map(w => (
+                                    <tr key={w.id}>
+                                        <td><strong>{w.english}</strong></td>
+                                        <td>{w.chinese}</td>
+                                        <td style={{fontSize:'0.8rem'}}>{w.sentence}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="nav-footer">
+                        <button className="btn" onClick={() => { if(confirm("確定要清空所有紀錄？")) setWordBank([]); }}>清空字庫</button>
+                        <button className="btn" onClick={() => setView('home')}>離開</button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
