@@ -3,56 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.7.1</title>
+    <title>Vocab Dungeon v10.7.2</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root { --bg: #f4f7f6; --primary: #0984e3; --text: #2d3436; --danger: #d63031; --dungeon-dark: #121212; }
-        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); overflow: hidden; }
+        :root { --bg: #f4f7f6; --primary: #0984e3; --text: #2d3436; --danger: #d63031; --dungeon-dark: #1a1a1a; }
+        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); }
         
-        /* 啟動封面：全螢幕黑色背景防止白光閃爍 */
+        /* 啟動封面樣式 */
         .splash-container { 
-            width: 100vw; 
-            height: 100vh; 
-            background: var(--dungeon-dark); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            position: fixed;
-            top: 0; left: 0; z-index: 9999;
+            width: 100%; height: 100vh; background: var(--dungeon-dark); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            padding: 20px; box-sizing: border-box; position: fixed; top: 0; left: 0; z-index: 10000;
         }
         .splash-img { 
-            width: 90%; 
-            max-width: 450px; 
-            height: auto; 
-            max-height: 70vh;
-            object-fit: contain; 
-            border-radius: 8px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            width: 100%; max-width: 480px; height: 75vh; 
+            object-fit: contain; border-radius: 12px;
         }
         .enter-btn {
-            margin-top: 30px;
-            background: #d4af37; 
-            color: #000;
-            padding: 16px 45px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: 3px solid #fff;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-            transition: 0.2s;
+            margin-top: 20px; background: #d4af37; color: #1a1a1a; padding: 16px 50px;
+            border-radius: 50px; font-size: 1.4rem; font-weight: 800; border: 4px solid #fff;
+            cursor: pointer; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
-        .enter-btn:active { transform: scale(0.9); }
 
-        /* 主程式容器 */
-        .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); overflow-y: auto; }
-        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; }
+        /* 主容器 */
+        .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
+        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; border: none; }
         .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: transparent; }
-        .card { background: #fff; border-radius: 24px; padding: 25px; margin: 10px 0; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
+        .speaker-btn { background: #e1f0ff; border: none; border-radius: 50%; width: 44px; height: 44px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .card { background: #fff; border-radius: 24px; padding: 25px; margin: 10px 0; min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; position: relative; border: 1px solid #eee; }
+        .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box; }
+        .monster-box { text-align: center; margin: 10px 0; min-height: 160px; display: flex; align-items: center; justify-content: center; }
+        .monster-img { width: 130px; height: auto; image-rendering: pixelated; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; }
     </style>
@@ -62,15 +47,52 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        const splashImgUrl = "https://i.imgur.com/2YisAof.png"; 
+        const splashImgUrl = "https://i.imgur.com/8MUpGMJ.jpeg"; 
+        const monsterImages = ["https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png", "https://i.imgur.com/ToQhBZL.png"];
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png"];
 
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
             {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
-            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."}
-            // ... 其他 36 個單字在正式運行時會自動補足
-        ];
+            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
+            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
+            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
+            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
+            {eng:"house", chi:"房子", example:"We live in a big white house."},
+            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
+            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
+            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
+            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
+            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
+            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
+            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
+            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
+            {eng:"river", chi:"河流", example:"We went fishing by the river."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
+            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
+            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
+            {eng:"water", chi:"水", example:"We should drink plenty of water."},
+            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
+            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
+            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
+            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+            {eng:"door", chi:"門", example:"Please close the door behind you."},
+            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
+            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
+            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
+            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
+            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
+            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
+            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
+            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
         const App = () => {
             const [view, setView] = useState('splash');
@@ -80,98 +102,127 @@
             const [options, setOptions] = useState([]);
             const [isFlipped, setIsFlipped] = useState(false);
             const [feedback, setFeedback] = useState("");
+            const [hp, setHp] = useState(10);
+            const [floor, setFloor] = useState(1);
+            const [maxFloor, setMaxFloor] = useState(20);
+            const [mode, setMode] = useState('');
+            const fileInputRef = useRef(null);
 
             useEffect(() => {
                 const saved = localStorage.getItem('vocab_v10_final_v2');
                 if (saved) {
-                    try {
-                        const parsed = JSON.parse(saved);
-                        setWordBank(parsed.length > 0 ? parsed : []);
-                    } catch (e) { setWordBank([]); }
-                }
+                    try { setWordBank(JSON.parse(saved).length > 0 ? JSON.parse(saved) : initialWords); } 
+                    catch (e) { setWordBank(initialWords); }
+                } else { setWordBank(initialWords); }
             }, []);
 
+            useEffect(() => { if (wordBank.length > 0) localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank)); }, [wordBank]);
+
+            const speak = (t) => { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; window.speechSynthesis.speak(u); };
+            const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
+
+            const exportCSV = () => {
+                let csv = "英文,中文,例句\n" + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
+                const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "vocab_list.csv";
+                link.click();
+            };
+
+            const importCSV = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    const lines = evt.target.result.split("\n").slice(1);
+                    const newWords = lines.map((line, i) => {
+                        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                        if (parts.length < 2) return null;
+                        return { eng: parts[0].replace(/"/g, '').trim(), chi: parts[1].replace(/"/g, '').trim(), example: parts[2] ? parts[2].replace(/"/g, '').trim() : "", id: Date.now() + i };
+                    }).filter(x => x && x.eng);
+                    setWordBank([...newWords, ...wordBank]);
+                    alert(`匯入 ${newWords.length} 個單字`);
+                };
+                reader.readAsText(file);
+            };
+
             const startNormal = (m) => {
-                const bank = wordBank.length > 0 ? wordBank : initialWords;
-                const q = [...bank].sort(() => Math.random() - 0.5);
-                setCurrentWord(q[0]);
-                setStudyList(q.slice(1));
-                setIsFlipped(false);
-                setFeedback("");
-                if (m === 'quiz') {
-                    const others = bank.filter(x => x.eng !== q[0].eng).sort(() => Math.random() - 0.5).slice(0, 3);
-                    setOptions([q[0].eng, ...others.map(x => x.eng)].sort(() => Math.random() - 0.5));
-                }
+                const q = shuffle(wordBank);
+                setCurrentWord(q[0]); setStudyList(q.slice(1));
+                setIsFlipped(false); setFeedback("");
+                if(m === 'quiz') setOptions(shuffle([q[0].eng, ...wordBank.filter(x=>x.eng!==q[0].eng).slice(0,3).map(x=>x.eng)]));
                 setView(m);
             };
 
-            const speak = (text) => {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u);
-            };
-
-            // 1. 封面視圖
-            if (view === 'splash') return (
+            if(view === 'splash') return (
                 <div className="splash-container">
-                    <img src={splashImgUrl} className="splash-img" alt="Splash" onError={(e) => e.target.style.display='none'}/>
-                    <button className="enter-btn" onClick={() => setView('home')}>ENTER DUNGEON</button>
+                    <img src={splashImgUrl} className="splash-img" alt="Cover" />
+                    <button className="enter-btn" onClick={()=>setView('home')}>ENTER DUNGEON</button>
                 </div>
             );
 
-            // 2. 主選單
-            if (view === 'home') return (
-                <div className="container">
-                    <h1 style={{textAlign:'center', marginTop:'50px'}}>VOCAB DUNGEON</h1>
-                    <button className="btn btn-primary" onClick={() => startNormal('card')}>開始溫習 (生字卡)</button>
-                    <button className="btn btn-primary" onClick={() => startNormal('quiz')}>開始挑戰 (選擇題)</button>
-                    <button className="btn" onClick={() => setView('list')}>字庫管理 ({wordBank.length || 40})</button>
-                    <button className="btn btn-outline" onClick={() => setView('splash')}>返回封面</button>
+            if(view === 'home') return (
+                <div className="container" style={{justifyContent:'center'}}>
+                    <h1 style={{textAlign:'center', color:'var(--primary)'}}>VOCAB DUNGEON</h1>
+                    <button className="btn btn-primary" onClick={()=>setView('menu')}>開始挑戰 / 溫習</button>
+                    <button className="btn" onClick={()=>setView('list')}>字庫管理 ({wordBank.length})</button>
+                    <button className="btn btn-outline" onClick={()=>setView('splash')}>返回封面</button>
                 </div>
             );
 
-            // 3. 字庫管理
-            if (view === 'list') return (
+            if(view === 'menu') return (
                 <div className="container">
-                    <button className="btn" onClick={() => setView('home')}>← 返回</button>
-                    <h3>字庫列表</h3>
-                    <p>目前共有 {(wordBank.length || 40)} 個單字</p>
-                    <button className="btn btn-outline" onClick={() => { localStorage.clear(); location.reload(); }}>⚠️ 重置字庫</button>
+                    <button className="btn" onClick={()=>setView('home')}>← 返回</button>
+                    <h2>選擇模式</h2>
+                    <button className="btn btn-outline" onClick={()=>startNormal('card')}>生字卡 (讀音/例句)</button>
+                    <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
                 </div>
             );
 
-            // 4. 生字卡 / 選擇題共通邏輯
-            if (view === 'card' || view === 'quiz') return (
+            if(view === 'list') return (
                 <div className="container">
-                    <div className="card" onClick={() => { if(view==='card') setIsFlipped(!isFlipped) }}>
+                    <button className="btn" onClick={()=>setView('home')}>← 返回</button>
+                    <div style={{display:'flex', gap:'5px', marginBottom:'15px'}}>
+                        <button className="btn btn-outline btn-small" onClick={exportCSV}>📤 匯出 CSV</button>
+                        <button className="btn btn-outline btn-small" onClick={()=>fileInputRef.current.click()}>📥 匯入 CSV</button>
+                        <input type="file" ref={fileInputRef} style={{display:'none'}} accept=".csv" onChange={importCSV} />
+                    </div>
+                    {wordBank.map(w => (
+                        <div key={w.id} style={{background:'#fff', padding:'10px', borderRadius:'10px', marginBottom:'5px', display:'flex', alignItems:'center', border:'1px solid #eee'}}>
+                            <div style={{flex:1}}><strong>{w.eng}</strong> - {w.chi}</div>
+                            <button style={{color:'red', border:'none', background:'none'}} onClick={()=>setWordBank(wordBank.filter(x=>x.id!==w.id))}>×</button>
+                        </div>
+                    ))}
+                </div>
+            );
+
+            if(view === 'card' || view === 'quiz') return (
+                <div className="container">
+                    <div className="card" onClick={()=>{if(view==='card') setIsFlipped(!isFlipped)}}>
                         {!isFlipped ? (
-                            view === 'quiz' ? <h2>{currentWord?.chi}</h2> : <h1>{currentWord?.eng}</h1>
+                            <div>{view === 'quiz' ? <h2>{currentWord?.chi}</h2> : <h1>{currentWord?.eng}</h1>}</div>
                         ) : (
-                            <div>
-                                <h1>{currentWord?.eng}</h1>
+                            <div style={{textAlign:'left', width:'100%'}}>
+                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                    <strong>{currentWord?.eng}</strong>
+                                    <button onClick={()=>speak(currentWord?.eng)}>🔊</button>
+                                </div>
+                                <hr/>
                                 <p>{currentWord?.chi}</p>
-                                <small>{currentWord?.example}</small>
+                                <div className="example-box">{currentWord?.example}</div>
                             </div>
                         )}
                     </div>
                     {view === 'quiz' && !isFlipped && (
                         <div className="quiz-grid">
-                            {options.map(o => <button key={o} className="btn btn-outline" onClick={() => { setFeedback(o === currentWord.eng ? "✅" : "❌"); setIsFlipped(true); speak(currentWord.eng); }}>{o}</button>)}
+                            {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅":"❌"); setIsFlipped(true); speak(currentWord?.eng);}}>{o}</button>)}
                         </div>
                     )}
-                    <button className="btn btn-primary" style={{marginTop:'20px'}} onClick={() => {
-                        if (studyList.length === 0) return setView('home');
-                        const next = studyList[0];
-                        setStudyList(studyList.slice(1));
-                        setCurrentWord(next);
-                        setIsFlipped(false);
-                        setFeedback("");
-                        if (view === 'quiz') {
-                            const bank = wordBank.length > 0 ? wordBank : initialWords;
-                            const others = bank.filter(x => x.eng !== next.eng).sort(() => Math.random() - 0.5).slice(0, 3);
-                            setOptions([next.eng, ...others.map(x => x.eng)].sort(() => Math.random() - 0.5));
-                        }
+                    <button className="btn btn-primary" onClick={()=>{
+                        if(studyList.length === 0) return setView('home');
+                        const next = studyList[0]; setStudyList(studyList.slice(1)); setCurrentWord(next); setIsFlipped(false); setFeedback("");
+                        if(view==='quiz') setOptions(shuffle([next.eng, ...wordBank.filter(x=>x.eng!==next.eng).slice(0,3).map(x=>x.eng)]));
                     }}>下一個</button>
                 </div>
             );
