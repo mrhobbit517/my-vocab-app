@@ -2,43 +2,39 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vocab Dungeon v11.0 - Full Restoration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocab Dungeon v10.6 - CSV & Quiz Fixed</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root { --bg: #f4f7f6; --primary: #0984e3; --danger: #d63031; --gold: #ffd700; --dark: #2d3436; }
-        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; user-select: none; }
-
-        /* 封面樣式 - 確保比例與疊加按鈕 */
-        .splash-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 99999; display: flex; justify-content: center; }
-        .splash-content { position: relative; width: 100%; max-width: 500px; height: 100%; }
-        .splash-img { width: 100%; height: 100%; object-fit: contain; }
-        .enter-btn {
-            position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
-            background: linear-gradient(180deg, #5d4037 0%, #3e2723 100%);
-            color: var(--gold); border: 3px solid var(--gold); padding: 15px 40px;
-            font-size: 1.5rem; font-weight: 900; border-radius: 8px; cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); text-shadow: 2px 2px #000;
-            font-family: 'Courier New', Courier, monospace; white-space: nowrap;
-        }
-
-        /* v10.6 核心 UI */
-        .container { width: 100%; max-width: 480px; margin: 0 auto; min-height: 100vh; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
-        .card { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; margin: 15px 0; position: relative; min-height: 220px; display: flex; flex-direction: column; justify-content: center; border: 1px solid #eee; }
-        .hp-bar { display: flex; justify-content: space-between; background: var(--dark); color: #fff; padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; font-weight: bold; font-family: monospace; }
-        .btn { padding: 14px; margin: 8px 0; border-radius: 12px; border: none; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; }
-        .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 0 #0769b5; }
-        .btn-primary:active { transform: translateY(3px); box-shadow: none; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .monster-img { width: 120px; height: auto; margin: 10px auto; image-rendering: pixelated; display: block; }
-        .timer-line { position: absolute; top: 0; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; border-radius: 20px 20px 0 0; }
+        :root { --bg: #f4f7f6; --primary: #0984e3; --text: #2d3436; --danger: #d63031; --success: #27ae60; --gray: #636e72; }
+        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); overflow-x: hidden; }
+        .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
         
-        /* 管理頁面樣式 */
-        .input-group { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #ddd; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
-        .word-item { display: flex; justify-content: space-between; background: #fff; padding: 12px; margin-bottom: 8px; border-radius: 10px; align-items: center; border: 1px solid #eee; }
+        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+        .btn:active { transform: scale(0.96); background: #f0f0f0; }
+        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(9,132,227,0.2); }
+        .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: transparent; }
+        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
+
+        .speaker-btn { background: #e1f0ff; border: none; border-radius: 50%; width: 44px; height: 44px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+        .card { background: #fff; border-radius: 24px; padding: 25px; margin: 10px 0; min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; position: relative; border: 1px solid #eee; }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
+        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
+        .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box; }
+
+        .monster-box { text-align: center; margin: 10px 0; min-height: 160px; display: flex; align-items: center; justify-content: center; }
+        .monster-img { width: 130px; height: auto; image-rendering: pixelated; transition: 0.3s; }
+        @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
+        .anim-hit { animation: hit-shake 0.5s forwards; }
+        @keyframes hurt-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 100% { filter: brightness(1); } }
+        .anim-hurt { animation: hurt-red 0.4s; }
+
+        .timer-line { position: absolute; top: 0; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -46,194 +42,356 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        const SPLASH_URL = "https://i.imgur.com/8MUpGMJ.jpeg";
-        const MONSTER_URLS = ["https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png"];
-        const BOSS_URL = "https://i.imgur.com/LNZ46Uc.png";
+        const monsterImages = [
+            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
+            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
+            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
+        ];
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
+
+        const initialWords = [
+            {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
+            {eng:"book", chi:"書", example:"I like to read a book before bed."},
+            {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
+            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
+            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
+            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
+            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
+            {eng:"house", chi:"房子", example:"We live in a big white house."},
+            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
+            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
+            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
+            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
+            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
+            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
+            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
+            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
+            {eng:"river", chi:"河流", example:"We went fishing by the river."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
+            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
+            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
+            {eng:"water", chi:"水", example:"We should drink plenty of water."},
+            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
+            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
+            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
+            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+            {eng:"door", chi:"門", example:"Please close the door behind you."},
+            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
+            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
+            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
+            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
+            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
+            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
+            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
+            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
         const App = () => {
-            const [showSplash, setShowSplash] = useState(true);
             const [view, setView] = useState('home');
             const [wordBank, setWordBank] = useState([]);
-            const [game, setGame] = useState({ list: [], idx: 0, hp: 10, floor: 1, mode: '' });
-            const [inputWord, setInputWord] = useState({ eng: '', chi: '' });
-            const [quizOpts, setQuizOpts] = useState([]);
-            const [spellInput, setSpellInput] = useState('');
+            const [studyList, setStudyList] = useState([]);
+            const [currentWord, setCurrentWord] = useState(null);
+            const [options, setOptions] = useState([]);
+            const [isFlipped, setIsFlipped] = useState(false);
+            const [feedback, setFeedback] = useState("");
+            const [hp, setHp] = useState(10);
+            const [floor, setFloor] = useState(1);
+            const [maxFloor, setMaxFloor] = useState(20);
+            const [mode, setMode] = useState('');
+            const [bossIn, setBossIn] = useState("");
             const [timeLeft, setTimeLeft] = useState(100);
+            const [monsterAnim, setMonsterAnim] = useState("");
+            const [mImg, setMImg] = useState(monsterImages[0]);
             const timerRef = useRef(null);
+            const fileInputRef = useRef(null);
 
-            // 10.6 數據持久化
+            const [newEng, setNewEng] = useState("");
+            const [newChi, setNewChi] = useState("");
+            const [newExample, setNewExample] = useState("");
+
             useEffect(() => {
-                const saved = localStorage.getItem('vocab_dungeon_v10_6');
-                if (saved) setWordBank(JSON.parse(saved));
-                else setWordBank([{eng: "apple", chi: "蘋果"}, {eng: "banana", chi: "香蕉"}, {eng: "cat", chi: "貓"}, {eng: "dog", chi: "狗"}]);
+                const saved = localStorage.getItem('vocab_v10_final_v2');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        setWordBank(parsed.length > 0 ? parsed : initialWords);
+                    } catch (e) { setWordBank(initialWords); }
+                } else {
+                    setWordBank(initialWords);
+                }
             }, []);
 
             useEffect(() => {
-                localStorage.setItem('vocab_dungeon_v10_6', JSON.stringify(wordBank));
+                if (wordBank.length > 0) {
+                    localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+                }
             }, [wordBank]);
 
-            const speak = (t) => { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang='en-US'; window.speechSynthesis.speak(u); };
-
-            // 10.6 自動翻譯功能
-            const handleTranslate = async () => {
-                if (!inputWord.eng) return;
-                try {
-                    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURI(inputWord.eng)}`);
-                    const data = await res.json();
-                    setInputWord({ ...inputWord, chi: data[0][0][0] });
-                } catch (e) { alert("翻譯失敗，請檢查網路"); }
+            const speak = (text) => {
+                if(!text || !window.speechSynthesis) return;
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US';
+                window.speechSynthesis.speak(u);
             };
 
-            const startDungeon = (mode) => {
-                if (wordBank.length < 4) return alert("單字庫至少需要 4 個單字！");
-                const list = [...wordBank].sort(() => Math.random() - 0.5);
-                setGame({ list, idx: 0, hp: 10, floor: 1, mode });
-                loadLevel(list[0], mode);
+            const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
+
+            // CSV Export
+            const exportCSV = () => {
+                let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
+                    + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "my_vocab_list.csv");
+                document.body.appendChild(link);
+                link.click();
+            };
+
+            // CSV Import
+            const importCSV = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    const text = evt.target.result;
+                    const lines = text.split("\n").slice(1); // 跳過標題列
+                    const newWords = lines.map((line, i) => {
+                        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // 處理逗號但在引號內的情況
+                        if (parts.length < 2) return null;
+                        return {
+                            eng: parts[0].replace(/"/g, '').trim(),
+                            chi: parts[1].replace(/"/g, '').trim(),
+                            example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
+                            id: Date.now() + i
+                        };
+                    }).filter(x => x && x.eng);
+                    if (newWords.length > 0) {
+                        setWordBank([...newWords, ...wordBank]);
+                        alert(`成功匯入 ${newWords.length} 個單字！`);
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            const autoFetch = async () => {
+                if(!newEng) return;
+                try {
+                    const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(newEng)}&langpair=en|zh-TW`);
+                    const tData = await tRes.json();
+                    setNewChi(tData.responseData.translatedText);
+                    const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(newEng)}`);
+                    const dData = await dRes.json();
+                    if(Array.isArray(dData)) {
+                        const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
+                        setNewExample(ex || "No example found.");
+                    }
+                } catch(e) { alert("抓取失敗"); }
+            };
+
+            const startNormal = (m) => {
+                if(wordBank.length < 4) return alert("單字不足4個");
+                const q = shuffle(wordBank);
+                setCurrentWord(q[0]); setStudyList(q.slice(1));
+                setIsFlipped(false); setFeedback("");
+                if(m === 'quiz') setOptions(shuffle([q[0].eng, ...wordBank.filter(x=>x.eng!==q[0].eng).slice(0,3).map(x=>x.eng)]));
+                setView(m);
+            };
+
+            const startDungeon = (diff) => {
+                if(wordBank.length < 4) return alert("單字不足4個");
+                let mf = diff==='low'?20 : diff==='mid'?30 : 40;
+                let list = []; while(list.length < mf) list = [...list, ...shuffle(wordBank)];
+                list = list.slice(0, mf);
+                setMode(diff); setMaxFloor(mf); setHp(10); setFloor(1); setStudyList(list);
+                loadDungeonLevel(1, list[0], diff);
                 setView('dungeon');
             };
 
-            const loadLevel = (word, mode) => {
-                setSpellInput('');
-                if (mode !== 'high') {
-                    const others = wordBank.filter(w => w.eng !== word.eng).sort(() => Math.random() - 0.5).slice(0, 3);
-                    setQuizOpts([...others, word].sort(() => Math.random() - 0.5));
-                }
+            const loadDungeonLevel = (f, word, m) => {
+                if(!word) return;
+                setCurrentWord(word); setBossIn(""); setFeedback(""); setMonsterAnim("");
+                const isB = (m==='mid' && (f===15 || f===30)) || (m==='high' && (f===20 || f===40));
+                setMImg(isB ? bossImages[Math.floor(Math.random()*bossImages.length)] : monsterImages[Math.floor(Math.random()*monsterImages.length)]);
+                if(!isB) setOptions(shuffle([word.eng, ...wordBank.filter(x=>x.eng!==word.eng).slice(0,3).map(x=>x.eng)]));
                 clearInterval(timerRef.current);
-                if (mode === 'high') {
+                if(m==='high') {
                     setTimeLeft(100);
                     timerRef.current = setInterval(() => {
-                        setTimeLeft(prev => {
-                            if (prev <= 0) { handleAns(false); return 0; }
-                            return prev - 2;
-                        });
+                        setTimeLeft(p => { if(p <= 0) { handleDungeonAns(false); return 0; } return p-2.5; });
                     }, 100);
                 }
             };
 
-            const handleAns = (correct) => {
+            const handleDungeonAns = (correct) => {
                 clearInterval(timerRef.current);
-                if (correct) {
-                    speak(game.list[game.idx].eng);
-                    if (game.idx + 1 >= game.list.length) return setView('win');
-                    const next = game.idx + 1;
-                    setGame(p => ({ ...p, idx: next, floor: p.floor + 1 }));
-                    loadLevel(game.list[next], game.mode);
+                if(correct) {
+                    setMonsterAnim("anim-hit");
+                    setFeedback("⚔️ SUCCESS!");
+                    speak(currentWord?.eng);
+                    setTimeout(() => {
+                        if(floor >= maxFloor) return setView('win');
+                        const nextF = floor + 1; setFloor(nextF);
+                        loadDungeonLevel(nextF, studyList[nextF-1], mode);
+                    }, 500);
                 } else {
-                    const newHp = game.hp - 1;
-                    setGame(p => ({ ...p, hp: newHp }));
-                    if (newHp <= 0) return setView('lose');
-                    const next = game.idx + 1;
-                    if (next >= game.list.length) return setView('win');
-                    setGame(p => ({ ...p, idx: next, floor: p.floor + 1 }));
-                    loadLevel(game.list[next], game.mode);
+                    setMonsterAnim("anim-hurt");
+                    setHp(h => h - 1);
+                    setFeedback("💥 DAMAGED!");
+                    if(hp <= 1) setTimeout(() => setView('lose'), 600);
+                    else setTimeout(() => {
+                        const nextF = floor + 1; setFloor(nextF);
+                        loadDungeonLevel(nextF, studyList[nextF-1], mode);
+                    }, 800);
                 }
             };
 
-            if (showSplash) return (
-                <div className="splash-screen">
-                    <div className="splash-content">
-                        <img src={SPLASH_URL} className="splash-img" />
-                        <button className="enter-btn" onClick={() => setShowSplash(false)}>ENTER DUNGEON</button>
-                    </div>
-                </div>
-            );
-
-            if (view === 'home') return (
+            if(view === 'home') return (
                 <div className="container" style={{justifyContent:'center'}}>
                     <h1 style={{textAlign:'center', color:'var(--primary)'}}>VOCAB DUNGEON</h1>
-                    <button className="btn btn-primary" onClick={() => startDungeon('low')}>初級挑戰 (選擇題)</button>
-                    <button className="btn btn-primary" onClick={() => startDungeon('high')}>高級挑戰 (拼字限時)</button>
-                    <button className="btn btn-outline" onClick={() => setView('admin')}>字庫管理 ({wordBank.length})</button>
+                    <button className="btn btn-primary" onClick={()=>setView('menu')}>開始挑戰</button>
+                    <button className="btn" onClick={()=>setView('add')}>新增單字</button>
+                    <button className="btn" onClick={()=>setView('list')}>字庫管理 ({wordBank.length})</button>
                 </div>
             );
 
-            if (view === 'admin') return (
+            if(view === 'menu') return (
                 <div className="container">
-                    <button onClick={() => setView('home')} className="btn btn-outline">← 返回主選單</button>
-                    <h3>新增單字 (10.6 自動翻譯)</h3>
-                    <div className="input-group">
-                        <input placeholder="英文" value={inputWord.eng} onChange={e => setInputWord({...inputWord, eng: e.target.value})} />
-                        <button className="btn btn-outline" onClick={handleTranslate}>✨ 自動翻譯中文</button>
-                        <input placeholder="中文" value={inputWord.chi} onChange={e => setInputWord({...inputWord, chi: e.target.value})} />
-                        <button className="btn btn-primary" onClick={() => {
-                            if(!inputWord.eng || !inputWord.chi) return;
-                            setWordBank([inputWord, ...wordBank]);
-                            setInputWord({eng:'', chi:''});
-                        }}>確認加入</button>
-                    </div>
-                    <h3>CSV 數據管理</h3>
-                    <div style={{display:'flex', gap:'10px'}}>
-                        <button className="btn btn-outline" onClick={() => {
-                            const csv = "英文,中文\n" + wordBank.map(w => `${w.eng},${w.chi}`).join("\n");
-                            const blob = new Blob(["\uFEFF"+csv], {type: 'text/csv'});
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a'); a.href=url; a.download="vocab_export.csv"; a.click();
-                        }}>匯出 CSV</button>
-                        <label className="btn btn-outline" style={{textAlign:'center', cursor:'pointer'}}>
-                            匯入 CSV <input type="file" style={{display:'none'}} accept=".csv" onChange={(e) => {
-                                const file = e.target.files[0];
-                                const reader = new FileReader();
-                                reader.onload = (evt) => {
-                                    const rows = evt.target.result.split('\n').slice(1);
-                                    const news = rows.map(r => {
-                                        const [e, c] = r.split(',');
-                                        return e && c ? {eng: e.trim(), chi: c.trim()} : null;
-                                    }).filter(x => x);
-                                    setWordBank([...news, ...wordBank]);
-                                };
-                                reader.readAsText(file);
-                            }} />
-                        </label>
-                    </div>
-                    <div style={{marginTop:'20px'}}>
-                        {wordBank.map((w, i) => (
-                            <div key={i} className="word-item">
-                                <span><b>{w.eng}</b> - {w.chi}</span>
-                                <button onClick={() => setWordBank(wordBank.filter((_, idx) => idx !== i))} style={{color:'red', border:'none', background:'none'}}>刪除</button>
-                            </div>
-                        ))}
-                    </div>
+                    <button className="btn" onClick={()=>setView('home')}>← 返回</button>
+                    <h2>選擇模式</h2>
+                    <button className="btn btn-outline" onClick={()=>startNormal('card')}>生字卡 (讀音/例句)</button>
+                    <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
+                    <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
+                    <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
+                    <button className="btn" onClick={()=>startDungeon('low')}>初級 (20層)</button>
+                    <button className="btn" onClick={()=>startDungeon('mid')}>中級 (30層)</button>
+                    <button className="btn" onClick={()=>startDungeon('high')}>高級 (40層)</button>
                 </div>
             );
 
-            if (view === 'dungeon') {
-                const cur = game.list[game.idx];
-                return (
-                    <div className="container">
-                        <div className="hp-bar">
-                            <span>HP: {"❤️".repeat(game.hp)}</span>
-                            <span>FLOOR: {game.floor}</span>
+            if(view === 'add') return (
+                <div className="container">
+                    <button className="btn" onClick={()=>setView('home')}>← 返回</button>
+                    <h2>新增單字</h2>
+                    <input placeholder="英文單字" value={newEng} onChange={e=>setNewEng(e.target.value)} />
+                    <button className="btn btn-outline" onClick={autoFetch}>✨ 自動翻譯</button>
+                    <textarea placeholder="中文意思" value={newChi} onChange={e=>setNewChi(e.target.value)} />
+                    <textarea placeholder="例句" rows="3" value={newExample} onChange={e=>setNewExample(e.target.value)} />
+                    <button className="btn btn-primary" onClick={()=>{
+                        if(!newEng || !newChi) return alert("內容不全");
+                        setWordBank([{eng:newEng, chi:newChi, example:newExample, id:Date.now()}, ...wordBank]);
+                        setNewEng(""); setNewChi(""); setNewExample(""); alert("儲存成功");
+                    }}>💾 儲存</button>
+                </div>
+            );
+
+            if(view === 'list') return (
+                <div className="container">
+                    <button className="btn" onClick={()=>setView('home')}>← 返回</button>
+                    <h3>我的字庫 ({wordBank.length})</h3>
+                    <div style={{display:'flex', gap:'5px', marginBottom:'15px'}}>
+                        <button className="btn btn-outline btn-small" onClick={exportCSV}>📤 匯出 CSV</button>
+                        <button className="btn btn-outline btn-small" onClick={()=>fileInputRef.current.click()}>📥 匯入 CSV</button>
+                        <input type="file" ref={fileInputRef} style={{display:'none'}} accept=".csv" onChange={importCSV} />
+                    </div>
+                    {wordBank.map(w => (
+                        <div key={w.id} style={{background:'#fff', padding:'12px', borderRadius:'12px', marginBottom:'8px', display:'flex', alignItems:'center', border:'1px solid #eee'}}>
+                            <div style={{flex:1}}><strong>{w.eng}</strong> - {w.chi}</div>
+                            <button className="speaker-btn" style={{width:'32px', height:'32px', fontSize:'0.9rem'}} onClick={()=>speak(w.eng)}>🔊</button>
+                            <button style={{color:'red', border:'none', background:'none', marginLeft:'10px', fontSize:'1.2rem'}} onClick={()=>setWordBank(wordBank.filter(x=>x.id!==w.id))}>×</button>
                         </div>
-                        <img src={game.mode === 'high' ? BOSS_URL : MONSTER_URLS[game.idx % 3]} className="monster-img" />
-                        <div className="card">
-                            {game.mode === 'high' && <div className="timer-line" style={{width: `${timeLeft}%`}}></div>}
-                            <h2 style={{fontSize: '2.5rem', margin: 0}}>{cur.chi}</h2>
-                        </div>
-                        {game.mode === 'high' ? (
+                    ))}
+                    <button className="btn btn-danger" style={{marginTop:'20px', color:'red'}} onClick={()=>{if(confirm('確定重置字庫嗎？所有手動加入的單字將會消失。')) { localStorage.removeItem('vocab_v10_final_v2'); location.reload(); }}}>⚠️ 重置回預設單字</button>
+                </div>
+            );
+
+            if(view === 'card' || view === 'quiz') return (
+                <div className="container">
+                    <div className="card" onClick={()=>{if(view==='card') setIsFlipped(!isFlipped)}}>
+                        {/* 邏輯：選擇題看中文猜英文，生字卡看英文猜中文 */}
+                        {!isFlipped ? (
                             <div>
-                                <input value={spellInput} onChange={e => setSpellInput(e.target.value)} placeholder="輸入英文拼寫..." autoFocus />
-                                <button className="btn btn-primary" onClick={() => handleAns(spellInput.toLowerCase().trim() === cur.eng.toLowerCase())}>發動攻擊</button>
+                                {view === 'quiz' ? (
+                                    <div className="card-chi">{currentWord?.chi}</div>
+                                ) : (
+                                    <>
+                                        <div className="card-eng">{currentWord?.eng}</div>
+                                        <button className="speaker-btn" onClick={(e)=>{e.stopPropagation(); speak(currentWord?.eng);}}>🔊</button>
+                                    </>
+                                )}
                             </div>
                         ) : (
-                            <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px'}}>
-                                {quizOpts.map((o, i) => (
-                                    <button key={i} className="btn btn-outline" onClick={() => handleAns(o.eng === cur.eng)}>{o.eng}</button>
-                                ))}
+                            <div style={{textAlign:'left', width:'100%'}}>
+                                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                                    <strong style={{fontSize:'1.4rem', color:'var(--primary)'}}>{currentWord?.eng}</strong>
+                                    <button className="speaker-btn" style={{width:'36px', height:'36px'}} onClick={()=>speak(currentWord?.eng)}>🔊</button>
+                                </div>
+                                <hr/>
+                                <strong>【中文】</strong><p>{currentWord?.chi}</p>
+                                <div className="example-box"><strong>【例句】</strong><p>{currentWord?.example}</p></div>
                             </div>
                         )}
-                        <button className="btn" style={{marginTop:'auto', opacity:0.5}} onClick={() => {clearInterval(timerRef.current); setView('home');}}>逃避戰鬥</button>
+                    </div>
+                    {view === 'quiz' && !isFlipped && (
+                        <div className="quiz-grid">
+                            {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅ 正確":"❌ 錯誤"); setIsFlipped(true); speak(currentWord?.eng);}}>{o}</button>)}
+                        </div>
+                    )}
+                    {feedback && <div style={{textAlign:'center', fontWeight:'bold', margin:'10px'}}>{feedback}</div>}
+                    <button className="btn btn-primary" onClick={()=>{
+                        if(studyList.length === 0) return setView('home');
+                        const next = studyList[0];
+                        setStudyList(studyList.slice(1)); setCurrentWord(next); setIsFlipped(false); setFeedback("");
+                        if(view==='quiz') setOptions(shuffle([next.eng, ...wordBank.filter(x=>x.eng!==next.eng).slice(0,3).map(x=>x.eng)]));
+                    }}>下一個</button>
+                    <button className="btn" onClick={()=>setView('home')}>返回</button>
+                </div>
+            );
+
+            if(view === 'dungeon') {
+                const isB = (mode==='mid' && (floor===15 || floor===30)) || (mode==='high' && (floor===20 || floor===40));
+                return (
+                    <div className="container">
+                        <div style={{background: '#2d3436', color: 'white', padding: '12px', borderRadius: '15px', display:'flex', justifyContent:'space-between'}}>
+                            <span>{"❤️".repeat(hp)}</span>
+                            <span>B{floor}/{maxFloor}</span>
+                        </div>
+                        <div className="monster-box">
+                            <img src={mImg} className={`monster-img ${isB?'boss-img':''} ${monsterAnim}`} />
+                        </div>
+                        <div className="card" style={{minHeight:'120px'}}>
+                            {mode==='high' && <div className="timer-line" style={{width:timeLeft+'%'}}></div>}
+                            <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
+                        </div>
+                        {isB ? (
+                            <div>
+                                <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
+                                <button className="btn btn-primary" onClick={()=>handleDungeonAns(bossIn.toLowerCase().trim() === currentWord?.eng.toLowerCase().trim())}>⚡ 攻擊 BOSS</button>
+                            </div>
+                        ) : (
+                            <div className="quiz-grid">
+                                {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>handleDungeonAns(o === currentWord?.eng)}>{o}</button>)}
+                            </div>
+                        )}
+                        <button className="btn" style={{color:'#999'}} onClick={()=>{clearInterval(timerRef.current); setView('home')}}>🏳️ 撤退</button>
                     </div>
                 );
             }
 
-            if (view === 'win' || view === 'lose') return (
+            if(view === 'win' || view === 'lose') return (
                 <div className="container" style={{justifyContent:'center', textAlign:'center'}}>
-                    <h1 style={{fontSize:'3rem'}}>{view === 'win' ? "🏆" : "💀"}</h1>
-                    <h2>{view === 'win' ? "挑戰成功！" : "你倒下了..."}</h2>
-                    <button className="btn btn-primary" onClick={() => setView('home')}>返回主選單</button>
+                    <h1>{view==='win'?"🎉":"💀"}</h1>
+                    <h2>{view==='win'?"挑戰成功":"你倒下了"}</h2>
+                    <button className="btn btn-primary" onClick={()=>setView('home')}>返回</button>
                 </div>
             );
-
             return null;
         };
 
