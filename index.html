@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.6 - Fixed with Footer Image</title>
+    <title>Vocab Dungeon v10.6 - CSV & Quiz Fixed</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -36,7 +36,7 @@
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
 
-        /* 新增：底部圖片樣式 */
+        /* 主頁面底部圖片樣式 */
         .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
     </style>
 </head>
@@ -146,7 +146,6 @@
 
             const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
 
-            // CSV Export
             const exportCSV = () => {
                 let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
                     + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
@@ -158,7 +157,6 @@
                 link.click();
             };
 
-            // CSV Import
             const importCSV = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -262,9 +260,7 @@
                     <button className="btn btn-primary" onClick={()=>setView('menu')}>開始挑戰</button>
                     <button className="btn" onClick={()=>setView('add')}>新增單字</button>
                     <button className="btn" onClick={()=>setView('list')}>字庫管理 ({wordBank.length})</button>
-                    
-                    {/* 加入主頁面底部的圖片 */}
-                    <img src="https://i.imgur.com/SVZU74X.png" className="footer-img" alt="Dungeon Decoration" />
+                    <img src="https://i.imgur.com/6UDmnhC.png" className="footer-img" />
                 </div>
             );
 
