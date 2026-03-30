@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.6 - CSV & Quiz Fixed</title>
+    <title>Vocab Dungeon v10.6 - Fixed with Footer Image</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -35,6 +35,9 @@
         .timer-line { position: absolute; top: 0; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
+
+        /* 新增：底部圖片樣式 */
+        .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
     </style>
 </head>
 <body>
@@ -162,9 +165,9 @@
                 const reader = new FileReader();
                 reader.onload = (evt) => {
                     const text = evt.target.result;
-                    const lines = text.split("\n").slice(1); // 跳過標題列
+                    const lines = text.split("\n").slice(1);
                     const newWords = lines.map((line, i) => {
-                        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // 處理逗號但在引號內的情況
+                        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                         if (parts.length < 2) return null;
                         return {
                             eng: parts[0].replace(/"/g, '').trim(),
@@ -259,6 +262,9 @@
                     <button className="btn btn-primary" onClick={()=>setView('menu')}>開始挑戰</button>
                     <button className="btn" onClick={()=>setView('add')}>新增單字</button>
                     <button className="btn" onClick={()=>setView('list')}>字庫管理 ({wordBank.length})</button>
+                    
+                    {/* 加入主頁面底部的圖片 */}
+                    <img src="https://i.imgur.com/SVZU74X.png" className="footer-img" alt="Dungeon Decoration" />
                 </div>
             );
 
@@ -315,7 +321,6 @@
             if(view === 'card' || view === 'quiz') return (
                 <div className="container">
                     <div className="card" onClick={()=>{if(view==='card') setIsFlipped(!isFlipped)}}>
-                        {/* 邏輯：選擇題看中文猜英文，生字卡看英文猜中文 */}
                         {!isFlipped ? (
                             <div>
                                 {view === 'quiz' ? (
