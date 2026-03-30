@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.6 - Pokémon Style Update</title>
+    <title>Vocab Dungeon v10.7 - UI Polished</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -25,12 +25,14 @@
         .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
         .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box; }
 
-        /* 地下城對戰介面優化 - Pokémon 風格 */
-        .battle-scene { position: relative; width: 100%; height: 200px; margin: 10px 0; overflow: visible; }
-        .monster-box { position: absolute; top: 10px; right: 60px; text-align: center; z-index: 1; }
+        /* 地下城對戰介面 - 強化版 Pokémon 風格 */
+        .battle-scene { position: relative; width: 100%; height: 240px; margin: 10px 0; overflow: visible; }
+        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
         .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        .player-box { position: absolute; bottom: 0; left: 40px; z-index: 2; }
-        .player-img { width: 180px; height: auto; transition: 0.3s; }
+        
+        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
+        /* 主角圖片放大 50% (原 180px -> 270px) */
+        .player-img { width: 270px; height: auto; transition: 0.3s; }
 
         @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
         .anim-hit { animation: hit-shake 0.5s forwards; }
@@ -370,7 +372,7 @@
                             <span>B{floor}/{maxFloor}</span>
                         </div>
 
-                        {/* 無邊框 Pokémon 風格對戰畫面 */}
+                        {/* 無邊框 Pokémon 風格對戰畫面 (主角已放大 50%) */}
                         <div className="battle-scene">
                             {mode==='high' && <div className="timer-line" style={{width:timeLeft+'%'}}></div>}
                             <div className="monster-box">
