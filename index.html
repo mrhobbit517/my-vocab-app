@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.6 - Battle Interface Updated</title>
+    <title>Vocab Dungeon v10.6 - Pokémon Style Update</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -25,19 +25,19 @@
         .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
         .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box; }
 
-        /* 地下城對戰介面優化 */
-        .battle-scene { position: relative; width: 100%; height: 220px; background: #ebf2f1; border-radius: 20px; margin: 10px 0; overflow: hidden; border: 2px solid #ddd; }
-        .monster-box { position: absolute; top: 20px; right: 20px; text-align: center; }
-        .monster-img { width: 100px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        .player-box { position: absolute; bottom: 10px; left: 10px; }
-        .player-img { width: 140px; height: auto; transition: 0.3s; }
+        /* 地下城對戰介面優化 - Pokémon 風格 */
+        .battle-scene { position: relative; width: 100%; height: 200px; margin: 10px 0; overflow: visible; }
+        .monster-box { position: absolute; top: 10px; right: 60px; text-align: center; z-index: 1; }
+        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
+        .player-box { position: absolute; bottom: 0; left: 40px; z-index: 2; }
+        .player-img { width: 180px; height: auto; transition: 0.3s; }
 
         @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
         .anim-hit { animation: hit-shake 0.5s forwards; }
         @keyframes hurt-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 100% { filter: brightness(1); } }
         .anim-hurt { animation: hurt-red 0.4s; }
 
-        .timer-line { position: absolute; top: 0; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
+        .timer-line { position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
 
@@ -55,7 +55,7 @@
             "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-        const playerImg = "https://i.imgur.com/YRrFQ0h.png";
+        const playerImg = "https://i.imgur.com/49PQ8zR.png";
 
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
@@ -365,13 +365,12 @@
                 const isB = (mode==='mid' && (floor===15 || floor===30)) || (mode==='high' && (floor===20 || floor===40));
                 return (
                     <div className="container">
-                        {/* 狀態欄 */}
-                        <div style={{background: '#2d3436', color: 'white', padding: '12px', borderRadius: '15px', display:'flex', justifyContent:'space-between', marginBottom: '5px'}}>
+                        <div style={{background: '#2d3436', color: 'white', padding: '12px', borderRadius: '15px', display:'flex', justifyContent:'space-between', marginBottom: '15px'}}>
                             <span>{"❤️".repeat(hp)}</span>
                             <span>B{floor}/{maxFloor}</span>
                         </div>
 
-                        {/* Pokemon 對戰風格視窗 */}
+                        {/* 無邊框 Pokémon 風格對戰畫面 */}
                         <div className="battle-scene">
                             {mode==='high' && <div className="timer-line" style={{width:timeLeft+'%'}}></div>}
                             <div className="monster-box">
@@ -383,11 +382,11 @@
                         </div>
 
                         {/* 題目卡片 */}
-                        <div className="card" style={{minHeight:'80px', padding: '15px', marginBottom: '10px'}}>
+                        <div className="card" style={{minHeight:'60px', padding: '15px', marginBottom: '10px'}}>
                             <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
                         </div>
 
-                        {/* 答題區與按鈕 */}
+                        {/* 按鈕區 */}
                         {isB ? (
                             <div>
                                 <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
@@ -399,7 +398,6 @@
                             </div>
                         )}
                         
-                        {/* 撤退 */}
                         <button className="btn" style={{color:'#999', marginTop: '10px'}} onClick={()=>{clearInterval(timerRef.current); setView('home')}}>🏳️ 撤退</button>
                     </div>
                 );
