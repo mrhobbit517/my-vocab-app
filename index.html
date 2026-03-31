@@ -12,31 +12,27 @@
         body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); overflow-x: hidden; }
         .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; z-index: 1; }
         
-        /* 背景圖樣式：確保比例不走樣 */
+        /* 原有背景圖樣式 */
         .global-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("https://i.imgur.com/SwmBCNA.jpeg");
-            background-size: cover;
-            background-position: center;
-            z-index: 0;
+            background-size: cover; background-position: center; z-index: 0;
         }
 
-        /* 啟動畫面樣式 - 維持原樣（黑色背景） */
+        /* 新增：地下城專用背景圖樣式 */
+        .dungeon-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://i.imgur.com/Rhq2R6d.png");
+            background-size: cover; background-position: center; z-index: 0;
+        }
+
+        /* 啟動畫面樣式 - 維持黑色背景 */
         .splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center;
         }
-        .splash-img {
-            width: 100%; height: 100%; object-fit: contain;
-            position: absolute; top: 0; left: 0;
-        }
-        .enter-btn-container {
-            position: absolute; bottom: 15%; width: 100%; display: flex; justify-content: center;
-        }
+        .splash-img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
+        .enter-btn-container { position: absolute; bottom: 15%; width: 100%; display: flex; justify-content: center; }
         .btn-rpg {
             background: #2d3436; color: #fff; border: 4px solid #fff;
             padding: 12px 40px; font-size: 1.5rem; font-weight: bold; cursor: pointer;
@@ -77,7 +73,6 @@
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -86,7 +81,6 @@
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
         const playerImg = "https://i.imgur.com/49PQ8zR.png";
         const splashImg = "https://i.imgur.com/8MUpGMJ.jpeg";
-
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
@@ -288,7 +282,7 @@
                 }
             };
 
-            // 啟動畫面渲染
+            // 啟動畫面
             if(view === 'splash') return (
                 <div className="splash-screen">
                     <img src={splashImg} className="splash-img" alt="splash" />
@@ -300,8 +294,8 @@
 
             return (
                 <div style={{minHeight: '100vh'}}>
-                    {/* 地下城模式不顯示背景圖 */}
-                    {view !== 'dungeon' && <div className="global-bg"></div>}
+                    {/* 地下城模式顯示新背景圖，其他顯示原圖 */}
+                    {view === 'dungeon' ? <div className="dungeon-bg"></div> : <div className="global-bg"></div>}
                     
                     <div className="container">
                         {view === 'home' && (
@@ -447,7 +441,6 @@
                 </div>
             );
         };
-
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
