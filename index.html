@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.7 - UI Polished</title>
+    <title>Vocab Dungeon v10.8 - RPG Splash</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -12,37 +12,49 @@
         body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); overflow-x: hidden; }
         .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; }
         
+        /* 啟動畫面樣式 */
+        .splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center;
+        }
+        .splash-img {
+            width: 100%; height: 100%; object-fit: contain; /* 確保圖片不變形 */
+            position: absolute; top: 0; left: 0;
+        }
+        .enter-btn-container {
+            position: absolute; bottom: 15%; width: 100%; display: flex; justify-content: center;
+        }
+        .btn-rpg {
+            background: #2d3436; color: #fff; border: 4px solid #fff;
+            padding: 12px 40px; font-size: 1.5rem; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 0 4px #2d3436; transition: 0.1s;
+        }
+        .btn-rpg:active { transform: scale(0.9); background: #636e72; }
+
+        /* 既有樣式保留 */
         .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
         .btn:active { transform: scale(0.96); background: #f0f0f0; }
         .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(9,132,227,0.2); }
         .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: transparent; }
         .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
-
         .speaker-btn { background: #e1f0ff; border: none; border-radius: 50%; width: 44px; height: 44px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-
         .card { background: #fff; border-radius: 24px; padding: 25px; margin: 10px 0; min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; position: relative; border: 1px solid #eee; }
         .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
         .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
         .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box; }
-
-        /* 地下城對戰介面 - 強化版 Pokémon 風格 */
         .battle-scene { position: relative; width: 100%; height: 240px; margin: 10px 0; overflow: visible; }
         .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
         .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        
         .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
-        /* 主角圖片放大 50% (原 180px -> 270px) */
         .player-img { width: 270px; height: auto; transition: 0.3s; }
-
         @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
         .anim-hit { animation: hit-shake 0.5s forwards; }
         @keyframes hurt-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 100% { filter: brightness(1); } }
         .anim-hurt { animation: hurt-red 0.4s; }
-
         .timer-line { position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
-
         .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
     </style>
 </head>
@@ -50,7 +62,6 @@
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -58,6 +69,7 @@
         ];
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
         const playerImg = "https://i.imgur.com/49PQ8zR.png";
+        const splashImg = "https://i.imgur.com/8MUpGMJ.jpeg";
 
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
@@ -103,7 +115,7 @@
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
         const App = () => {
-            const [view, setView] = useState('home');
+            const [view, setView] = useState('splash'); // 初始設置為啟動畫面
             const [wordBank, setWordBank] = useState([]);
             const [studyList, setStudyList] = useState([]);
             const [currentWord, setCurrentWord] = useState(null);
@@ -120,7 +132,6 @@
             const [mImg, setMImg] = useState(monsterImages[0]);
             const timerRef = useRef(null);
             const fileInputRef = useRef(null);
-
             const [newEng, setNewEng] = useState("");
             const [newChi, setNewChi] = useState("");
             const [newExample, setNewExample] = useState("");
@@ -261,6 +272,17 @@
                 }
             };
 
+            // 1. 啟動畫面 View
+            if(view === 'splash') return (
+                <div className="splash-screen">
+                    <img src={splashImg} className="splash-img" alt="splash" />
+                    <div className="enter-btn-container">
+                        <button className="btn-rpg" onClick={() => setView('home')}>Enter</button>
+                    </div>
+                </div>
+            );
+
+            // 以下為原有 View，保持不變
             if(view === 'home') return (
                 <div className="container" style={{justifyContent:'center'}}>
                     <h1 style={{textAlign:'center', color:'var(--primary)'}}>VOCAB DUNGEON</h1>
@@ -371,8 +393,6 @@
                             <span>{"❤️".repeat(hp)}</span>
                             <span>B{floor}/{maxFloor}</span>
                         </div>
-
-                        {/* 無邊框 Pokémon 風格對戰畫面 (主角已放大 50%) */}
                         <div className="battle-scene">
                             {mode==='high' && <div className="timer-line" style={{width:timeLeft+'%'}}></div>}
                             <div className="monster-box">
@@ -382,13 +402,9 @@
                                 <img src={playerImg} className="player-img" />
                             </div>
                         </div>
-
-                        {/* 題目卡片 */}
                         <div className="card" style={{minHeight:'60px', padding: '15px', marginBottom: '10px'}}>
                             <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
                         </div>
-
-                        {/* 按鈕區 */}
                         {isB ? (
                             <div>
                                 <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
@@ -399,7 +415,6 @@
                                 {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>handleDungeonAns(o === currentWord?.eng)}>{o}</button>)}
                             </div>
                         )}
-                        
                         <button className="btn" style={{color:'#999', marginTop: '10px'}} onClick={()=>{clearInterval(timerRef.current); setView('home')}}>🏳️ 撤退</button>
                     </div>
                 );
