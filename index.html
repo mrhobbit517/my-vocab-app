@@ -79,7 +79,7 @@
             transition: 0.1s; 
         }
         .btn-rpg:active { transform: scale(0.9);
-            background: #636e72; }
+        background: #636e72; }
 
         .btn { 
             background: #fff;
@@ -101,7 +101,7 @@
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
         .btn-small { padding: 8px; font-size: 0.85rem;
-            margin: 5px 2px; flex: 1; }
+        margin: 5px 2px; flex: 1; }
         .speaker-btn { 
             background: #e1f0ff;
             border: none;
@@ -445,7 +445,7 @@
             {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
             {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
            
-          {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+             {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
             {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
         const monsterImages = [
@@ -584,7 +584,7 @@
                 div.innerHTML = `
                     <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
          
-                   <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
+                    <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
                     <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
                 `;
                 container.appendChild(div);
@@ -621,7 +621,7 @@
                     if (parts.length < 2) return null;
                     return {
                      
-                   eng: parts[0].replace(/"/g, '').trim(),
+                        eng: parts[0].replace(/"/g, '').trim(),
                        chi: parts[1].replace(/"/g, '').trim(),
                        example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
                        id: Date.now() + i
@@ -782,6 +782,7 @@
                 bossInput.value = '';
                 bossInput.focus();
             } else {
+                currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
                 document.getElementById('dungeonQuizGrid').style.display = 'grid';
                 document.getElementById('dungeonBossArea').style.display = 'none';
                 
@@ -801,16 +802,26 @@
             }
             mImgElement.src = currentMImg;
 
+            // 啟動計時器 (獨立成一個函數，方便答錯/超時保留原地時呼叫)
+            startTimer();
+        }
+
+        // 新增/抽離：開始計時器的邏輯
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 100;
+            document.getElementById('timerLine').style.width = '100%';
+
             let totalSeconds = isBossCurrent ? 7 : 5;
             totalSeconds += extraTime;
             extraTime = 0;
             const step = (100 / (totalSeconds * 10));
+
             timerInterval = setInterval(() => {
                 timeLeft -= step;
                 document.getElementById('timerLine').style.width = timeLeft + '%';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                  
                     triggerPlayerHurt(true);
                 }
             }, 100);
@@ -855,6 +866,7 @@
                 }, 600);
                 // 配合 CSS 動畫長度改為 0.6 秒
             } else {
+                // 答錯：呼叫受傷邏輯 (非超時超時)，但「不切換下一題」
                 triggerPlayerHurt(false);
             }
         }
@@ -882,10 +894,10 @@
             if (hp <= 0) {
                 setTimeout(() => endGame('lose'), 600);
             } else {
-                // 原本在此處會無視對錯直接進入下一關，現在修改為：
-                // 不論是超時還是答錯，都不會增加 floor，而是直接重載當前關卡 loadDungeonLevel()
+                // 原本此處為 800 毫秒後無條件執行 loadDungeonLevel() 跳下一題。
+                // 現改為：維持同一題，並重新給予作答時間（重啟計時器）
                 setTimeout(() => {
-                    loadDungeonLevel();
+                    startTimer(); // 重置計時條並重新倒數，不切換題目
                 }, 800);
             }
         }
