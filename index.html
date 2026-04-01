@@ -119,8 +119,6 @@
         }
         .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
         .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        
-        /* 保持圖片比例,不要走樣 */
         .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
         .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain; }
         
@@ -189,7 +187,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
         }
         
-        /* 保持圖片比例,不要走樣 */
         .chest-img { 
             width: 100px; height: auto; cursor: pointer; 
             transition: 0.2s; object-fit: contain; 
@@ -260,4 +257,189 @@
                 <div id="card-unflipped" style="width:100%"></div>
                 <div id="card-flipped" style="display:none; text-align:left; width:100%">
                     <div style="display:flex; justify-content:space-between; align-items:center">
-                        <strong style="font-size:1.4rem;
+                        <strong style="font-size:1.4rem; color:var(--primary)" id="flipEng"></strong>
+                        <button class="speaker-btn" style="width:36px; height:36px" id="flipSpeakBtn">🔊</button>
+                    </div>
+                    <hr/>
+                    <strong>【中文】</strong><p id="flipChi"></p>
+                    <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
+                </div>
+            </div>
+            <div id="quizOptions" class="quiz-grid" style="display:none"></div>
+            <div id="studyFeedback" style="text-align:center; font-weight:bold; margin:10px"></div>
+            <button class="btn btn-primary" onclick="nextStudyWord()">下一個</button>
+            <button class="btn" onclick="switchView('home')">返回</button>
+        </div>
+
+        <div id="view-dungeon" class="view-section">
+            <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between; margin-bottom: 15px">
+                <span id="hpDisplay"></span>
+                <span id="floorDisplay"></span>
+            </div>
+            <div class="battle-scene">
+                <div class="timer-line" id="timerLine" style="width:100%"></div>
+                <div class="combo-text" id="comboDisplay">🔥 2 Combo!</div>
+                <div class="monster-box">
+                    <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
+                </div>
+                <div class="player-box">
+                    <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
+                </div>
+            </div>
+            <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
+                <div style="font-size:1.3rem; font-weight:bold" id="dungeonChi"></div>
+            </div>
+            
+            <div id="dungeonQuizGrid" class="quiz-grid"></div>
+            <div id="dungeonBossArea" style="display:none">
+                <input type="text" id="bossInput" placeholder="拼寫單字..." />
+                <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+            </div>
+
+            <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
+        </div>
+
+        <div id="view-end" class="view-section">
+            <div style="text-align:center">
+                <h1 id="endEmoji"></h1>
+                <h2 id="endTitle"></h2>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; marginTop: 15px; max-height: 200px; overflow-y: auto">
+                <h4 style="margin: 0 0 10px 0">📊 本次戰果</h4>
+                <div style="color: var(--success); margin-bottom: 5px">
+                    <strong>擊殺 (<span id="killedCount">0</span>)：</strong> 
+                    <span id="killedList"></span>
+                </div>
+                <div style="color: var(--danger)">
+                    <strong>漏掉/錯過 (<span id="missedCount">0</span>)：</strong> 
+                    <span id="missedList"></span>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 20px" onclick="switchView('home')">返回</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="chestModal">
+        <div class="modal-content">
+            <h3>🎉 擊敗 Boss！獲得寶箱</h3>
+            <img src="https://i.imgur.com/sAsVc32.png" id="chestImg" class="chest-img" onclick="openChest()" alt="寶箱" />
+            <p style="color: #636e72" id="chestTip">點擊寶箱開啟獎勵！</p>
+            <button class="btn btn-primary" style="margin-top: 10px; display:none" id="chestNextBtn" onclick="closeChestModal()">前往下一關</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. 完全保留預設 40 個單字
+        const initialWords = [
+            {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
+            {eng:"book", chi:"書", example:"I like to read a book before bed."},
+            {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
+            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
+            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
+            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
+            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
+            {eng:"house", chi:"房子", example:"We live in a big white house."},
+            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
+            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
+            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
+            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
+            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
+            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
+            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
+            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
+            {eng:"river", chi:"河流", example:"We went fishing by the river."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
+            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
+            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
+            {eng:"water", chi:"水", example:"We should drink plenty of water."},
+            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
+            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
+            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
+            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+            {eng:"door", chi:"門", example:"Please close the door behind you."},
+            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
+            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
+            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
+            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
+            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
+            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
+            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
+            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
+
+        const monsterImages = [
+            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
+            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
+            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
+        ];
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
+
+        let wordBank = [];
+        let wrongWords = []; // 4. 錯題系統
+        let studyList = [];
+        let currentWord = null;
+        let studyMode = 'card'; 
+        let isFlipped = false;
+        let currentOptions = [];
+
+        let hp = 10;
+        let floor = 1;
+        let maxFloor = 10;
+        let dungeonMode = 'low';
+        let timeLeft = 100;
+        let timerInterval = null;
+        let combo = 0;
+        let extraTime = 0;
+        let isBossCurrent = false;
+        let chestStatus = 'closed';
+        let killedWords = []; // 5. 結算畫面用
+        let missedWords = [];
+        let currentMImg = "";
+
+        // 初始化
+        function init() {
+            const savedBank = localStorage.getItem('vocab_v10_final_v2');
+            const savedWrongs = localStorage.getItem('vocab_wrongs');
+            
+            if (savedBank) {
+                try { wordBank = JSON.parse(savedBank); } catch(e) { wordBank = initialWords; }
+            } else { wordBank = initialWords; }
+
+            if (savedWrongs) {
+                try { wrongWords = JSON.parse(savedWrongs); } catch(e) { wrongWords = []; }
+            }
+
+            updateGlobalCounts();
+            switchView('splash');
+        }
+
+        function saveState() {
+            localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+            localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
+            updateGlobalCounts();
+        }
+
+        function updateGlobalCounts() {
+            document.getElementById('bankCount').innerText = wordBank.length;
+            document.getElementById('listCount').innerText = wordBank.length;
+        }
+
+        function resetDefaultBank() {
+            if(confirm('確定要重置回預設單字嗎？')) {
+                wordBank = initialWords;
+                wrongWords = [];
+                saveState();
+                switchView('home');
+            }
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(sec
