@@ -127,8 +127,10 @@ top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display
 }
         .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%;
 max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        
+        /* 保持圖片比例,不要走樣 */
         .chest-img { width: 100px;
-height: auto; cursor: pointer; transition: 0.2s; }
+height: auto; cursor: pointer; transition: 0.2s; object-fit: contain; }
         .chest-img:hover { transform: scale(1.1);
 }
     </style>
@@ -157,7 +159,6 @@ const playerImgHurt = "https://i.imgur.com/PBcBCFv.png";
             {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
             {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
       
-
             {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
             {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
             {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
@@ -177,7 +178,7 @@ my drink, please."},
             {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
             {eng:"river", chi:"河流", example:"We went fishing by the river."},
           
-  {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
   
             {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
             {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
@@ -191,14 +192,14 @@ my drink, please."},
             {eng:"ball", chi:"球", example:"Throw the ball to me!"},
             {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
           
-  {eng:"door", chi:"門", example:"Please close the door behind you."},
+            {eng:"door", chi:"門", example:"Please close the door behind you."},
         
             {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
             {eng:"flower", chi:"花", example:"This flower smells wonderful."},
             {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
             {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
       
-      {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
           
             {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
             {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
@@ -263,7 +264,6 @@ const fileInputRef = useRef(null);
                 if (saved) {
                     try {
         
-
                         const parsed = JSON.parse(saved);
                         setWordBank(parsed.length > 0 ? parsed : initialWords);
                     } catch (e) { setWordBank(initialWords); }
@@ -313,12 +313,10 @@ const lines = text.split("\n").slice(1);
                         if (parts.length < 2) return null;
                         return {
          
-
                            eng: parts[0].replace(/"/g, '').trim(),
                             chi: parts[1].replace(/"/g, '').trim(),
                             example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
        
-        
                              id: Date.now() + i
                         };
                     }).filter(x => x && x.eng);
@@ -421,7 +419,6 @@ timerRef.current = setInterval(() => {
                         if(p <= 0) { 
                             clearInterval(timerRef.current);
                  
-
                             triggerHurtEffects(true); 
                             return 0; 
                         } 
@@ -452,12 +449,10 @@ setHp(h => {
                         setTimeout(() => setView('lose'), 600);
                     } else {
  
-
                         setTimeout(() => {
                             setPlayerAnim(""); setCurrentPlayerImg(playerImgDefault); setFeedback("");
                             startTimer(mode, isBossCurrent);
                
- 
                         }, 800);
                     }
                     return newHp;
@@ -499,16 +494,16 @@ setTimeout(() => {
                         if (floor >= maxFloor) {
                             setView('win');
                  
-       } else if(isBossCurrent) {
+        } else if(isBossCurrent) {
                             // 【新功能：擊殺 Boss 掉落隨機寶箱】(非最後一關)
                             setChestStatus('closed');
                             setChestReward('');
    
-                         setShowChest(true);
+                             setShowChest(true);
                         } else {
                             nextFloor();
                      
-   }
+    }
                     }, 500);
 } else { triggerHurtEffects(false); }
             };
@@ -536,7 +531,6 @@ if(view === 'splash') return (
                     <div className="enter-btn-container">
                         <button className="btn-rpg" onClick={() => setView('home')}>Enter</button>
       
-
                     </div>
                 </div>
             );
@@ -546,7 +540,6 @@ return (
                     
                     {/* 【新功能：受傷全畫面紅閃】 */}
            
-
                      <div className={`hurt-flash ${isHurtFlash ? 'anim-flash' : ''}`}></div>
 
                     <div className="container">
@@ -578,7 +571,7 @@ onClick={()=>setView('add')}>新增單字</button>
                              <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
                               
   <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
-                                <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
+                                <h3 style={{color:'var(--danger)'}}>城堡 地下城戰鬥</h3>
           
                                 <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時5秒)</button>
           
@@ -649,7 +642,7 @@ location.reload(); }}}>⚠️ 重置回預設單字</button>
 
                         {(view === 'card' || view === 'quiz') && (
               
-
+ 
                             <div>
                                 <div className="card" onClick={()=>{if(view==='card') setIsFlipped(!isFlipped)}}>
                                     {!isFlipped 
@@ -718,7 +711,7 @@ setOptions(shuffle([next.eng, ...wrongPool]));
                                 <button className="btn" onClick={()=>setView('home')}>返回</button>
                             </div>
     
-
+ 
                         )}
 
                         {view === 'dungeon' && (
@@ -766,7 +759,7 @@ setOptions(shuffle([next.eng, ...wrongPool]));
                                     <div>
                                         <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
                   
- 
+  
                                      <button className="btn btn-primary" onClick={()=>handleDungeonAns(bossIn.toLowerCase().trim() === currentWord?.eng.toLowerCase().trim())}>⚡ 攻擊 BOSS</button>
                                     </div>
                    
@@ -786,34 +779,30 @@ setView('home')}}>🏳️ 撤退</button>
 
                         {/* 【新功能：Boss 掉落寶箱彈窗】 */}
                     
-
                         {showChest && (
                             <div className="modal-overlay">
                                 <div className="modal-content">
             
                     
                                     <h3>🎉 擊敗 Boss！獲得寶箱</h3>
+                                    
+                                    {/* 嚴格使用您要求的圖片並加上 {} 修復三元運算子的語法錯誤 */}
                                     <img 
-     
-                                   src={chestStatus === 'closed' ? "https://i.imgur.com/sAsVc32.png" : "https://i.imgur.com/JNPgpc7.png"} 
-          
+                                        src={chestStatus === 'closed' ? "https://i.imgur.com/sAsVc32.png" : "https://i.imgur.com/JNPgpc7.png"} 
                                         className="chest-img"
-        
-                                onClick={openChest}
-                              
+                                        onClick={openChest}
                                     />
   
-                                  <p style={{color: '#636e72'}}>{chestStatus === 'closed' ? '點擊寶箱開啟獎勵！' : chestReward}</p>
+                                   <p style={{color: '#636e72'}}>{chestStatus === 'closed' ? '點擊寶箱開啟獎勵！' : chestReward}</p>
                                     {chestStatus === 'open' && (
           
         
-                                <button className="btn btn-primary" style={{marginTop: '10px'}} onClick={() => { setShowChest(false);
+                                        <button className="btn btn-primary" style={{marginTop: '10px'}} onClick={() => { setShowChest(false);
 nextFloor(); }}>前往下一關</button>
                                     )}
                                 </div>
                             </div>
    
-
                         )}
 
                         {(view === 'win' || view === 'lose') && (
@@ -836,7 +825,7 @@ nextFloor(); }}>前往下一關</button>
                           
                                     <div style={{color: 'var(--success)', marginBottom: '5px'}}>
          
-                               <strong>擊殺 ({killedWords.length})：</strong> 
+                                       <strong>擊殺 ({killedWords.length})：</strong> 
                                         {killedWords.map(w => w.eng).join(', ') 
                        
                  ||
@@ -852,7 +841,6 @@ nextFloor(); }}>前往下一關</button>
                                 </div>
 
                                 
-
                                 <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={()=>setView('home')}>返回</button>
                             </div>
                         )}
@@ -866,4 +854,4 @@ nextFloor(); }}>前往下一關</button>
         root.render(<App />);
     </script>
 </body>
-</html>```
+</html>
