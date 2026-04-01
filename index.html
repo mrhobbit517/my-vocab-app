@@ -3,147 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v11.1 - Full Features</title>
+    <title>Vocab Dungeon v11.2 - Fixed</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        :root { --bg: #f4f7f6;
---primary: #0984e3; --text: #2d3436; --danger: #d63031; --success: #27ae60; --gray: #636e72;
-}
-        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text);
-overflow-x: hidden; }
-        .container { width: 100%; max-width: 480px; min-height: 100vh;
-margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; z-index: 1;
-}
+        :root { 
+            --bg: #f4f7f6;
+            --primary: #0984e3; 
+            --text: #2d3436; 
+            --danger: #d63031; 
+            --success: #27ae60; 
+            --gray: #636e72;
+        }
+        body { 
+            background: var(--bg); 
+            font-family: -apple-system, sans-serif; 
+            margin: 0; 
+            color: var(--text);
+            overflow-x: hidden; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 480px; 
+            min-height: 100vh;
+            margin: 0 auto; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            z-index: 1;
+        }
+        .global-bg { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 0;
+        }
+        .dungeon-bg { 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 0; 
+        }
+        .splash-screen { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; 
+            z-index: 1000; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
+        .splash-img { 
+            width: 100%; height: 100%; 
+            object-fit: contain; 
+            position: absolute; 
+            top: 0; left: 0; 
+        }
+        .enter-btn-container { 
+            position: absolute; 
+            bottom: 15%; 
+            width: 100%; 
+            display: flex;
+            justify-content: center; 
+        }
+        .btn-rpg { 
+            background: #2d3436; 
+            color: #fff; 
+            border: 4px solid #fff;
+            padding: 12px 40px; 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            box-shadow: 0 0 0 4px #2d3436;
+            transition: 0.1s; 
+        }
+        .btn-rpg:active { 
+            transform: scale(0.9); 
+            background: #636e72;
+        }
+        .btn { 
+            background: #fff; 
+            border: 1px solid #ddd; 
+            padding: 14px;
+            margin: 8px 0; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            border-radius: 12px; 
+            width: 100%; 
+            font-weight: 600; 
+            box-sizing: border-box; 
+            transition: 0.2s; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active { 
+            transform: scale(0.96); 
+            background: #f0f0f0;
+        }
+        .btn-primary { 
+            background: var(--primary); 
+            color: white; 
+            border: none;
+            box-shadow: 0 4px 12px rgba(9,132,227,0.2); 
+        }
+        .btn-outline { 
+            color: var(--primary);
+            border: 2px solid var(--primary); 
+            background: rgba(255,255,255,0.8); 
+        }
+        .btn-small { 
+            padding: 8px; 
+            font-size: 0.85rem;
+            margin: 5px 2px; 
+            flex: 1; 
+        }
+        .speaker-btn { 
+            background: #e1f0ff; 
+            border: none;
+            border-radius: 50%; 
+            width: 44px; 
+            height: 44px; 
+            cursor: pointer; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.2rem;
+        }
+        .card { 
+            background: rgba(255,255,255,0.95); 
+            border-radius: 24px; 
+            padding: 25px; 
+            margin: 10px 0;
+            min-height: 260px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); 
+            text-align: center; 
+            position: relative;
+            border: 1px solid #eee; 
+        }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
+        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
+        .example-box { 
+            margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px;
+            border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box;
+        }
+        .battle-scene { 
+            position: relative;
+            width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
+            background: rgba(255, 255, 255, 0.5); border-radius: 15px;
+        }
+        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
+        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
+        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
+        .player-img { width: 270px; height: auto; transition: 0.3s; }
         
-        .global-bg { position: fixed;
-top: 0; left: 0; width: 100%; height: 100%; background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); background-size: cover; background-position: center; z-index: 0;
-}
-        .dungeon-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); background-size: cover; background-position: center; z-index: 0; }
-
-        .splash-screen { position: fixed;
-top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center;
-}
-        .splash-img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0;
-left: 0; }
-        .enter-btn-container { position: absolute; bottom: 15%; width: 100%; display: flex;
-justify-content: center; }
-        .btn-rpg { background: #2d3436; color: #fff; border: 4px solid #fff;
-padding: 12px 40px; font-size: 1.5rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 0 4px #2d3436;
-transition: 0.1s; }
-        .btn-rpg:active { transform: scale(0.9); background: #636e72;
-}
-
-        .btn { background: #fff; border: 1px solid #ddd; padding: 14px;
-margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; -webkit-tap-highlight-color: transparent;
-}
-        .btn:active { transform: scale(0.96); background: #f0f0f0;
-}
-        .btn-primary { background: var(--primary); color: white; border: none;
-box-shadow: 0 4px 12px rgba(9,132,227,0.2); }
-        .btn-outline { color: var(--primary);
-border: 2px solid var(--primary); background: rgba(255,255,255,0.8); }
-        .btn-small { padding: 8px; font-size: 0.85rem;
-margin: 5px 2px; flex: 1; }
-        .speaker-btn { background: #e1f0ff; border: none;
-border-radius: 50%; width: 44px; height: 44px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
-}
-        .card { background: rgba(255,255,255,0.95); border-radius: 24px; padding: 25px; margin: 10px 0;
-min-height: 260px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; position: relative;
-border: 1px solid #eee; }
-        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary);
-}
-        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444;
-}
-        .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px;
-border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box;
-}
+        @keyframes hit-shake { 
+            0% { transform: translateX(0); } 
+            20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 
+            100% { transform: scale(0); opacity: 0; } 
+        }
+        .anim-hit { animation: hit-shake 0.5s forwards; }
         
-        .battle-scene { position: relative;
-width: 100%; height: 240px; margin: 10px 0; overflow: visible; background: rgba(255, 255, 255, 0.5); border-radius: 15px;
-}
-        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1;
-}
-        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s;
-}
-        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2;
-}
-        .player-img { width: 270px; height: auto; transition: 0.3s;
-}
+        @keyframes hurt-red { 
+            0% { filter: brightness(1); } 
+            50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 
+            100% { filter: brightness(1); } 
+        }
+        .anim-hurt { animation: hurt-red 0.4s; }
         
-        @keyframes hit-shake { 0% { transform: translateX(0);
-} 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0;
-} }
-        .anim-hit { animation: hit-shake 0.5s forwards;
-}
-        @keyframes hurt-red { 0% { filter: brightness(1);
-} 50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 100% { filter: brightness(1);
-} }
-        .anim-hurt { animation: hurt-red 0.4s;
-}
-        
-        @keyframes hurt-red-filter { 0% { filter: brightness(1);
-} 50% { filter: brightness(1.2) sepia(1) saturate(8); } 100% { filter: brightness(1);
-} }
-        @keyframes hurt-vibrate { 0% { transform: translate(0, 0);
-} 10% { transform: translate(-4px, -2px); } 20% { transform: translate(3px, 2px); } 30% { transform: translate(-4px, 1px);
-} 40% { transform: translate(3px, -1px); } 50% { transform: translate(-2px, 2px); } 60% { transform: translate(2px, 1px);
-} 70% { transform: translate(-3px, -1px); } 80% { transform: translate(3px, 2px); } 90% { transform: translate(-1px, -2px);
-} 100% { transform: translate(0, 0); } }
-        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s;
-}
+        @keyframes hurt-red-filter { 
+            0% { filter: brightness(1); } 
+            50% { filter: brightness(1.2) sepia(1) saturate(8); } 
+            100% { filter: brightness(1); } 
+        }
+        @keyframes hurt-vibrate { 
+            0% { transform: translate(0, 0); } 
+            10% { transform: translate(-4px, -2px); } 
+            20% { transform: translate(3px, 2px); } 
+            30% { transform: translate(-4px, 1px); } 
+            40% { transform: translate(3px, -1px); } 
+            50% { transform: translate(-2px, 2px); } 
+            60% { transform: translate(2px, 1px); } 
+            70% { transform: translate(-3px, -1px); } 
+            80% { transform: translate(3px, 2px); } 
+            90% { transform: translate(-1px, -2px); } 
+            100% { transform: translate(0, 0); } 
+        }
+        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s; }
 
-        .timer-line { position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger);
-transition: width 0.1s linear; }
-        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr;
-gap: 10px; width: 100%; }
-        input, textarea { width: 100%; padding: 14px;
-border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
-}
-        .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px;
-}
+        .timer-line { 
+            position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger);
+            transition: width 0.1s linear; 
+        }
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        input, textarea { 
+            width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; 
+            margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
+        }
+        .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
 
-        /* 新功能：畫面邊緣受傷紅框 */
-        .hurt-flash { position: fixed;
-top: 0; left: 0; width: 100vw; height: 100vh; box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
-z-index: 999; opacity: 0; }
-        .anim-flash { animation: flash-fade 0.5s ease;
-}
-        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1;
-} 100% { opacity: 0; } }
+        /* 受傷畫面邊緣紅框 */
+        .hurt-flash { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
+            z-index: 999; opacity: 0; 
+        }
+        .anim-flash { animation: flash-fade 0.5s ease; }
+        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* 新功能：Combo 動畫 */
-        .combo-text { position: absolute;
-left: 20px; top: 30px; font-size: 1.8rem; font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
-animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-        @keyframes pop { 0% { transform: scale(0.5);
-} 100% { transform: scale(1); } }
+        /* Combo 動畫 */
+        .combo-text { 
+            position: absolute; left: 20px; top: 30px; font-size: 1.8rem; font-weight: bold; 
+            color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
+            animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
+        }
+        @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
 
-        /* 新功能：寶箱彈窗 */
-        .modal-overlay { position: fixed;
-top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;
-}
-        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%;
-max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .chest-img { width: 100px;
-height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* object-fit ensures aspect ratio */
-        .chest-img:hover { transform: scale(1.1);
-}
+        /* 寶箱彈窗與圖片比例控制 */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content { 
+            background: white; padding: 30px; border-radius: 20px; text-align: center; 
+            width: 80%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+        }
+        .chest-img { 
+            max-width: 100px; /* 限制最大寬度，依需要縮小 */
+            height: auto;      /* 高度自動，維持原圖比例 */
+            cursor: pointer; 
+            transition: 0.2s; 
+            object-fit: contain; /* 確保內容不會溢出或拉伸 */
+            display: block;
+            margin: 0 auto 15px auto;
+        }
+        .chest-img:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
     <div id="root"></div>
+
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
+
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
             "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-        
         const monsterHurtImages = [...monsterImages];
         const bossHurtImages = [...bossImages];
 
@@ -156,49 +275,41 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
             {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
             {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
-      
             {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
             {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
             {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
             {eng:"house", chi:"房子", example:"We live in a big white house."},
             {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
-    
             {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
             {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
             {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
             {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
             {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
- 
             {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
             {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
             {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
             {eng:"river", chi:"河流", example:"We went fishing by the river."},
             {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
-  
             {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
             {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
             {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
             {eng:"water", chi:"水", example:"We should drink plenty of water."},
             {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
-    
             {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
             {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
             {eng:"ball", chi:"球", example:"Throw the ball to me!"},
             {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
             {eng:"door", chi:"門", example:"Please close the door behind you."},
-        
             {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
             {eng:"flower", chi:"花", example:"This flower smells wonderful."},
             {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
             {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
             {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
-          
             {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
             {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
             {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
             {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
             {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
-           
             {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
@@ -230,50 +341,43 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
             const [newEng, setNewEng] = useState("");
             const [newChi, setNewChi] = useState("");
             const [newExample, setNewExample] = useState("");
-            // ================= 新增功能狀態 =================
+            
+            // 地下城強化功能狀態
             const [wrongWords, setWrongWords] = useState([]);
-            // 暗黑怨念錯題庫
             const [combo, setCombo] = useState(0);
-            // 連擊數
             const [isHurtFlash, setIsHurtFlash] = useState(false);
-            // 紅光閃爍控制
             const [showChest, setShowChest] = useState(false);
-            // 寶箱開關
             const [chestStatus, setChestStatus] = useState('closed');
-            // 'closed' | 'open'
             const [chestReward, setChestReward] = useState('');
-            // 寶箱開出什麼
             const [extraTime, setExtraTime] = useState(0);
-            // 下一關額外獎勵時間
             const [killedWords, setKilledWords] = useState([]);
-            // 成功答對清單
             const [missedWords, setMissedWords] = useState([]);
-            // 答錯/超時清單
 
             useEffect(() => {
                 const saved = localStorage.getItem('vocab_v10_final_v2');
                 const savedWrongs = localStorage.getItem('vocab_wrongs');
                 if (saved) {
                     try {
-        
                         const parsed = JSON.parse(saved);
                         setWordBank(parsed.length > 0 ? parsed : initialWords);
                     } catch (e) { setWordBank(initialWords); }
                 } else { setWordBank(initialWords); }
-      
                 
                 if (savedWrongs) {
                     try { setWrongWords(JSON.parse(savedWrongs)); } catch(e) { setWrongWords([]); }
                 }
             }, []);
+
             useEffect(() => {
                 if (wordBank.length > 0) {
                     localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
                 }
             }, [wordBank]);
+
             useEffect(() => {
                 localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
             }, [wrongWords]);
+
             const speak = (text) => {
                 if(!text || !window.speechSynthesis) return;
                 window.speechSynthesis.cancel();
@@ -281,7 +385,9 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                 u.lang = 'en-US';
                 window.speechSynthesis.speak(u);
             };
+
             const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
+
             const exportCSV = () => {
                 let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
                     + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
@@ -292,6 +398,7 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                 document.body.appendChild(link);
                 link.click();
             };
+
             const importCSV = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -303,12 +410,10 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                         const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                         if (parts.length < 2) return null;
                         return {
-         
-                           eng: parts[0].replace(/"/g, '').trim(),
+                            eng: parts[0].replace(/"/g, '').trim(),
                             chi: parts[1].replace(/"/g, '').trim(),
                             example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
-               
-                             id: Date.now() + i
+                            id: Date.now() + i
                         };
                     }).filter(x => x && x.eng);
                     if (newWords.length > 0) {
@@ -331,9 +436,9 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                         const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
                         setNewExample(ex || "No example found.");
                     }
-                } catch(e) { alert("抓取失敗");
-                }
+                } catch(e) { alert("抓取失敗"); }
             };
+
             const startNormal = (m) => {
                 if(wordBank.length < 4) return alert("單字不足4個");
                 const q = shuffle(wordBank);
@@ -346,10 +451,10 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                 }
                 setView(m);
             };
+
             const startDungeon = (diff) => {
                 if(wordBank.length < 4) return alert("單字不足4個");
                 let mf = diff==='low'? 10 : diff==='mid'? 15 : 20;
-                // 【新功能：暗黑怨念】優先加入曾答錯的單字
                 let list = [];
                 const matchedWrongs = wrongWords.filter(w => wordBank.some(bankW => bankW.eng === w.eng));
                 const shuffleWrongs = shuffle(matchedWrongs).slice(0, Math.floor(mf/2));
@@ -370,6 +475,7 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                 loadDungeonLevel(1, list[0], diff, true);
                 setView('dungeon');
             };
+
             const loadDungeonLevel = (f, word, m, shuffleOptions = true) => {
                 if(!word) return;
                 setCurrentWord(word); setBossIn(""); setFeedback(""); setMonsterAnim("");
@@ -400,27 +506,23 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                     totalSeconds = 7;
                 }
                 
-                // 【新功能：寶箱額外時間】
                 totalSeconds += extraTime;
-                setExtraTime(0); // 領取過一次後歸零
+                setExtraTime(0); 
                 
                 const step = (100 / (totalSeconds * 10));
                 timerRef.current = setInterval(() => {
                     setTimeLeft(p => { 
                         if(p <= 0) { 
                             clearInterval(timerRef.current);
-                 
                             triggerHurtEffects(true); 
                             return 0; 
                         } 
                         return p - step; 
-     
                     });
                 }, 100);
-            }
+            };
 
             const triggerHurtEffects = (isTimeout = false) => {
-                // 【新功能】連擊歸零、紅光閃爍、紀錄錯題與結算
                 setCombo(0);
                 setIsHurtFlash(true);
                 setTimeout(() => setIsHurtFlash(false), 500);
@@ -438,11 +540,9 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                     if(newHp <= 0) {
                         setTimeout(() => setView('lose'), 600);
                     } else {
- 
                         setTimeout(() => {
                             setPlayerAnim(""); setCurrentPlayerImg(playerImgDefault); setFeedback("");
                             startTimer(mode, isBossCurrent);
-                
                         }, 800);
                     }
                     return newHp;
@@ -455,316 +555,6 @@ height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* obje
                     window.navigator.vibrate(300);
                 }
             };
+
             const handleDungeonAns = (correct) => {
-                clearInterval(timerRef.current);
-                if(correct) {
-                    setCombo(prev => prev + 1);
-                    // 【新功能】連擊累加
-                    setKilledWords(prev => [...prev, currentWord]);
-                    setMonsterAnim("anim-hit"); setMonsterHurtAnim("anim-hurt-combined"); 
-                    
-                    const currentIdx = monsterImages.indexOf(mImg);
-                    const currentBossIdx = bossImages.indexOf(mImg);
-                    if(isBossCurrent && currentBossIdx !== -1) {
-                        setCurrentMonsterImg(bossHurtImages[currentBossIdx]);
-                    } else if(currentIdx !== -1) {
-                        setCurrentMonsterImg(monsterHurtImages[currentIdx]);
-                    }
-
-                    if (window.navigator && window.navigator.vibrate) { window.navigator.vibrate(300);
-                    }
-
-                    setFeedback("⚔️ SUCCESS!");
-                    speak(currentWord?.eng);
-                    
-                    // 從怨念庫移除成功擊殺的字
-                    setWrongWords(prev => prev.filter(w => w.eng !== currentWord.eng));
-                    setTimeout(() => {
-                        // 如果是最後一關，不管是不是Boss都直接跳轉結算
-                        if (floor >= maxFloor) {
-                            setView('win');
-                        } else if(isBossCurrent) {
-                            // 【新功能：擊殺 Boss 掉落隨機寶箱】(非最後一關)
-                            setChestStatus('closed');
-                            setChestReward('');
-                            setShowChest(true);
-                        } else {
-                            nextFloor();
-                        }
-                    }, 500);
-                } else { triggerHurtEffects(false); }
-            };
-            const nextFloor = () => {
-                if(floor >= maxFloor) return setView('win');
-                const nextF = floor + 1; setFloor(nextF);
-                loadDungeonLevel(nextF, studyList[nextF-1], mode, true);
-            }
-
-            const openChest = () => {
-                if (chestStatus !== 'closed') return;
-                setChestStatus('open');
-                const hitHp = Math.random() < 0.5;
-                if (hitHp) {
-                    setHp(prev => prev + 1);
-                    setChestReward('你獲得了：❤️ 回復 1 點生命！');
-                } else {
-                    setExtraTime(2);
-                    setChestReward('你獲得了：⏱️ 下一關時間延長 2 秒！');
-                }
-            };
-            if(view === 'splash') return (
-                <div className="splash-screen">
-                    <img src={splashImg} className="splash-img" alt="splash" />
-                    <div className="enter-btn-container">
-                        <button className="btn-rpg" onClick={() => setView('home')}>Enter</button>
-      
-                    </div>
-                </div>
-            );
-            return (
-                <div style={{minHeight: '100vh'}}>
-                    {view === 'dungeon' ? <div className="dungeon-bg"></div> : <div className="global-bg"></div>}
-                    
-                    {/* 【新功能：受傷全畫面紅閃】 */}
-           
-                     <div className={`hurt-flash ${isHurtFlash ? 'anim-flash' : ''}`}></div>
-
-                    <div className="container">
-                        {view === 'home' && (
-                            <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center'}}>
-    
-                                <h1 style={{textAlign:'center', color:'var(--primary)'}}>VOCAB DUNGEON</h1>
-                                <button className="btn btn-primary" onClick={()=>setView('menu')}>開始挑戰</button>
-                                <button className="btn" 
-onClick={()=>setView('add')}>新增單字</button>
-                                <button className="btn" onClick={()=>setView('list')}>字庫管理 ({wordBank.length})</button>
-                                <img src="https://i.imgur.com/6UDmnhC.png" className="footer-img" />
-                            </div>
-  
-                        )}
-
-                        {view === 'menu' && (
-                            <div>
-                      
-                             <button className="btn" onClick={()=>setView('home')}>← 返回</button>
-                                <h2>選擇模式</h2>
-                                <button className="btn btn-outline" onClick={()=>startNormal('card')}>生字卡 (讀音/例句)</button>
-                   
-                             <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
-                                <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
-                                <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
-          
-                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時5秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('mid')}>中級 (15層 - 限時5秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('high')}>高級 (20層 
-- 限時5秒)</button>
-                            </div>
-                        )}
-
-                        {view === 'add' && (
-                   
-                         <div>
-                                <button className="btn" onClick={()=>setView('home')}>← 返回</button>
-                                <h2>新增單字</h2>
-                        
-                                <input placeholder="英文單字" value={newEng} onChange={e=>setNewEng(e.target.value)} />
-                                <button className="btn btn-outline" onClick={autoFetch}>✨ 自動翻譯</button>
-                                <textarea placeholder="中文意思" value={newChi} onChange={e=>setNewChi(e.target.value)} />
-                
-                                <textarea placeholder="例句" rows="3" value={newExample} onChange={e=>setNewExample(e.target.value)} />
-                                <button className="btn btn-primary" onClick={()=>{
-                                    if(!newEng ||
-!newChi) return alert("內容不全");
-                                    setWordBank([{eng:newEng, chi:newChi, example:newExample, id:Date.now()}, ...wordBank]);
-                                    setNewEng(""); setNewChi(""); setNewExample(""); alert("儲存成功");
-}}>💾 儲存</button>
-                            </div>
-                        )}
-
-                        {view === 'list' && (
-                   
-                         <div>
-                                <button className="btn" onClick={()=>setView('home')}>← 返回</button>
-                                <h3>我的字庫 ({wordBank.length})</h3>
-                       
-                         <div style={{display:'flex', gap:'5px', marginBottom:'15px'}}>
-                                    <button className="btn btn-outline btn-small" onClick={exportCSV}>📤 匯出 CSV</button>
-                                    <button className="btn btn-outline btn-small" onClick={()=>fileInputRef.current.click()}>📥 匯入 CSV</button>
-    
-                                    <input type="file" ref={fileInputRef} style={{display:'none'}} accept=".csv" onChange={importCSV} />
-                                </div>
-                              
-  {wordBank.map(w => (
-                                    <div key={w.id} style={{background:'rgba(255,255,255,0.9)', padding:'12px', borderRadius:'12px', marginBottom:'8px', display:'flex', alignItems:'center', border:'1px solid #eee'}}>
-                                        <div style={{flex:1}}><strong>{w.eng}</strong> - {w.chi}</div>
-       
-                                         <button className="speaker-btn" style={{width:'32px', height:'32px', fontSize:'0.9rem'}} onClick={()=>speak(w.eng)}>🔊</button>
-                                        <button style={{color:'red', border:'none', background:'none', marginLeft:'10px', fontSize:'1.2rem'}} onClick={()=>setWordBank(wordBank.filter(x=>x.id!==w.id))}>×</button>
-                
-                                    </div>
-                                ))}
-                                <button className="btn" style={{marginTop:'20px', color:'red'}} onClick={()=>{if(confirm('確定重置字庫嗎？')) { localStorage.removeItem('vocab_v10_final_v2');
-location.reload(); }}}>⚠️ 重置回預設單字</button>
-                            </div>
-                        )}
-
-                        {(view === 'card' || view === 'quiz') && (
-              
-                            <div>
-                                <div className="card" onClick={()=>{if(view==='card') setIsFlipped(!isFlipped)}}>
-                                    {!isFlipped ? (
-             
-                                         <div>
-                                            {view === 'quiz' ? <div className="card-chi">{currentWord?.chi}</div> : (
-                      
-                                          <>
-                                                    <div className="card-eng">{currentWord?.eng}</div>
-                     
-                                                    <button className="speaker-btn" onClick={(e)=>{e.stopPropagation(); speak(currentWord?.eng);}}>🔊</button>
-                                                </>
-                  
-                                          )}
-                                        </div>
-                                  
-  ) : (
-                                        <div style={{textAlign:'left', width:'100%'}}>
-                                            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-       
-                                                 <strong style={{fontSize:'1.4rem', color:'var(--primary)'}}>{currentWord?.eng}</strong>
-                                                <button className="speaker-btn" style={{width:'36px', height:'36px'}} onClick={()=>speak(currentWord?.eng)}>🔊</button>
-     
-                                               </div>
-                                            <hr/>
-                 
-                                           <strong>【中文】</strong><p>{currentWord?.chi}</p>
-                                            <div className="example-box"><strong>【例句】</strong><p>{currentWord?.example}</p></div>
-                            
-                                            </div>
-                                    )}
-                                </div>
-                    
-                            {view === 'quiz' && !isFlipped && (
-                                    <div className="quiz-grid">
-                                        {options.map(o => <button key={o} className="btn 
-btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅ 正確":"❌ 錯誤"); setIsFlipped(true); speak(currentWord?.eng);}}>{o}</button>)}
-                                    </div>
-                                )}
-                           
-                            {feedback && <div style={{textAlign:'center', fontWeight:'bold', margin:'10px'}}>{feedback}</div>}
-                                <button className="btn btn-primary" onClick={()=>{
-                                    if(studyList.length === 0) return setView('home');
-                                    const next = studyList[0];
-                                    setStudyList(studyList.slice(1)); setCurrentWord(next); setIsFlipped(false); setFeedback("");
-                                    if(view==='quiz') {
-                                        const wrongPool = shuffle(wordBank.filter(x => x.eng !== next.eng)).slice(0, 3).map(x => x.eng);
-                                        setOptions(shuffle([next.eng, ...wrongPool]));
-                                    }
-                                }}>下一個</button>
-                                <button className="btn" onClick={()=>setView('home')}>返回</button>
-                            </div>
-    
-                        )}
-
-                        {view === 'dungeon' && (
-                            <div>
-                        
-                                <div style={{background: '#2d3436', color: 'white', padding: '12px', borderRadius: '15px', display:'flex', justifyContent:'space-between', marginBottom: '15px'}}>
-                                    <span>{"❤️".repeat(hp)}</span>
-                                    <span>B{floor}/{maxFloor}</span>
-        
-                                </div>
-                                <div className="battle-scene">
-                                    <div className="timer-line" style={{width:timeLeft+'%'}}></div>
-     
-                                    
-                                    {/* 【新功能：連擊特效】 */}
-                               
-                                    {combo >= 2 && <div className="combo-text">🔥 {combo} Combo!</div>}
-                                    
-                                    <div className="monster-box">
-               
-                                         <img src={currentMonsterImg} className={`monster-img ${monsterAnim} ${monsterHurtAnim}`} />
-                                    </div>
-                                  
-                                  <div className="player-box">
-                                        <img src={currentPlayerImg} className={`player-img ${playerAnim}`} />
-                                    </div>
-                 
-                               </div>
-                                <div className="card" style={{minHeight:'60px', padding: '15px', marginBottom: '10px'}}>
-                                    <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
-         
-                               </div>
-                                {isBossCurrent ?
-                                (
-                                    <div>
-                                        <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
-                   
-                                     <button className="btn btn-primary" onClick={()=>handleDungeonAns(bossIn.toLowerCase().trim() === currentWord?.eng.toLowerCase().trim())}>⚡ 攻擊 BOSS</button>
-                                    </div>
-                                ) : (
-  
-                                     <div className="quiz-grid">
-                                        {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>handleDungeonAns(o === currentWord?.eng)}>{o}</button>)}
-                 
-                                   </div>
-                                )}
-                                <button className="btn" style={{color:'#999', marginTop: '10px'}} onClick={()=>{clearInterval(timerRef.current);
-                                setView('home')}}>🏳️ 撤退</button>
-                            </div>
-                        )}
-
-                        {/* 【新功能：Boss 掉落寶箱彈窗】 */}
-                    
-                        {showChest && (
-                            <div className="modal-overlay">
-                                <div className="modal-content">
-                                
-                                    <h3>🎉 擊敗 Boss！獲得寶箱</h3>
-                                    <img 
-                                        src={chestStatus === 'closed' ? "https://i.imgur.com/sAsVc32.png" : "https://i.imgur.com/JNPgpc7.png"} 
-          
-                                        className="chest-img"
-                                        onClick={openChest}
-                              
-                                    />
-                                    <p style={{color: '#636e72'}}>{chestStatus === 'closed' ? '點擊寶箱開啟獎勵！' : chestReward}</p>
-                                    {chestStatus === 'open' && (
-          
-                                        <button className="btn btn-primary" style={{marginTop: '10px'}} onClick={() => { setShowChest(false);
-                                        nextFloor(); }}>前往下一關</button>
-                                    )}
-                                </div>
-                            </div>
-   
-                        )}
-
-                        {(view === 'win' || view === 'lose') && (
-                            <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center'}}>
-               
-                                 <div style={{textAlign:'center'}}>
-                                    <h1>{view==='win'?"🎉":"💀"}</h1>
-                                    <h2>{view==='win'?"挑戰成功":"你倒下了"}</h2>
-          
-                                      </div>
-                                
-                                {/* 【新功能：戰鬥結果報告】 */}
-            
-                                    <div style={{background: 'rgba(255,255,255,0.95)', padding: '15px', borderRadius: '15px', marginTop: '15px', maxHeight: '200px', overflowY: 'auto'}}>
-                                    <h4 style={{margin: '0 0 10px 0'}}>📊 本次戰果</h4>
-                          
-                                    <div style={{color: 'var(--success)', marginBottom: '5px'}}>
-                                        <strong>擊殺 ({killedWords.length})：</strong> 
-                                        {killedWords.map(w => w.eng).join(', ') 
-                                        || '無'}
-                                    </div>
-                                    <div style={{color: 'var(--danger)'}}>
-                         
-                                        <strong>漏掉/錯過 ({missedWords.length})：</strong> 
-                                        {missedWords.map(w => w.eng).join(', ') ||
-                                        '無'}
-                                    </div>
-                                </div>
-
-                                
-                                <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={()=>setView('
+                clearInterval(timerRef.current
