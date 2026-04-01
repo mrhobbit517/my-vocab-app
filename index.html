@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v11.1 - No Last Chest</title>
+    <title>Vocab Dungeon v11.2 - Fixed White Screen</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -279,7 +279,10 @@
             }
 
             function handleChestOption(selected) {
+                // 第一時間停止計時器並徹底清除背景中的 timeout，防範白畫面
                 setTimerActive(false);
+                clearTimeout(timerRef.current);
+                
                 const correct = words[currentWordIndex];
                 
                 if (selected.eng === correct.eng) {
@@ -288,8 +291,7 @@
                     
                     const nextLv = curLevel + 1;
                     if(nextLv >= 4) {
-                        setTimerActive(false);
-                        // 最後一關直接跳轉，什麼也不彈出
+                        // 如果是最後一關，直接去完結畫面
                         setView('chest-win');
                     } else {
                         setMessage("答對了！成功解鎖一層寶箱！");
@@ -399,7 +401,7 @@
                             )}
 
                             <div style={{textAlign: 'center', marginTop: 'auto'}}>
-                                <p style={{color: '#fff', textShadow: '1px 1px #000'}}>Game Version 11.1</p>
+                                <p style={{color: '#fff', textShadow: '1px 1px #000'}}>Game Version 11.2</p>
                             </div>
                         </div>
                     </>
