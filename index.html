@@ -12,20 +12,15 @@
         body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); overflow-x: hidden; }
         .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; z-index: 1; }
         
-        /* 原有背景圖樣式 */
         .global-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); background-size: cover; background-position: center; z-index: 0; }
-
-        /* 地下城專用背景圖樣式 */
         .dungeon-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); background-size: cover; background-position: center; z-index: 0; }
 
-        /* 啟動畫面樣式 - 維持黑色背景 */
         .splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; }
         .splash-img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
         .enter-btn-container { position: absolute; bottom: 15%; width: 100%; display: flex; justify-content: center; }
         .btn-rpg { background: #2d3436; color: #fff; border: 4px solid #fff; padding: 12px 40px; font-size: 1.5rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 0 4px #2d3436; transition: 0.1s; }
         .btn-rpg:active { transform: scale(0.9); background: #636e72; }
 
-        /* 遊戲組件樣式 */
         .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
         .btn:active { transform: scale(0.96); background: #f0f0f0; }
         .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(9,132,227,0.2); }
@@ -37,20 +32,17 @@
         .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
         .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-style: italic; font-size: 0.95rem; width: 100%; box-sizing: border-box; }
         
-        /* 戰鬥畫面樣式 */
         .battle-scene { position: relative; width: 100%; height: 240px; margin: 10px 0; overflow: visible; background: rgba(255, 255, 255, 0.5); border-radius: 15px; }
         .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
         .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
         .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
         .player-img { width: 270px; height: auto; transition: 0.3s; }
         
-        /* 動畫效果 */
         @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
         .anim-hit { animation: hit-shake 0.5s forwards; }
         @keyframes hurt-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 100% { filter: brightness(1); } }
         .anim-hurt { animation: hurt-red 0.4s; }
         
-        /* 受傷濾鏡與震動動畫 */
         @keyframes hurt-red-filter { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); } 100% { filter: brightness(1); } }
         @keyframes hurt-vibrate { 0% { transform: translate(0, 0); } 10% { transform: translate(-4px, -2px); } 20% { transform: translate(3px, 2px); } 30% { transform: translate(-4px, 1px); } 40% { transform: translate(3px, -1px); } 50% { transform: translate(-2px, 2px); } 60% { transform: translate(2px, 1px); } 70% { transform: translate(-3px, -1px); } 80% { transform: translate(3px, 2px); } 90% { transform: translate(-1px, -2px); } 100% { transform: translate(0, 0); } }
         .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s; }
@@ -65,6 +57,7 @@
     <div id="root"></div>
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
+        
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -72,13 +65,8 @@
         ];
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
         
-        // 【防禦性代碼】如果用戶有提供怪物受傷圖片可以放這裡，暫時與原圖保持一致避免白畫面或破圖
-        const monsterHurtImages = [
-            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
-            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
-            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
-        ];
-        const bossHurtImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
+        const monsterHurtImages = [...monsterImages];
+        const bossHurtImages = [...bossImages];
 
         const playerImgDefault = "https://i.imgur.com/PBcBCFv.png";
         const playerImgHurt = "https://i.imgur.com/PBcBCFv.png"; 
@@ -143,11 +131,9 @@
             const [monsterAnim, setMonsterAnim] = useState("");
             const [mImg, setMImg] = useState(monsterImages[0]);
             
-            /* 玩家狀態管理 Hooks */
             const [currentPlayerImg, setCurrentPlayerImg] = useState(playerImgDefault);
             const [playerAnim, setPlayerAnim] = useState("");
 
-            /* 【新增】怪物狀態管理 Hooks，用於實現怪物答對時的受傷效果 */
             const [currentMonsterImg, setCurrentMonsterImg] = useState(monsterImages[0]);
             const [monsterHurtAnim, setMonsterHurtAnim] = useState("");
             const [isBossCurrent, setIsBossCurrent] = useState(false);
@@ -242,7 +228,12 @@
                 const q = shuffle(wordBank);
                 setCurrentWord(q[0]); setStudyList(q.slice(1));
                 setIsFlipped(false); setFeedback("");
-                if(m === 'quiz') setOptions(shuffle([q[0].eng, ...wordBank.filter(x=>x.eng!==q[0].eng).slice(0,3).map(x=>x.eng)]));
+                
+                // 【修復】解決主選單測驗模式可能沒有答案的 Bug
+                if(m === 'quiz') {
+                    const wrongPool = shuffle(wordBank.filter(x => x.eng !== q[0].eng)).slice(0, 3).map(x => x.eng);
+                    setOptions(shuffle([q[0].eng, ...wrongPool]));
+                }
                 setView(m);
             };
 
@@ -269,8 +260,8 @@
             const loadDungeonLevel = (f, word, m, shuffleOptions = true) => {
                 if(!word) return;
                 setCurrentWord(word); setBossIn(""); setFeedback(""); setMonsterAnim("");
+                setMonsterHurtAnim(""); 
                 
-                setMonsterHurtAnim(""); // 重置怪物受傷動畫
                 setCurrentPlayerImg(playerImgDefault);
                 setPlayerAnim("");
                 
@@ -282,19 +273,23 @@
                 
                 const currentImg = isB ? bossImages[randomBossIndex] : monsterImages[randomIndex];
                 setMImg(currentImg);
-                setCurrentMonsterImg(currentImg); // 初始化怪物外觀
+                setCurrentMonsterImg(currentImg); 
                 
+                // 【修復】解決地下城模式中，生字英文選擇中沒有對應答案的 Bug
                 if(!isB && shuffleOptions) {
-                    setOptions(shuffle([word.eng, ...wordBank.filter(x=>x.eng!==word.eng).slice(0,3).map(x=>x.eng)]));
+                    const wrongPool = shuffle(wordBank.filter(x => x.eng !== word.eng)).slice(0, 3).map(x => x.eng);
+                    setOptions(shuffle([word.eng, ...wrongPool]));
                 }
                 
                 clearInterval(timerRef.current);
                 setTimeLeft(100);
                 
-                // 【修改】時間判定邏輯：初、中、高級的普通關卡一律為 5 秒，中級與高級的 Boss 關卡為 7 秒。
-                let totalSeconds = 5;
-                if(isB && (m === 'mid' || m === 'high')) {
-                    totalSeconds = 7;
+                // 【修復】徹底修正地下城的時間判定
+                let totalSeconds = 5; 
+                if (m === 'low') {
+                    totalSeconds = 10; // 初級一律 10 秒
+                } else if (isB) {
+                    totalSeconds = 7; // 中、高級的 Boss 題 7 秒
                 }
                 
                 const intervalTime = 100;
@@ -337,11 +332,9 @@
             const handleDungeonAns = (correct) => {
                 clearInterval(timerRef.current);
                 if(correct) {
-                    /* 【修改】答對時，為怪物更新受傷視覺、觸發受傷動畫和手機震動 */
-                    setMonsterAnim("anim-hit"); // 舊有的擊退
-                    setMonsterHurtAnim("anim-hurt-combined"); // 新增的震動與紅色濾鏡
+                    setMonsterAnim("anim-hit"); 
+                    setMonsterHurtAnim("anim-hurt-combined"); 
                     
-                    // 切換為怪物受傷圖片 (此處若未定義專屬受傷圖則繼續使用當前圖)
                     const currentIdx = monsterImages.indexOf(mImg);
                     const currentBossIdx = bossImages.indexOf(mImg);
                     if(isBossCurrent && currentBossIdx !== -1) {
@@ -351,7 +344,7 @@
                     }
 
                     if (window.navigator && window.navigator.vibrate) {
-                        window.navigator.vibrate(300); // 震動300毫秒
+                        window.navigator.vibrate(300); 
                     }
 
                     setFeedback("⚔️ SUCCESS!");
@@ -366,7 +359,6 @@
                 }
             };
 
-            // 啟動畫面
             if(view === 'splash') return (
                 <div className="splash-screen">
                     <img src={splashImg} className="splash-img" alt="splash" />
@@ -399,9 +391,9 @@
                                 <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
                                 <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
                                 <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
-                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時5秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('mid')}>中級 (15層 - Boss關7秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('high')}>高級 (20層 - Boss關7秒)</button>
+                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時10秒)</button>
+                                <button className="btn" onClick={()=>startDungeon('mid')}>中級 (15層 - 限時5秒)</button>
+                                <button className="btn" onClick={()=>startDungeon('high')}>高級 (20層 - 限時5秒)</button>
                             </div>
                         )}
 
@@ -475,7 +467,10 @@
                                     if(studyList.length === 0) return setView('home');
                                     const next = studyList[0];
                                     setStudyList(studyList.slice(1)); setCurrentWord(next); setIsFlipped(false); setFeedback("");
-                                    if(view==='quiz') setOptions(shuffle([next.eng, ...wordBank.filter(x=>x.eng!==next.eng).slice(0,3).map(x=>x.eng)]));
+                                    if(view==='quiz') {
+                                        const wrongPool = shuffle(wordBank.filter(x => x.eng !== next.eng)).slice(0, 3).map(x => x.eng);
+                                        setOptions(shuffle([next.eng, ...wrongPool]));
+                                    }
                                 }}>下一個</button>
                                 <button className="btn" onClick={()=>setView('home')}>返回</button>
                             </div>
@@ -489,7 +484,6 @@
                                 </div>
                                 <div className="battle-scene">
                                     <div className="timer-line" style={{width:timeLeft+'%'}}></div>
-                                    {/* 【修改】此處的 className 與 src 皆綁定了新的 state，用於實現怪物震動與濾鏡 */}
                                     <div className="monster-box">
                                         <img src={currentMonsterImg} className={`monster-img ${monsterAnim} ${monsterHurtAnim}`} />
                                     </div>
