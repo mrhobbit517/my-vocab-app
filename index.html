@@ -122,12 +122,15 @@
         .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
         .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain; }
         
+        /* 怪物受傷動畫：融合了原本的擊飛消失，並加入了震動與濾鏡 */
         @keyframes hit-shake { 
             0% { transform: translateX(0); } 
-            20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 
-            100% { transform: scale(0); opacity: 0; } 
+            20% { transform: translateX(-15px) scale(1.1); filter: brightness(1.2) sepia(1) saturate(8); } 
+            40% { transform: translateX(10px) scale(1.05); filter: brightness(1.2) sepia(1) saturate(8); }
+            60% { transform: translateX(-10px) scale(1); filter: brightness(1.1) sepia(0.5); }
+            100% { transform: scale(0) translateX(-50px); opacity: 0; filter: brightness(1); } 
         }
-        .anim-hit { animation: hit-shake 0.5s forwards; }
+        .anim-hit { animation: hit-shake 0.6s forwards; }
         
         @keyframes hurt-red-filter { 
             0% { filter: brightness(1); } 
@@ -193,7 +196,6 @@
         }
         .chest-img:hover { transform: scale(1.1); }
 
-        /* 關鍵修正：確保被啟用的 View 絕對看得到 */
         .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
         .view-section.active { display: flex !important; }
     </style>
@@ -440,29 +442,23 @@
             }
         }
 
-        // 徹底重構畫面切換邏輯，根治無法進入的 Bug
         function switchView(viewId) {
-            // 隱藏所有一般的視圖區塊
             const sections = document.querySelectorAll('.view-section');
             for(let i=0; i<sections.length; i++) {
                 sections[i].classList.remove('active');
             }
 
-            // 處理專屬的 Splash Screen 隱藏與顯現
             const splash = document.getElementById('view-splash');
             if (viewId === 'splash') {
                 splash.style.setProperty('display', 'flex', 'important');
             } else {
                 splash.style.setProperty('display', 'none', 'important');
-                
-                // 開放對應目標區塊
                 const target = document.getElementById('view-' + viewId);
                 if (target) {
                     target.classList.add('active');
                 }
             }
 
-            // 背景切換
             if (viewId === 'dungeon') {
                 document.getElementById('dungeonBg').style.display = 'block';
                 document.getElementById('globalBg').style.display = 'none';
@@ -766,6 +762,7 @@
                 wrongWords = wrongWords.filter(w => w.eng !== currentWord.eng);
                 
                 const mImgElement = document.getElementById('monsterImg');
+                // 觸發修改後的敵人受傷特效（含震動與血紅濾鏡）
                 mImgElement.classList.add('anim-hit');
                 
                 speak(currentWord.eng);
@@ -781,7 +778,7 @@
                         floor++;
                         loadDungeonLevel();
                     }
-                }, 500);
+                }, 600); // 配合 CSS 動畫長度改為 0.6 秒
             } else {
                 triggerPlayerHurt(false);
             }
