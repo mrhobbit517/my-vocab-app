@@ -32,6 +32,7 @@
             position: relative; 
             z-index: 1;
         }
+        
         .global-bg { 
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; 
@@ -49,6 +50,7 @@
             z-index: 0; 
             display: none;
         }
+
         .splash-screen { 
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; 
@@ -90,6 +92,7 @@
             color: var(--primary);
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
+        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
         .speaker-btn { 
             background: #e1f0ff; border: none;
             border-radius: 50%; width: 44px; height: 44px; cursor: pointer; 
@@ -108,6 +111,7 @@
             border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
             font-size: 0.95rem; width: 100%; box-sizing: border-box;
         }
+        
         .battle-scene { 
             position: relative;
             width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
@@ -125,13 +129,25 @@
         }
         .anim-hit { animation: hit-shake 0.5s forwards; }
         
+        @keyframes hurt-red-filter { 
+            0% { filter: brightness(1); } 
+            50% { filter: brightness(1.2) sepia(1) saturate(8); } 
+            100% { filter: brightness(1); } 
+        }
         @keyframes hurt-vibrate { 
             0% { transform: translate(0, 0); } 
             10% { transform: translate(-4px, -2px); } 
+            20% { transform: translate(3px, 2px); } 
+            30% { transform: translate(-4px, 1px); } 
+            40% { transform: translate(3px, -1px); } 
             50% { transform: translate(-2px, 2px); } 
+            60% { transform: translate(2px, 1px); } 
+            70% { transform: translate(-3px, -1px); } 
+            80% { transform: translate(3px, 2px); } 
+            90% { transform: translate(-1px, -2px); } 
             100% { transform: translate(0, 0); } 
         }
-        .anim-hurt-combined { animation: hurt-vibrate 0.4s; }
+        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s; }
 
         .timer-line { 
             position: absolute; top: -10px; left: 0; height: 6px; 
@@ -155,8 +171,10 @@
         .combo-text { 
             position: absolute; left: 20px; top: 30px; font-size: 1.8rem; 
             font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
+            animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
             display: none;
         }
+        @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
 
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -168,12 +186,13 @@
             text-align: center; width: 80%; max-width: 320px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
         }
+        
         .chest-img { 
             width: 100px; height: auto; cursor: pointer; 
             transition: 0.2s; object-fit: contain; 
         }
         .chest-img:hover { transform: scale(1.1); }
-        
+
         .view-section { display: none; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
         .view-section.active { display: flex; }
     </style>
@@ -183,7 +202,7 @@
     <div class="dungeon-bg" id="dungeonBg"></div>
     <div class="hurt-flash" id="hurtFlash"></div>
 
-    <div class="splash-screen" id="view-splash">
+    <div class="splash-screen" id="view-splash" style="display: flex;">
         <img src="https://i.imgur.com/8MUpGMJ.jpeg" class="splash-img" alt="splash" />
         <div class="enter-btn-container">
             <button class="btn-rpg" onclick="switchView('home')">Enter</button>
@@ -194,44 +213,69 @@
         <div id="view-home" class="view-section">
             <h1 style="text-align:center; color:var(--primary)">VOCAB DUNGEON</h1>
             <button class="btn btn-primary" onclick="switchView('menu')">開始挑戰</button>
-            <button class="btn" onclick="alert('新增功能正在優化中，可先遊玩預設字庫！')">新增單字</button>
-            <button class="btn" onclick="switchView('list')">字庫管理 (<span id="bankCount">40</span>)</button>
+            <button class="btn" onclick="switchView('add')">新增單字</button>
+            <button class="btn" onclick="switchView('list')">字庫管理 (<span id="bankCount">0</span>)</button>
             <img src="https://i.imgur.com/6UDmnhC.png" class="footer-img" />
         </div>
 
         <div id="view-menu" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>選擇模式</h2>
-            <button class="btn btn-outline" onclick="startCardMode()">生字卡 (讀音/例句)</button>
+            <button class="btn btn-outline" onclick="startNormal('card')">生字卡 (讀音/例句)</button>
+            <button class="btn btn-outline" onclick="startNormal('quiz')">選擇題模式 (看中選英)</button>
             <hr style="width:100%; border:none; border-top:1px solid #ddd; margin:20px 0"/>
             <h3 style="color:var(--danger)">城堡 地下城戰鬥</h3>
-            <button class="btn" onclick="startDungeon(10)">初級 (10層 - 限時5秒)</button>
+            <button class="btn" onclick="startDungeon('low')">初級 (10層 - 限時5秒)</button>
+            <button class="btn" onclick="startDungeon('mid')">中級 (15層 - 限時5秒)</button>
+            <button class="btn" onclick="startDungeon('high')">高級 (20層 - 限時5秒)</button>
         </div>
 
-        <div id="view-card" class="view-section">
-            <div class="card" onclick="flipCard()">
-                <div id="card-front">
-                    <div class="card-eng" id="cardEngText">apple</div>
-                    <button class="speaker-btn" onclick="event.stopPropagation(); speakCurrent();">🔊</button>
-                </div>
-                <div id="card-back" style="display:none; text-align:left; width:100%">
-                    <div style="display:flex; justify-content:space-between; alignItems:center">
-                        <strong style="font-size:1.4rem; color:var(--primary)" id="cardBackEng">apple</strong>
-                        <button class="speaker-btn" style="width:36px; height:36px" onclick="event.stopPropagation(); speakCurrent();">🔊</button>
+        <div id="view-add" class="view-section">
+            <button class="btn" onclick="switchView('home')">← 返回</button>
+            <h2>新增單字</h2>
+            <input type="text" id="newEng" placeholder="英文單字" />
+            <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯</button>
+            <textarea id="newChi" placeholder="中文意思"></textarea>
+            <textarea id="newExample" placeholder="例句" rows="3"></textarea>
+            <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
+        </div>
+
+        <div id="view-list" class="view-section">
+            <button class="btn" onclick="switchView('home')">← 返回</button>
+            <h3>我的字庫 (<span id="listCount">0</span>)</h3>
+            <div style="display:flex; gap:5px; margin-bottom:15px">
+                <button class="btn btn-outline btn-small" onclick="exportCSV()">📤 匯出 CSV</button>
+                <button class="btn btn-outline btn-small" onclick="document.getElementById('csvInput').click()">📥 匯入 CSV</button>
+                <input type="file" id="csvInput" style="display:none" accept=".csv" onchange="importCSV(event)" />
+            </div>
+            <div id="wordListContainer" style="max-height: 400px; overflow-y: auto;"></div>
+            <button class="btn" style="marginTop:20px; color:red" onclick="resetDefaultBank()">⚠️ 重置回預設單字</button>
+        </div>
+
+        <div id="view-study" class="view-section">
+            <div class="card" id="studyCard" onclick="handleCardFlip()">
+                <div id="card-unflipped" style="width:100%">
+                    </div>
+                <div id="card-flipped" style="display:none; text-align:left; width:100%">
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <strong style="font-size:1.4rem; color:var(--primary)" id="flipEng"></strong>
+                        <button class="speaker-btn" style="width:36px; height:36px" id="flipSpeakBtn">🔊</button>
                     </div>
                     <hr/>
-                    <strong>【中文】</strong><p id="cardChiText">蘋果</p>
-                    <div class="example-box"><strong>【例句】</strong><p id="cardExText">An apple a day...</p></div>
+                    <strong>【中文】</strong><p id="flipChi"></p>
+                    <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
                 </div>
             </div>
-            <button class="btn btn-primary" onclick="nextCard()">下一個</button>
+            <div id="quizOptions" class="quiz-grid" style="display:none"></div>
+            <div id="studyFeedback" style="text-align:center; font-weight:bold; margin:10px"></div>
+            <button class="btn btn-primary" onclick="nextStudyWord()">下一個</button>
             <button class="btn" onclick="switchView('home')">返回</button>
         </div>
 
         <div id="view-dungeon" class="view-section">
             <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between; margin-bottom: 15px">
-                <span id="hpDisplay">❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️</span>
-                <span id="floorDisplay">B1/10</span>
+                <span id="hpDisplay"></span>
+                <span id="floorDisplay"></span>
             </div>
             <div class="battle-scene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
@@ -244,23 +288,36 @@
                 </div>
             </div>
             <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
-                <div style="font-size:1.3rem; font-weight:bold" id="dungeonChiText">蘋果</div>
+                <div style="font-size:1.3rem; font-weight:bold" id="dungeonChi"></div>
             </div>
             
-            <div id="quizGrid" class="quiz-grid"></div>
-            <div id="bossInputArea" style="display:none">
+            <div id="dungeonQuizGrid" class="quiz-grid"></div>
+            <div id="dungeonBossArea" style="display:none">
                 <input type="text" id="bossInput" placeholder="拼寫單字..." />
-                <button class="btn btn-primary" onclick="checkBossAns()">⚡ 攻擊 BOSS</button>
+                <button class="btn btn-primary" onclick="checkDungeonAns(document.getElementById('bossInput').value.trim().toLowerCase() === currentWord.eng.toLowerCase())">⚡ 攻擊 BOSS</button>
             </div>
 
-            <button class="btn" style="color:#999; margin-top: 10px" onclick="endDungeonGame('home')">🏳️ 撤退</button>
+            <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
         </div>
 
         <div id="view-end" class="view-section">
             <div style="text-align:center">
-                <h1 id="endEmoji">🎉</h1>
-                <h2 id="endTitle">挑戰成功</h2>
+                <h1 id="endEmoji"></h1>
+                <h2 id="endTitle"></h2>
             </div>
+            
+            <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; marginTop: 15px; max-height: 200px; overflow-y: auto">
+                <h4 style="margin: 0 0 10px 0">📊 本次戰果</h4>
+                <div style="color: var(--success); margin-bottom: 5px">
+                    <strong>擊殺 (<span id="killedCount">0</span>)：</strong> 
+                    <span id="killedList"></span>
+                </div>
+                <div style="color: var(--danger)">
+                    <strong>漏掉/錯過 (<span id="missedCount">0</span>)：</strong> 
+                    <span id="missedList"></span>
+                </div>
+            </div>
+
             <button class="btn btn-primary" style="margin-top: 20px" onclick="switchView('home')">返回</button>
         </div>
     </div>
@@ -275,7 +332,7 @@
     </div>
 
     <script>
-        // 1. 資料庫
+        // --- 完整 40 個單字庫 (與 v10.1 完全一致) ---
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
@@ -286,189 +343,454 @@
             {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
             {eng:"house", chi:"房子", example:"We live in a big white house."},
             {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
-            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."}
+            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
+            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
+            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
+            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
+            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
+            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
+            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
+            {eng:"river", chi:"河流", example:"We went fishing by the river."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
+            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
+            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
+            {eng:"water", chi:"水", example:"We should drink plenty of water."},
+            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
+            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
+            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
+            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+            {eng:"door", chi:"門", example:"Please close the door behind you."},
+            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
+            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
+            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
+            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
+            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
+            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
+            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
+            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
+
+        const monsterImages = [
+            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
+            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
+            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
 
-        const monsterImages = ["https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png"];
-        const bossImages = ["https://i.imgur.com/LNZ46Uc.png"];
+        // --- 狀態控制 ---
+        let wordBank = [];
+        let wrongWords = [];
+        let studyList = [];
+        let currentWord = null;
+        let studyMode = 'card'; 
+        let isFlipped = false;
+        let currentOptions = [];
 
-        // 2. 狀態管理
-        let currentView = 'splash';
-        let currentWordIndex = 0;
+        // 地下城狀態
         let hp = 10;
         let floor = 1;
         let maxFloor = 10;
-        let isFlipped = false;
-        let timer = null;
+        let dungeonMode = 'low';
         let timeLeft = 100;
+        let timerInterval = null;
         let combo = 0;
-        let chestOpened = false;
+        let extraTime = 0;
+        let isBossCurrent = false;
+        let chestStatus = 'closed';
+        let killedWords = [];
+        let missedWords = [];
+        let currentMImg = "";
 
-        // 3. 核心切換畫面邏輯 (純原生JS，毫無白畫面風險)
+        // --- 初始化與儲存 ---
+        function init() {
+            const savedBank = localStorage.getItem('vocab_v10_final_v2');
+            const savedWrongs = localStorage.getItem('vocab_wrongs');
+            
+            if (savedBank) {
+                try { wordBank = JSON.parse(savedBank); } catch(e) { wordBank = initialWords; }
+            } else { wordBank = initialWords; }
+
+            if (savedWrongs) {
+                try { wrongWords = JSON.parse(savedWrongs); } catch(e) { wrongWords = []; }
+            }
+
+            updateGlobalCounts();
+            switchView('splash');
+        }
+
+        function saveState() {
+            localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+            localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
+            updateGlobalCounts();
+        }
+
+        function updateGlobalCounts() {
+            document.getElementById('bankCount').innerText = wordBank.length;
+            document.getElementById('listCount').innerText = wordBank.length;
+        }
+
+        function resetDefaultBank() {
+            if(confirm('確定要重置回預設字庫嗎？')) {
+                wordBank = initialWords;
+                wrongWords = [];
+                saveState();
+                switchView('home');
+            }
+        }
+
+        // --- 畫面切換 (原生JS防白畫面) ---
         function switchView(viewId) {
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
             const target = document.getElementById('view-' + viewId);
-            if(target) target.classList.add('active');
-            
-            if(viewId === 'splash') document.getElementById('view-splash').style.display = 'flex';
+            if (target) target.classList.add('active');
+
+            if (viewId === 'splash') document.getElementById('view-splash').style.display = 'flex';
             else document.getElementById('view-splash').style.display = 'none';
 
-            if(viewId === 'dungeon') {
+            if (viewId === 'dungeon') {
                 document.getElementById('dungeonBg').style.display = 'block';
                 document.getElementById('globalBg').style.display = 'none';
             } else {
                 document.getElementById('dungeonBg').style.display = 'none';
                 document.getElementById('globalBg').style.display = 'block';
             }
-            currentView = viewId;
+
+            if (viewId === 'list') renderWordList();
         }
 
-        // 4. 生字卡邏輯
-        function startCardMode() {
-            currentWordIndex = 0;
+        // --- 單字管理功能 (Add / List / CSV) ---
+        function addNewWord() {
+            const eng = document.getElementById('newEng').value.trim();
+            const chi = document.getElementById('newChi').value.trim();
+            const ex = document.getElementById('newExample').value.trim();
+            if (!eng || !chi) return alert("內容不全！");
+
+            wordBank.unshift({ eng, chi, example: ex, id: Date.now() });
+            saveState();
+            document.getElementById('newEng').value = '';
+            document.getElementById('newChi').value = '';
+            document.getElementById('newExample').value = '';
+            alert("儲存成功");
+        }
+
+        async function autoFetch() {
+            const eng = document.getElementById('newEng').value.trim();
+            if(!eng) return;
+            try {
+                const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
+                const tData = await tRes.json();
+                document.getElementById('newChi').value = tData.responseData.translatedText;
+                
+                const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
+                const dData = await dRes.json();
+                if(Array.isArray(dData)) {
+                    const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
+                    document.getElementById('newExample').value = ex || "No example found.";
+                }
+            } catch(e) { alert("抓取失敗"); }
+        }
+
+        function renderWordList() {
+            const container = document.getElementById('wordListContainer');
+            container.innerHTML = '';
+            wordBank.forEach(w => {
+                const div = document.createElement('div');
+                div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
+                div.innerHTML = `
+                    <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
+                    <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
+                    <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteWord(id) {
+            wordBank = wordBank.filter(x => x.id !== id);
+            saveState();
+            renderWordList();
+        }
+
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
+                + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "my_vocab_list.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function importCSV(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const text = evt.target.result;
+                const lines = text.split("\n").slice(1);
+                const newWords = lines.map((line, i) => {
+                    const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    if (parts.length < 2) return null;
+                    return {
+                       eng: parts[0].replace(/"/g, '').trim(),
+                       chi: parts[1].replace(/"/g, '').trim(),
+                       example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
+                       id: Date.now() + i
+                    };
+                }).filter(x => x && x.eng);
+                if (newWords.length > 0) {
+                    wordBank = [...newWords, ...wordBank];
+                    saveState();
+                    alert(`成功匯入 ${newWords.length} 個單字！`);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- 核心邏輯：洗牌與發音 ---
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+
+        function speak(text) {
+            if(!text || !window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+
+        // --- 生字卡與選擇題模式 ---
+        function startNormal(m) {
+            if(wordBank.length < 4) return alert("單字不足 4 個，無法開始！");
+            studyMode = m;
+            studyList = shuffle(wordBank);
+            currentWord = studyList[0];
+            studyList = studyList.slice(1);
             isFlipped = false;
-            updateCardDisplay();
-            switchView('card');
-        }
-
-        function updateCardDisplay() {
-            const word = initialWords[currentWordIndex];
-            document.getElementById('cardEngText').innerText = word.eng;
-            document.getElementById('cardBackEng').innerText = word.eng;
-            document.getElementById('cardChiText').innerText = word.chi;
-            document.getElementById('cardExText').innerText = word.example;
+            document.getElementById('studyFeedback').innerText = '';
             
-            document.getElementById('card-front').style.display = 'block';
-            document.getElementById('card-back').style.display = 'none';
-            isFlipped = false;
+            setupStudyCard();
+            switchView('study');
         }
 
-        function flipCard() {
-            if(!isFlipped) {
-                document.getElementById('card-front').style.display = 'none';
-                document.getElementById('card-back').style.display = 'block';
+        function setupStudyCard() {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            const quizOpts = document.getElementById('quizOptions');
+
+            quizOpts.style.display = 'none';
+            unflipped.style.display = 'block';
+            flipped.style.display = 'none';
+            isFlipped = false;
+
+            if (studyMode === 'card') {
+                unflipped.innerHTML = `
+                    <div class="card-eng">${currentWord.eng}</div>
+                    <button class="speaker-btn" onclick="event.stopPropagation(); speak('${currentWord.eng}')">🔊</button>
+                `;
+            } else { // quiz 模式：看中選英
+                unflipped.innerHTML = `<div class="card-chi">${currentWord.chi}</div>`;
+                quizOpts.style.display = 'grid';
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                
+                quizOpts.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-outline';
+                    btn.innerText = opt;
+                    btn.onclick = () => handleQuizSelect(opt);
+                    quizOpts.appendChild(btn);
+                });
+            }
+
+            document.getElementById('flipEng').innerText = currentWord.eng;
+            document.getElementById('flipChi').innerText = currentWord.chi;
+            document.getElementById('flipEx').innerText = currentWord.example || '無例句';
+            document.getElementById('flipSpeakBtn').onclick = (e) => { e.stopPropagation(); speak(currentWord.eng); };
+        }
+
+        function handleCardFlip() {
+            if (studyMode !== 'card') return;
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            if (!isFlipped) {
+                unflipped.style.display = 'none';
+                flipped.style.display = 'block';
             } else {
-                document.getElementById('card-front').style.display = 'block';
-                document.getElementById('card-back').style.display = 'none';
+                unflipped.style.display = 'block';
+                flipped.style.display = 'none';
             }
             isFlipped = !isFlipped;
         }
 
-        function nextCard() {
-            currentWordIndex = (currentWordIndex + 1) % initialWords.length;
-            updateCardDisplay();
+        function handleQuizSelect(selected) {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            
+            speak(currentWord.eng);
+            if (selected === currentWord.eng) {
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
+            } else {
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
+            }
+            
+            unflipped.style.display = 'none';
+            flipped.style.display = 'block';
         }
 
-        // 5. 地下城邏輯
-        function startDungeon(floors) {
-            maxFloor = floors;
-            floor = 1;
+        function nextStudyWord() {
+            if (studyList.length === 0) return switchView('home');
+            currentWord = studyList[0];
+            studyList = studyList.slice(1);
+            document.getElementById('studyFeedback').innerText = '';
+            setupStudyCard();
+        }
+
+        // --- 地下城戰鬥模式 (極致還原核心) ---
+        function startDungeon(diff) {
+            if(wordBank.length < 4) return alert("單字不足 4 個！");
+            dungeonMode = diff;
+            maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
             hp = 10;
+            floor = 1;
             combo = 0;
+            extraTime = 0;
+            killedWords = [];
+            missedWords = [];
+
+            // 錯題優先邏輯
+            const matchedWrongs = wrongWords.filter(w => wordBank.some(bw => bw.eng === w.eng));
+            let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
+            
+            while (list.length < maxFloor) {
+                const randomWords = shuffle(wordBank);
+                for (let rw of randomWords) {
+                    if (list.length >= maxFloor) break;
+                    if (!list.some(l => l.eng === rw.eng)) list.push(rw);
+                }
+            }
+            studyList = shuffle(list);
+            
+            document.getElementById('playerImg').src = "https://i.imgur.com/PBcBCFv.png";
+            document.getElementById('comboDisplay').style.display = 'none';
+
             switchView('dungeon');
             loadDungeonLevel();
         }
 
         function loadDungeonLevel() {
-            clearInterval(timer);
+            clearInterval(timerInterval);
+            currentWord = studyList[floor - 1];
             timeLeft = 100;
-            document.getElementById('timerLine').style.width = '100%';
-            document.getElementById('hpDisplay').innerText = '❤️'.repeat(hp);
-            document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
             
-            // 隨機選一個單字
-            currentWordIndex = Math.floor(Math.random() * initialWords.length);
-            const word = initialWords[currentWordIndex];
-            document.getElementById('dungeonChiText').innerText = word.chi;
+            document.getElementById('timerLine').style.width = '100%';
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(hp);
+            document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
+            document.getElementById('dungeonChi').innerText = currentWord.chi;
+            
+            // 判斷 Boss 關卡
+            isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
+                            (dungeonMode === 'high' && (floor === 5 || floor === 10 || floor === 15 || floor === 20));
 
-            const isBoss = (floor === maxFloor || floor === 5);
-
-            // 設置怪物圖片
-            const mImg = document.getElementById('monsterImg');
-            mImg.className = 'monster-img';
-            if(isBoss) {
-                mImg.src = bossImages[0];
-                document.getElementById('quizGrid').style.display = 'none';
-                document.getElementById('bossInputArea').style.display = 'block';
+            const mImgElement = document.getElementById('monsterImg');
+            mImgElement.className = 'monster-img';
+            
+            if (isBossCurrent) {
+                currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'none';
+                document.getElementById('dungeonBossArea').style.display = 'block';
                 document.getElementById('bossInput').value = '';
                 document.getElementById('bossInput').focus();
             } else {
-                mImg.src = monsterImages[Math.floor(Math.random() * monsterImages.length)];
-                document.getElementById('quizGrid').style.display = 'grid';
-                document.getElementById('bossInputArea').style.display = 'none';
-                generateQuizOptions(word.eng);
+                currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'grid';
+                document.getElementById('dungeonBossArea').style.display = 'none';
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                
+                const grid = document.getElementById('dungeonQuizGrid');
+                grid.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-outline';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkDungeonAns(opt === currentWord.eng);
+                    grid.appendChild(btn);
+                });
             }
+            mImgElement.src = currentMImg;
 
-            // 倒數計時
-            timer = setInterval(() => {
-                timeLeft -= 2;
+            // 計時器邏輯
+            let totalSeconds = isBossCurrent ? 7 : 5;
+            totalSeconds += extraTime;
+            extraTime = 0;
+            const step = (100 / (totalSeconds * 10));
+
+            timerInterval = setInterval(() => {
+                timeLeft -= step;
                 document.getElementById('timerLine').style.width = timeLeft + '%';
-                if(timeLeft <= 0) {
-                    clearInterval(timer);
-                    hurtPlayer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    triggerPlayerHurt(true);
                 }
             }, 100);
         }
 
-        function generateQuizOptions(correctAns) {
-            const grid = document.getElementById('quizGrid');
-            grid.innerHTML = '';
-            
-            let pool = [correctAns];
-            while(pool.length < 4) {
-                let randomEng = initialWords[Math.floor(Math.random() * initialWords.length)].eng;
-                if(!pool.includes(randomEng)) pool.push(randomEng);
-            }
-            pool.sort(() => Math.random() - 0.5);
-
-            pool.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-outline';
-                btn.innerText = opt;
-                btn.onclick = () => checkAns(opt === correctAns);
-                grid.appendChild(btn);
-            });
-        }
-
-        function checkAns(isCorrect) {
-            clearInterval(timer);
-            if(isCorrect) {
+        function checkDungeonAns(isCorrect) {
+            clearInterval(timerInterval);
+            if (isCorrect) {
                 combo++;
-                if(combo >= 2) {
-                    document.getElementById('comboDisplay').style.display = 'block';
-                    document.getElementById('comboDisplay').innerText = `🔥 ${combo} Combo!`;
+                if (combo >= 2) {
+                    const cb = document.getElementById('comboDisplay');
+                    cb.style.display = 'block';
+                    cb.innerText = `🔥 ${combo} Combo!`;
                 }
-                const mImg = document.getElementById('monsterImg');
-                mImg.classList.add('anim-hit');
-                speak(initialWords[currentWordIndex].eng);
+                killedWords.push(currentWord);
+                wrongWords = wrongWords.filter(w => w.eng !== currentWord.eng);
+                
+                const mImgElement = document.getElementById('monsterImg');
+                mImgElement.classList.add('anim-hit');
+                
+                speak(currentWord.eng);
+                if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
 
                 setTimeout(() => {
-                    if(floor === 5) { // 中間的Boss
-                        showChestModal();
-                    } else if(floor >= maxFloor) {
-                        endDungeonGame('win');
+                    mImgElement.classList.remove('anim-hit');
+                    if (floor >= maxFloor) {
+                        endGame('win');
+                    } else if (isBossCurrent) {
+                        showChest();
                     } else {
                         floor++;
                         loadDungeonLevel();
                     }
-                }, 600);
+                }, 500);
             } else {
-                hurtPlayer();
+                triggerPlayerHurt(false);
             }
         }
 
-        function checkBossAns() {
-            const inputVal = document.getElementById('bossInput').value.trim().toLowerCase();
-            const correctAns = initialWords[currentWordIndex].eng.toLowerCase();
-            checkAns(inputVal === correctAns);
-        }
-
-        function hurtPlayer() {
+        function triggerPlayerHurt(isTimeout) {
             combo = 0;
             document.getElementById('comboDisplay').style.display = 'none';
-            hp--;
-            document.getElementById('hpDisplay').innerText = '❤️'.repeat(hp);
             
+            // 記錄錯題
+            if (!wrongWords.some(w => w.eng === currentWord.eng)) wrongWords.push(currentWord);
+            if (!missedWords.some(w => w.eng === currentWord.eng)) missedWords.push(currentWord);
+            
+            hp--;
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(hp);
+
             const flash = document.getElementById('hurtFlash');
             flash.classList.add('anim-flash');
             setTimeout(() => flash.classList.remove('anim-flash'), 500);
@@ -477,17 +799,21 @@
             pImg.classList.add('anim-hurt-combined');
             setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
 
-            if(hp <= 0) {
-                setTimeout(() => endDungeonGame('lose'), 500);
+            if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
+
+            if (hp <= 0) {
+                setTimeout(() => endGame('lose'), 600);
             } else {
-                setTimeout(() => loadDungeonLevel(), 600);
+                setTimeout(() => {
+                    loadDungeonLevel();
+                }, 800);
             }
         }
 
-        // 6. 寶箱功能落實
-        function showChestModal() {
-            chestOpened = false;
-            // 重置為關閉寶箱圖
+        // --- 寶箱邏輯 (落實圖片要求) ---
+        function showChest() {
+            chestStatus = 'closed';
+            // 精確設定關閉寶箱圖
             document.getElementById('chestImg').src = "https://i.imgur.com/sAsVc32.png";
             document.getElementById('chestTip').innerText = '點擊寶箱開啟獎勵！';
             document.getElementById('chestNextBtn').style.display = 'none';
@@ -495,17 +821,17 @@
         }
 
         function openChest() {
-            if(chestOpened) return;
-            chestOpened = true;
-            // 開啟時換成開啟寶箱圖
+            if (chestStatus !== 'closed') return;
+            chestStatus = 'open';
+            // 精確設定開啟寶箱圖
             document.getElementById('chestImg').src = "https://i.imgur.com/JNPgpc7.png";
-            
-            // 隨機獎勵
-            if(Math.random() < 0.5) {
+
+            if (Math.random() < 0.5) {
                 hp++;
                 document.getElementById('chestTip').innerText = '你獲得了：❤️ 回復 1 點生命！';
             } else {
-                document.getElementById('chestTip').innerText = '你獲得了：⏱️ 寶箱的祝福！';
+                extraTime = 2;
+                document.getElementById('chestTip').innerText = '你獲得了：⏱️ 下一關時間延長 2 秒！';
             }
             document.getElementById('chestNextBtn').style.display = 'block';
         }
@@ -516,38 +842,25 @@
             loadDungeonLevel();
         }
 
-        function endDungeonGame(result) {
-            clearInterval(timer);
-            if(result === 'win') {
-                document.getElementById('endEmoji').innerText = '🎉';
-                document.getElementById('endTitle').innerText = '挑戰成功！';
-                switchView('end');
-            } else if(result === 'lose') {
-                document.getElementById('endEmoji').innerText = '💀';
-                document.getElementById('endTitle').innerText = '你倒下了...';
-                switchView('end');
-            } else {
-                switchView('home');
-            }
+        // --- 結算畫面 (100% 完整) ---
+        function endGame(result) {
+            clearInterval(timerInterval);
+            saveState(); // 儲存錯題
+
+            document.getElementById('endEmoji').innerText = (result === 'win') ? '🎉' : '💀';
+            document.getElementById('endTitle').innerText = (result === 'win') ? '挑戰成功' : '你倒下了';
+
+            document.getElementById('killedCount').innerText = killedWords.length;
+            document.getElementById('killedList').innerText = killedWords.map(w => w.eng).join(', ') || '無';
+            
+            document.getElementById('missedCount').innerText = missedWords.length;
+            document.getElementById('missedList').innerText = missedWords.map(w => w.eng).join(', ') || '無';
+
+            switchView('end');
         }
 
-        // 發音
-        function speak(text) {
-            if(!text || !window.speechSynthesis) return;
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'en-US';
-            window.speechSynthesis.speak(u);
-        }
-
-        function speakCurrent() {
-            speak(initialWords[currentWordIndex].eng);
-        }
-
-        // 初始載入
-        window.onload = () => {
-            switchView('splash');
-        };
+        // 啟動
+        init();
     </script>
 </body>
 </html>
