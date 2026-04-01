@@ -79,7 +79,7 @@
             transition: 0.1s; 
         }
         .btn-rpg:active { transform: scale(0.9);
-        background: #636e72; }
+            background: #636e72; }
 
         .btn { 
             background: #fff;
@@ -101,7 +101,7 @@
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
         .btn-small { padding: 8px; font-size: 0.85rem;
-        margin: 5px 2px; flex: 1; }
+            margin: 5px 2px; flex: 1; }
         .speaker-btn { 
             background: #e1f0ff;
             border: none;
@@ -146,13 +146,13 @@
             0% { transform: translateX(0);
             } 
             20% { transform: translateX(-15px) scale(1.1);
-            filter: brightness(1.2) sepia(1) saturate(8); } 
+                filter: brightness(1.2) sepia(1) saturate(8); } 
             40% { transform: translateX(10px) scale(1.05);
-            filter: brightness(1.2) sepia(1) saturate(8); }
+                filter: brightness(1.2) sepia(1) saturate(8); }
             60% { transform: translateX(-10px) scale(1);
-            filter: brightness(1.1) sepia(0.5); }
+                filter: brightness(1.1) sepia(0.5); }
             100% { transform: scale(0) translateX(-50px);
-            opacity: 0; filter: brightness(1); } 
+                opacity: 0; filter: brightness(1); } 
         }
         .anim-hit { animation: hit-shake 0.6s forwards;
         }
@@ -250,7 +250,7 @@
         }
 
         .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column;
-        justify-content: center; }
+            justify-content: center; }
         .view-section.active { display: flex !important;
         }
     </style>
@@ -278,6 +278,7 @@
         </div>
 
         <div id="view-menu" class="view-section">
+       
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>選擇模式</h2>
             <button class="btn btn-outline" onclick="startNormal('card')">生字卡 (讀音/例句)</button>
@@ -298,7 +299,7 @@
             <textarea id="newChi" placeholder="中文意思"></textarea>
             <textarea id="newExample" placeholder="例句" rows="3"></textarea>
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
-        
+  
         </div>
 
         <div id="view-list" class="view-section">
@@ -346,7 +347,7 @@
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
                 </div>
                 <div class="player-box">
-                   
+      
                     <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
                 </div>
             </div>
@@ -402,31 +403,37 @@
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
             {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
+         
             {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
             {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
             {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
             {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
             {eng:"house", chi:"房子", example:"We live in a big white house."},
+      
             {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
             {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
             {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
             {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
             {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
+    
             {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
             {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
             {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
             {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
             {eng:"river", chi:"河流", example:"We went fishing by the river."},
+   
             {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
             {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
             {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
             {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
             {eng:"water", chi:"水", example:"We should drink plenty of water."},
+       
             {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
             {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
             {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
             {eng:"ball", chi:"球", example:"Throw the ball to me!"},
             {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+         
             {eng:"door", chi:"門", example:"Please close the door behind you."},
             {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
             {eng:"flower", chi:"花", example:"This flower smells wonderful."},
@@ -437,9 +444,11 @@
             {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
             {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
             {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
-             {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+           
+            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
             {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
+        
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -589,16 +598,25 @@
             renderWordList();
         }
 
+        // 這是幫你更新後的匯出 CSV 功能，解決了亂碼問題
         function exportCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
+            // 在最前端加上 \ufeff (BOM)，解決 Excel 開啟時中文亂碼的問題
+            let csvContent = "\ufeff英文,中文,例句\n" 
                 + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
-            const encodedUri = encodeURI(csvContent);
+            
+            // 將內容轉為 Blob 物件，指定為 utf-8 格式，更安全穩固
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            
+            // 建立下載連結
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
             link.setAttribute("download", "my_vocab_list.csv");
+            
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            URL.revokeObjectURL(url); // 釋放記憶體
         }
 
         function importCSV(e) {
@@ -616,6 +634,7 @@
                         eng: parts[0].replace(/"/g, '').trim(),
                        chi: parts[1].replace(/"/g, '').trim(),
                        example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
+                    
                        id: Date.now() + i
                 
                     };
@@ -762,7 +781,7 @@
             document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
             document.getElementById('dungeonChi').innerText = currentWord.chi;
             isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
-            (dungeonMode === 'high' && (floor === 5 || floor === 10 || floor === 15 || floor === 20));
+                (dungeonMode === 'high' && (floor === 5 || floor === 10 || floor === 15 || floor === 20));
             const mImgElement = document.getElementById('monsterImg');
             mImgElement.className = 'monster-img';
             
@@ -793,12 +812,9 @@
                 });
             }
             mImgElement.src = currentMImg;
-
-            // 啟動計時器 (獨立成一個函數，方便答錯/超時保留原地時呼叫)
             startTimer();
         }
 
-        // 新增/抽離：開始計時器的邏輯
         function startTimer() {
             clearInterval(timerInterval);
             timeLeft = 100;
@@ -837,7 +853,6 @@
                 wrongWords = wrongWords.filter(w => w.eng !== currentWord.eng);
                 
                 const mImgElement = document.getElementById('monsterImg');
-                // 觸發修改後的敵人受傷特效（含震動與血紅濾鏡）
                 mImgElement.classList.add('anim-hit');
                 
                 speak(currentWord.eng);
@@ -848,17 +863,13 @@
                     if (floor >= maxFloor) {
                         endGame('win');
                     } else if (isBossCurrent) {
- 
                         showChest();
                     } else {
                         floor++;
                         loadDungeonLevel();
-       
                     }
                 }, 600);
-                // 配合 CSS 動畫長度改為 0.6 秒
             } else {
-                // 答錯：呼叫受傷邏輯 (非超時超時)，但「不切換下一題」
                 triggerPlayerHurt(false);
             }
         }
@@ -886,10 +897,8 @@
             if (hp <= 0) {
                 setTimeout(() => endGame('lose'), 600);
             } else {
-                // 原本此處為 800 毫秒後無條件執行 loadDungeonLevel() 跳下一題。
-                // 現改為：維持同一題，並重新給予作答時間（重啟計時器）
                 setTimeout(() => {
-                    startTimer(); // 重置計時條並重新倒數，不切換題目
+                    startTimer(); 
                 }, 800);
             }
         }
