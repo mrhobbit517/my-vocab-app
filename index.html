@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v11.0 - Full Features</title>
+    <title>Vocab Dungeon v11.1 - No Last Chest</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -52,594 +52,579 @@
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
         .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
 
-        /* 新功能：畫面邊緣受傷紅框 */
         .hurt-flash { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none; z-index: 999; opacity: 0; }
         .anim-flash { animation: flash-fade 0.5s ease; }
         @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* 新功能：Combo 動畫 */
         .combo-text { position: absolute; left: 20px; top: 30px; font-size: 1.8rem; font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10; animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
 
-        /* 新功能：寶箱彈窗 */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .chest-img { width: 100px; height: 100px; cursor: pointer; transition: 0.2s; }
-        .chest-img:hover { transform: scale(1.1); }
+        .modal-content h3 { margin-top: 0; color: var(--text); }
+        .modal-content p { color: var(--gray); font-size: 0.95rem; line-height: 1.5; }
     </style>
 </head>
 <body>
+
     <div id="root"></div>
+
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
-        
-        const monsterImages = [
-            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
-            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
-            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
+
+        const defaultWords = [
+            { eng: "apple", chi: "蘋果", eg: "I eat an apple every day." },
+            { eng: "banana", chi: "香蕉", eg: "Bananas are rich in potassium." },
+            { eng: "cat", chi: "貓", eg: "The cat is sleeping on the sofa." },
+            { eng: "dog", chi: "狗", eg: "The dog barked at the stranger." },
+            { eng: "elephant", chi: "大象", eg: "Elephants are the largest land animals." },
+            { eng: "fish", chi: "魚", eg: "There are many colorful fish in the pond." },
+            { eng: "guitar", chi: "吉他", eg: "He plays the guitar very well." },
+            { eng: "house", chi: "房子", eg: "They live in a big house." },
+            { eng: "ice cream", chi: "冰淇淋", eg: "I love chocolate ice cream." },
+            { eng: "juice", chi: "果汁", eg: "Orange juice is good for health." },
+            { eng: "kite", chi: "風箏", eg: "The children are flying kites." },
+            { eng: "lemon", chi: "檸檬", eg: "Lemons are very sour." },
+            { eng: "monkey", chi: "猴子", eg: "Monkeys like to eat bananas." },
+            { eng: "notebook", chi: "筆記本", eg: "I write my diary in a notebook." },
+            { eng: "orange", chi: "橙子", eg: "This orange is very sweet." },
+            { eng: "pencil", chi: "鉛筆", eg: "Please sharpen your pencil." },
+            { eng: "queen", chi: "皇后", eg: "The queen is waving to the crowd." },
+            { eng: "rabbit", chi: "兔子", eg: "Rabbits have long ears." },
+            { eng: "sun", chi: "太陽", eg: "The sun rises in the east." },
+            { eng: "tiger", chi: "老虎", eg: "Tigers are fierce animals." },
+            { eng: "umbrella", chi: "雨傘", eg: "Don't forget to take an umbrella." },
+            { eng: "violin", chi: "小提琴", eg: "She is learning to play the violin." },
+            { eng: "water", chi: "水", eg: "We should drink enough water." },
+            { eng: "xylophone", chi: "木琴", eg: "The boy is playing a xylophone." },
+            { eng: "yellow", chi: "黃色", eg: "Bananas are yellow." },
+            { eng: "zebra", chi: "斑馬", eg: "Zebras have black and white stripes." },
+            { eng: "airport", chi: "機場", eg: "The plane landed at the airport." },
+            { eng: "bakery", chi: "麵包店", eg: "The smell of fresh bread came from the bakery." },
+            { eng: "clock", chi: "時鐘", eg: "The clock on the wall says 10 o'clock." },
+            { eng: "doctor", chi: "醫生", eg: "The doctor examined the patient." },
+            { eng: "egg", chi: "雞蛋", eg: "I eat a boiled egg for breakfast." },
+            { eng: "forest", chi: "森林", eg: "There are many trees in the forest." },
+            { eng: "garden", chi: "花園", eg: "She is watering flowers in the garden." },
+            { eng: "hospital", chi: "醫院", eg: "He was taken to the hospital." },
+            { eng: "island", chi: "島嶼", eg: "They went to a tropical island for vacation." },
+            { eng: "jacket", chi: "夾克", eg: "Put on your jacket; it's cold outside." },
+            { eng: "kangaroo", chi: "袋鼠", eg: "Kangaroos live in Australia." },
+            { eng: "library", chi: "圖書館", eg: "I borrowed a book from the library." },
+            { eng: "mountain", chi: "山", eg: "We climbed a high mountain last week." },
+            { eng: "nurse", chi: "護士", eg: "The nurse is taking care of the sick child." }
         ];
-        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-        
-        const monsterHurtImages = [...monsterImages];
-        const bossHurtImages = [...bossImages];
 
-        const playerImgDefault = "https://i.imgur.com/PBcBCFv.png";
-        const playerImgHurt = "https://i.imgur.com/PBcBCFv.png"; 
-        const splashImg = "https://i.imgur.com/8MUpGMJ.jpeg";
+        const monsters = [
+            { name: "哥布林", hp: 30, maxHp: 30, img: "https://i.imgur.com/rP6r7jN.png" },
+            { name: "史萊姆", hp: 50, maxHp: 50, img: "https://i.imgur.com/fLzFfV8.png" },
+            { name: "骷髏兵", hp: 80, maxHp: 80, img: "https://i.imgur.com/vHqY7Kj.png" },
+            { name: "惡魔領主", hp: 120, maxHp: 120, img: "https://i.imgur.com/v0XlshW.png" }
+        ];
 
-        const initialWords = [
-            {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
-            {eng:"book", chi:"書", example:"I like to read a book before bed."},
-            {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
-            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
-            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
-            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
-            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
-            {eng:"house", chi:"房子", example:"We live in a big white house."},
-            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
-            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
-            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
-            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
-            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
-            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
-            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
-            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
-            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
-            {eng:"river", chi:"河流", example:"We went fishing by the river."},
-            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
-            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
-            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
-            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
-            {eng:"water", chi:"水", example:"We should drink plenty of water."},
-            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
-            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
-            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
-            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
-            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
-            {eng:"door", chi:"門", example:"Please close the door behind you."},
-            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
-            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
-            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
-            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
-            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
-            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
-            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
-            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
-            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
-            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
-            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
-        ].map((w, i) => ({ ...w, id: Date.now() + i }));
+        function App() {
+            const [showSplash, setShowSplash] = useState(true);
+            const [view, setView] = useState('menu'); 
+            const [words, setWords] = useState(() => {
+                const saved = localStorage.getItem('vocab_list');
+                return saved ? JSON.parse(saved) : defaultWords;
+            });
+            const [currentWordIndex, setCurrentWordIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [quizOptions, setQuizOptions] = useState([]);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [message, setMessage] = useState("");
+            const [mode, setMode] = useState('all'); 
+            const [isCorrect, setIsCorrect] = useState(null);
 
-        const App = () => {
-            const [view, setView] = useState('splash');
-            const [wordBank, setWordBank] = useState([]);
-            const [studyList, setStudyList] = useState([]);
-            const [currentWord, setCurrentWord] = useState(null);
-            const [options, setOptions] = useState([]);
-            const [isFlipped, setIsFlipped] = useState(false);
-            const [feedback, setFeedback] = useState("");
-            const [hp, setHp] = useState(10);
-            const [floor, setFloor] = useState(1);
-            const [maxFloor, setMaxFloor] = useState(10);
-            const [mode, setMode] = useState('');
-            const [bossIn, setBossIn] = useState("");
-            const [timeLeft, setTimeLeft] = useState(100);
-            const [monsterAnim, setMonsterAnim] = useState("");
-            const [mImg, setMImg] = useState(monsterImages[0]);
+            const [curLevel, setCurLevel] = useState(0);
+            const [curMonster, setCurMonster] = useState({...monsters[0]});
+            const [playerHurt, setPlayerHurt] = useState(false);
+            const [monsterHurt, setMonsterHurt] = useState(false);
+            const [screenHurtFlash, setScreenHurtFlash] = useState(false);
+            const [combo, setCombo] = useState(0);
             
-            const [currentPlayerImg, setCurrentPlayerImg] = useState(playerImgDefault);
-            const [playerAnim, setPlayerAnim] = useState("");
-
-            const [currentMonsterImg, setCurrentMonsterImg] = useState(monsterImages[0]);
-            const [monsterHurtAnim, setMonsterHurtAnim] = useState("");
-            const [isBossCurrent, setIsBossCurrent] = useState(false);
-
+            const [timeLeft, setTimeLeft] = useState(5);
+            const [timerActive, setTimerActive] = useState(false);
             const timerRef = useRef(null);
-            const fileInputRef = useRef(null);
-            const [newEng, setNewEng] = useState("");
-            const [newChi, setNewChi] = useState("");
-            const [newExample, setNewExample] = useState("");
 
-            // ================= 新增功能狀態 =================
-            const [wrongWords, setWrongWords] = useState([]); // 暗黑怨念錯題庫
-            const [combo, setCombo] = useState(0); // 連擊數
-            const [isHurtFlash, setIsHurtFlash] = useState(false); // 紅光閃爍控制
-            const [showChest, setShowChest] = useState(false); // 寶箱開關
-            const [chestStatus, setChestStatus] = useState('closed'); // 'closed' | 'open'
-            const [chestReward, setChestReward] = useState(''); // 寶箱開出什麼
-            const [extraTime, setExtraTime] = useState(0); // 下一關額外獎勵時間
-            const [killedWords, setKilledWords] = useState([]); // 成功答對清單
-            const [missedWords, setMissedWords] = useState([]); // 答錯/超時清單
+            const [showImportModal, setShowImportModal] = useState(false);
+            const [csvInput, setCsvInput] = useState("");
 
             useEffect(() => {
-                const saved = localStorage.getItem('vocab_v10_final_v2');
-                const savedWrongs = localStorage.getItem('vocab_wrongs');
-                if (saved) {
-                    try {
-                        const parsed = JSON.parse(saved);
-                        setWordBank(parsed.length > 0 ? parsed : initialWords);
-                    } catch (e) { setWordBank(initialWords); }
-                } else { setWordBank(initialWords); }
+                localStorage.setItem('vocab_list', JSON.stringify(words));
+            }, [words]);
+
+            useEffect(() => {
+                if (timerActive && timeLeft > 0) {
+                    timerRef.current = setTimeout(() => setTimeLeft(prev => +(prev - 0.1).toFixed(1)), 100);
+                } else if (timerActive && timeLeft <= 0) {
+                    handleTimeOut();
+                }
+                return () => clearTimeout(timerRef.current);
+            }, [timeLeft, timerActive]);
+
+            function handleTimeOut() {
+                setTimerActive(false);
+                setCombo(0);
+                setScreenHurtFlash(true);
+                setTimeout(() => setScreenHurtFlash(false), 500);
+                setPlayerHurt(true);
+                setTimeout(() => setPlayerHurt(false), 400);
+                setMessage("時間到！你受到了攻擊！");
                 
-                if (savedWrongs) {
-                    try { setWrongWords(JSON.parse(savedWrongs)); } catch(e) { setWrongWords([]); }
+                const nextIdx = Math.floor(Math.random() * words.length);
+                setCurrentWordIndex(nextIdx);
+                generateOptions(nextIdx);
+                setTimeLeft(5);
+                setTimerActive(true);
+            }
+
+            function playSound(text) {
+                const synth = window.speechSynthesis;
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'en-US';
+                synth.speak(utter);
+            }
+
+            function shuffle(array) {
+                return array.sort(() => Math.random() - 0.5);
+            }
+
+            function generateOptions(correctIdx) {
+                const correct = words[correctIdx];
+                let opts = [correct];
+                while(opts.length < 4 && opts.length < words.length) {
+                    const rand = words[Math.floor(Math.random() * words.length)];
+                    if(!opts.find(o => o.eng === rand.eng)) opts.push(rand);
                 }
-            }, []);
+                setQuizOptions(shuffle(opts));
+            }
 
-            useEffect(() => {
-                if (wordBank.length > 0) {
-                    localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+            function startQuiz() {
+                setView('quiz');
+                const startIdx = Math.floor(Math.random() * words.length);
+                setCurrentWordIndex(startIdx);
+                generateOptions(startIdx);
+                setScore(0);
+                setCurLevel(0);
+                setCurMonster({...monsters[0]});
+                setCombo(0);
+                setTimeLeft(5);
+                setTimerActive(true);
+            }
+
+            function handleOptionClick(selected) {
+                setTimerActive(false);
+                const correct = words[currentWordIndex];
+                
+                if (selected.eng === correct.eng) {
+                    setScore(score + 10);
+                    setCombo(combo + 1);
+                    setMonsterHurt(true);
+                    setTimeout(() => setMonsterHurt(false), 500);
+                    setMessage("答對了！造成傷害！");
+
+                    const dmg = 10 + (combo * 2);
+                    let newHp = curMonster.hp - dmg;
+                    
+                    if(newHp <= 0) {
+                        setTimerActive(false);
+                        setMessage(`你擊敗了 ${curMonster.name}！`);
+                        setTimeout(() => {
+                            const nextLv = curLevel + 1;
+                            if(nextLv < monsters.length) {
+                                setCurLevel(nextLv);
+                                setCurMonster({...monsters[nextLv]});
+                                setMessage(`進入第 ${nextLv+1} 關！`);
+                                nextQuestion();
+                            } else {
+                                setView('boss-win');
+                            }
+                        }, 1000);
+                    } else {
+                        setCurMonster({...curMonster, hp: newHp});
+                        setTimeout(nextQuestion, 600);
+                    }
+                } else {
+                    setCombo(0);
+                    setScreenHurtFlash(true);
+                    setTimeout(() => setScreenHurtFlash(false), 500);
+                    setPlayerHurt(true);
+                    setTimeout(() => setPlayerHurt(false), 400);
+                    setMessage(`答錯了！正確是: ${correct.chi}`);
+                    setTimeout(nextQuestion, 1000);
                 }
-            }, [wordBank]);
+            }
 
-            useEffect(() => {
-                localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
-            }, [wrongWords]);
+            function nextQuestion() {
+                const nextIdx = Math.floor(Math.random() * words.length);
+                setCurrentWordIndex(nextIdx);
+                generateOptions(nextIdx);
+                setMessage("");
+                setTimeLeft(5);
+                setTimerActive(true);
+            }
 
-            const speak = (text) => {
-                if(!text || !window.speechSynthesis) return;
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u);
-            };
+            function startChestMode() {
+                setView('chest');
+                const startIdx = Math.floor(Math.random() * words.length);
+                setCurrentWordIndex(startIdx);
+                generateOptions(startIdx);
+                setScore(0);
+                setCurLevel(0);
+                setCombo(0);
+                setTimeLeft(5);
+                setTimerActive(true);
+            }
 
-            const shuffle = (a) => [...a].sort(() => Math.random() - 0.5);
+            function handleChestOption(selected) {
+                setTimerActive(false);
+                const correct = words[currentWordIndex];
+                
+                if (selected.eng === correct.eng) {
+                    setScore(score + 10);
+                    setCombo(combo + 1);
+                    
+                    const nextLv = curLevel + 1;
+                    if(nextLv >= 4) {
+                        setTimerActive(false);
+                        // 最後一關直接跳轉，什麼也不彈出
+                        setView('chest-win');
+                    } else {
+                        setMessage("答對了！成功解鎖一層寶箱！");
+                        setCurLevel(nextLv);
+                        setTimeout(() => {
+                            const nextIdx = Math.floor(Math.random() * words.length);
+                            setCurrentWordIndex(nextIdx);
+                            generateOptions(nextIdx);
+                            setMessage("");
+                            setTimeLeft(5);
+                            setTimerActive(true);
+                        }, 600);
+                    }
+                } else {
+                    setCombo(0);
+                    setScreenHurtFlash(true);
+                    setTimeout(() => setScreenHurtFlash(false), 500);
+                    setMessage(`答錯了！寶箱重置了！正確是: ${correct.chi}`);
+                    setCurLevel(0);
+                    setTimeout(() => {
+                        const nextIdx = Math.floor(Math.random() * words.length);
+                        setCurrentWordIndex(nextIdx);
+                        generateOptions(nextIdx);
+                        setMessage("");
+                        setTimeLeft(5);
+                        setTimerActive(true);
+                    }, 1000);
+                }
+            }
 
-            const exportCSV = () => {
-                let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
-                    + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
-                const encodedUri = encodeURI(csvContent);
+            function handleImport() {
+                const lines = csvInput.trim().split('\n');
+                const newWords = [];
+                lines.forEach(line => {
+                    const [eng, chi, eg] = line.split(',');
+                    if (eng && chi) {
+                        newWords.push({ eng: eng.trim(), chi: chi.trim(), eg: eg ? eg.trim() : `This is a ${eng.trim()}.` });
+                    }
+                });
+                
+                if (newWords.length > 0) {
+                    setWords(newWords);
+                    alert(`成功匯入 ${newWords.length} 個單字！`);
+                    setShowImportModal(false);
+                    setCsvInput("");
+                } else {
+                    alert("格式不正確，請確保每行至少有英文和中文，並用逗號隔開。");
+                }
+            }
+
+            function handleExport() {
+                const csvContent = words.map(w => `${w.eng},${w.chi},${w.eg}`).join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "my_vocab_list.csv");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "vocab_list.csv");
+                link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
-            };
-
-            const importCSV = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    const text = evt.target.result;
-                    const lines = text.split("\n").slice(1);
-                    const newWords = lines.map((line, i) => {
-                        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                        if (parts.length < 2) return null;
-                        return {
-                            eng: parts[0].replace(/"/g, '').trim(),
-                            chi: parts[1].replace(/"/g, '').trim(),
-                            example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
-                            id: Date.now() + i
-                        };
-                    }).filter(x => x && x.eng);
-                    if (newWords.length > 0) {
-                        setWordBank([...newWords, ...wordBank]);
-                        alert(`成功匯入 ${newWords.length} 個單字！`);
-                    }
-                };
-                reader.readAsText(file);
-            };
-
-            const autoFetch = async () => {
-                if(!newEng) return;
-                try {
-                    const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(newEng)}&langpair=en|zh-TW`);
-                    const tData = await tRes.json();
-                    setNewChi(tData.responseData.translatedText);
-                    const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(newEng)}`);
-                    const dData = await dRes.json();
-                    if(Array.isArray(dData)) {
-                        const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
-                        setNewExample(ex || "No example found.");
-                    }
-                } catch(e) { alert("抓取失敗"); }
-            };
-
-            const startNormal = (m) => {
-                if(wordBank.length < 4) return alert("單字不足4個");
-                const q = shuffle(wordBank);
-                setCurrentWord(q[0]); setStudyList(q.slice(1));
-                setIsFlipped(false); setFeedback("");
-                
-                if(m === 'quiz') {
-                    const wrongPool = shuffle(wordBank.filter(x => x.eng !== q[0].eng)).slice(0, 3).map(x => x.eng);
-                    setOptions(shuffle([q[0].eng, ...wrongPool]));
-                }
-                setView(m);
-            };
-
-            const startDungeon = (diff) => {
-                if(wordBank.length < 4) return alert("單字不足4個");
-                let mf = diff==='low'? 10 : diff==='mid'? 15 : 20;
-                
-                // 【新功能：暗黑怨念】優先加入曾答錯的單字
-                let list = [];
-                const matchedWrongs = wrongWords.filter(w => wordBank.some(bankW => bankW.eng === w.eng));
-                const shuffleWrongs = shuffle(matchedWrongs).slice(0, Math.floor(mf/2));
-                
-                list = [...shuffleWrongs];
-                while(list.length < mf) {
-                    const randomWords = shuffle(wordBank);
-                    for(let rw of randomWords) {
-                        if(list.length >= mf) break;
-                        if(!list.some(l => l.eng === rw.eng)) list.push(rw);
-                    }
-                }
-                list = shuffle(list);
-                
-                setMode(diff); setMaxFloor(mf); setHp(10); setFloor(1); setStudyList(list);
-                setCombo(0); setExtraTime(0); setKilledWords([]); setMissedWords([]);
-                setCurrentPlayerImg(playerImgDefault); setPlayerAnim("");
-                
-                loadDungeonLevel(1, list[0], diff, true);
-                setView('dungeon');
-            };
-
-            const loadDungeonLevel = (f, word, m, shuffleOptions = true) => {
-                if(!word) return;
-                setCurrentWord(word); setBossIn(""); setFeedback(""); setMonsterAnim("");
-                setMonsterHurtAnim(""); setCurrentPlayerImg(playerImgDefault); setPlayerAnim("");
-                
-                const isB = (m==='mid' && (f===7 || f===15)) || (m==='high' && (f===5 || f===10 || f===15 || f===20));
-                setIsBossCurrent(isB);
-
-                const randomIndex = Math.floor(Math.random() * monsterImages.length);
-                const randomBossIndex = Math.floor(Math.random() * bossImages.length);
-                const currentImg = isB ? bossImages[randomBossIndex] : monsterImages[randomIndex];
-                setMImg(currentImg); setCurrentMonsterImg(currentImg); 
-                
-                if(!isB && shuffleOptions) {
-                    const wrongPool = shuffle(wordBank.filter(x => x.eng !== word.eng)).slice(0, 3).map(x => x.eng);
-                    setOptions(shuffle([word.eng, ...wrongPool]));
-                }
-                
-                startTimer(m, isB);
-            };
-
-            const startTimer = (currentMode, isBoss) => {
-                clearInterval(timerRef.current);
-                setTimeLeft(100);
-                
-                let totalSeconds = 5; 
-                if (isBoss && (currentMode === 'mid' || currentMode === 'high')) {
-                    totalSeconds = 7; 
-                }
-                
-                // 【新功能：寶箱額外時間】
-                totalSeconds += extraTime;
-                setExtraTime(0); // 領取過一次後歸零
-                
-                const step = (100 / (totalSeconds * 10));
-                
-                timerRef.current = setInterval(() => {
-                    setTimeLeft(p => { 
-                        if(p <= 0) { 
-                            clearInterval(timerRef.current);
-                            triggerHurtEffects(true); 
-                            return 0; 
-                        } 
-                        return p - step; 
-                    });
-                }, 100);
+                document.body.removeChild(link);
             }
 
-            const triggerHurtEffects = (isTimeout = false) => {
-                // 【新功能】連擊歸零、紅光閃爍、紀錄錯題與結算
-                setCombo(0);
-                setIsHurtFlash(true);
-                setTimeout(() => setIsHurtFlash(false), 500);
-
-                setWrongWords(prev => {
-                    if (prev.some(x => x.eng === currentWord.eng)) return prev;
-                    return [...prev, currentWord];
-                });
-                setMissedWords(prev => {
-                    if (prev.some(x => x.eng === currentWord.eng)) return prev;
-                    return [...prev, currentWord];
-                });
-
-                setHp(h => {
-                    const newHp = h - 1;
-                    if(newHp <= 0) {
-                        setTimeout(() => setView('lose'), 600);
-                    } else {
-                        setTimeout(() => {
-                            setPlayerAnim(""); setCurrentPlayerImg(playerImgDefault); setFeedback("");
-                            startTimer(mode, isBossCurrent);
-                        }, 800);
-                    }
-                    return newHp;
-                });
-                
-                setFeedback(isTimeout ? "⌛ TIMEOUT!" : "💥 WRONG!");
-                setCurrentPlayerImg(playerImgHurt); 
-                setPlayerAnim("anim-hurt-combined"); 
-                
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate(300);
-                }
-            };
-
-            const handleDungeonAns = (correct) => {
-                clearInterval(timerRef.current);
-                if(correct) {
-                    setCombo(prev => prev + 1); // 【新功能】連擊累加
-                    setKilledWords(prev => [...prev, currentWord]);
-
-                    setMonsterAnim("anim-hit"); setMonsterHurtAnim("anim-hurt-combined"); 
-                    
-                    const currentIdx = monsterImages.indexOf(mImg);
-                    const currentBossIdx = bossImages.indexOf(mImg);
-                    if(isBossCurrent && currentBossIdx !== -1) {
-                        setCurrentMonsterImg(bossHurtImages[currentBossIdx]);
-                    } else if(currentIdx !== -1) {
-                        setCurrentMonsterImg(monsterHurtImages[currentIdx]);
-                    }
-
-                    if (window.navigator && window.navigator.vibrate) { window.navigator.vibrate(300); }
-
-                    setFeedback("⚔️ SUCCESS!"); speak(currentWord?.eng);
-                    
-                    // 從怨念庫移除成功擊殺的字
-                    setWrongWords(prev => prev.filter(w => w.eng !== currentWord.eng));
-
-                    setTimeout(() => {
-                        // 【新功能：擊殺 Boss 掉落隨機寶箱】
-                        if(isBossCurrent) {
-                            setChestStatus('closed');
-                            setChestReward('');
-                            setShowChest(true);
-                        } else {
-                            nextFloor();
-                        }
-                    }, 500);
-                } else { triggerHurtEffects(false); }
-            };
-
-            const nextFloor = () => {
-                if(floor >= maxFloor) return setView('win');
-                const nextF = floor + 1; setFloor(nextF);
-                loadDungeonLevel(nextF, studyList[nextF-1], mode, true);
-            }
-
-            const openChest = () => {
-                if (chestStatus !== 'closed') return;
-                setChestStatus('open');
-                const hitHp = Math.random() < 0.5;
-                if (hitHp) {
-                    setHp(prev => prev + 1);
-                    setChestReward('你獲得了：❤️ 回復 1 點生命！');
-                } else {
-                    setExtraTime(2);
-                    setChestReward('你獲得了：⏱️ 下一關時間延長 2 秒！');
-                }
-            };
-
-            if(view === 'splash') return (
-                <div className="splash-screen">
-                    <img src={splashImg} className="splash-img" alt="splash" />
-                    <div className="enter-btn-container">
-                        <button className="btn-rpg" onClick={() => setView('home')}>Enter</button>
+            if (showSplash) {
+                return (
+                    <div className="splash-screen">
+                        <img src="https://i.imgur.com/rW7V9Vz.jpeg" className="splash-img" alt="splash" />
+                        <div className="enter-btn-container">
+                            <button className="btn-rpg" onClick={() => setShowSplash(false)}>Enter Game</button>
+                        </div>
                     </div>
-                </div>
-            );
+                );
+            }
 
-            return (
-                <div style={{minHeight: '100vh'}}>
-                    {view === 'dungeon' ? <div className="dungeon-bg"></div> : <div className="global-bg"></div>}
-                    
-                    {/* 【新功能：受傷全畫面紅閃】 */}
-                    <div className={`hurt-flash ${isHurtFlash ? 'anim-flash' : ''}`}></div>
-
-                    <div className="container">
-                        {view === 'home' && (
-                            <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                                <h1 style={{textAlign:'center', color:'var(--primary)'}}>VOCAB DUNGEON</h1>
-                                <button className="btn btn-primary" onClick={()=>setView('menu')}>開始挑戰</button>
-                                <button className="btn" onClick={()=>setView('add')}>新增單字</button>
-                                <button className="btn" onClick={()=>setView('list')}>字庫管理 ({wordBank.length})</button>
-                                <img src="https://i.imgur.com/6UDmnhC.png" className="footer-img" />
+            if (view === 'menu') {
+                return (
+                    <>
+                        <div className="global-bg"></div>
+                        <div className="container">
+                            <h1 style={{textAlign: 'center', color: '#fff', textShadow: '2px 2px #000'}}>Vocab Dungeon</h1>
+                            <div className="card">
+                                <p style={{fontWeight:'bold'}}>目前庫存單字量: {words.length}</p>
+                                <button className="btn btn-primary" onClick={startQuiz}>⚔️ 進入地牢 ⚔️</button>
+                                <button className="btn btn-outline" style={{background: '#ffeaa7', color: '#2d3436', border: 'none'}} onClick={startChestMode}>🔑 盜賊寶箱模式 🔑</button>
+                                <button className="btn btn-outline" onClick={() => setView('learn')}>📖 瀏覽/管理單字庫</button>
+                                <button className="btn btn-outline" style={{borderColor: '#27ae60', color: '#27ae60'}} onClick={() => setShowImportModal(true)}>📥 匯入單字 (CSV)</button>
+                                <button className="btn btn-outline" style={{borderColor: '#e67e22', color: '#e67e22'}} onClick={handleExport}>📤 匯出單字 (CSV)</button>
                             </div>
-                        )}
 
-                        {view === 'menu' && (
-                            <div>
-                                <button className="btn" onClick={()=>setView('home')}>← 返回</button>
-                                <h2>選擇模式</h2>
-                                <button className="btn btn-outline" onClick={()=>startNormal('card')}>生字卡 (讀音/例句)</button>
-                                <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
-                                <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
-                                <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
-                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時5秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('mid')}>中級 (15層 - 限時5秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('high')}>高級 (20層 - 限時5秒)</button>
-                            </div>
-                        )}
-
-                        {view === 'add' && (
-                            <div>
-                                <button className="btn" onClick={()=>setView('home')}>← 返回</button>
-                                <h2>新增單字</h2>
-                                <input placeholder="英文單字" value={newEng} onChange={e=>setNewEng(e.target.value)} />
-                                <button className="btn btn-outline" onClick={autoFetch}>✨ 自動翻譯</button>
-                                <textarea placeholder="中文意思" value={newChi} onChange={e=>setNewChi(e.target.value)} />
-                                <textarea placeholder="例句" rows="3" value={newExample} onChange={e=>setNewExample(e.target.value)} />
-                                <button className="btn btn-primary" onClick={()=>{
-                                    if(!newEng || !newChi) return alert("內容不全");
-                                    setWordBank([{eng:newEng, chi:newChi, example:newExample, id:Date.now()}, ...wordBank]);
-                                    setNewEng(""); setNewChi(""); setNewExample(""); alert("儲存成功");
-                                }}>💾 儲存</button>
-                            </div>
-                        )}
-
-                        {view === 'list' && (
-                            <div>
-                                <button className="btn" onClick={()=>setView('home')}>← 返回</button>
-                                <h3>我的字庫 ({wordBank.length})</h3>
-                                <div style={{display:'flex', gap:'5px', marginBottom:'15px'}}>
-                                    <button className="btn btn-outline btn-small" onClick={exportCSV}>📤 匯出 CSV</button>
-                                    <button className="btn btn-outline btn-small" onClick={()=>fileInputRef.current.click()}>📥 匯入 CSV</button>
-                                    <input type="file" ref={fileInputRef} style={{display:'none'}} accept=".csv" onChange={importCSV} />
-                                </div>
-                                {wordBank.map(w => (
-                                    <div key={w.id} style={{background:'rgba(255,255,255,0.9)', padding:'12px', borderRadius:'12px', marginBottom:'8px', display:'flex', alignItems:'center', border:'1px solid #eee'}}>
-                                        <div style={{flex:1}}><strong>{w.eng}</strong> - {w.chi}</div>
-                                        <button className="speaker-btn" style={{width:'32px', height:'32px', fontSize:'0.9rem'}} onClick={()=>speak(w.eng)}>🔊</button>
-                                        <button style={{color:'red', border:'none', background:'none', marginLeft:'10px', fontSize:'1.2rem'}} onClick={()=>setWordBank(wordBank.filter(x=>x.id!==w.id))}>×</button>
-                                    </div>
-                                ))}
-                                <button className="btn" style={{marginTop:'20px', color:'red'}} onClick={()=>{if(confirm('確定重置字庫嗎？')) { localStorage.removeItem('vocab_v10_final_v2'); location.reload(); }}}>⚠️ 重置回預設單字</button>
-                            </div>
-                        )}
-
-                        {(view === 'card' || view === 'quiz') && (
-                            <div>
-                                <div className="card" onClick={()=>{if(view==='card') setIsFlipped(!isFlipped)}}>
-                                    {!isFlipped ? (
-                                        <div>
-                                            {view === 'quiz' ? <div className="card-chi">{currentWord?.chi}</div> : (
-                                                <>
-                                                    <div className="card-eng">{currentWord?.eng}</div>
-                                                    <button className="speaker-btn" onClick={(e)=>{e.stopPropagation(); speak(currentWord?.eng);}}>🔊</button>
-                                                </>
-                                            )}
+                            {showImportModal && (
+                                <div className="modal-overlay">
+                                    <div className="modal-content">
+                                        <h3>📥 匯入單字庫</h3>
+                                        <p>請輸入 CSV 格式內容 (英文,中文,例句)</p>
+                                        <textarea 
+                                            rows="5" 
+                                            placeholder="apple,蘋果,I eat an apple.&#10;banana,香蕉,He likes bananas." 
+                                            value={csvInput}
+                                            onChange={(e) => setCsvInput(e.target.value)}
+                                        />
+                                        <div style={{display:'flex', gap:'10px'}}>
+                                            <button className="btn btn-primary btn-small" onClick={handleImport}>確認匯入</button>
+                                            <button className="btn btn-outline btn-small" style={{borderColor:'#aaa', color:'#444'}} onClick={() => {setShowImportModal(false); setCsvInput("");}}>取消</button>
                                         </div>
-                                    ) : (
-                                        <div style={{textAlign:'left', width:'100%'}}>
-                                            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                                                <strong style={{fontSize:'1.4rem', color:'var(--primary)'}}>{currentWord?.eng}</strong>
-                                                <button className="speaker-btn" style={{width:'36px', height:'36px'}} onClick={()=>speak(currentWord?.eng)}>🔊</button>
-                                            </div>
-                                            <hr/>
-                                            <strong>【中文】</strong><p>{currentWord?.chi}</p>
-                                            <div className="example-box"><strong>【例句】</strong><p>{currentWord?.example}</p></div>
-                                        </div>
-                                    )}
-                                </div>
-                                {view === 'quiz' && !isFlipped && (
-                                    <div className="quiz-grid">
-                                        {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅ 正確":"❌ 錯誤"); setIsFlipped(true); speak(currentWord?.eng);}}>{o}</button>)}
                                     </div>
-                                )}
-                                {feedback && <div style={{textAlign:'center', fontWeight:'bold', margin:'10px'}}>{feedback}</div>}
-                                <button className="btn btn-primary" onClick={()=>{
-                                    if(studyList.length === 0) return setView('home');
-                                    const next = studyList[0];
-                                    setStudyList(studyList.slice(1)); setCurrentWord(next); setIsFlipped(false); setFeedback("");
-                                    if(view==='quiz') {
-                                        const wrongPool = shuffle(wordBank.filter(x => x.eng !== next.eng)).slice(0, 3).map(x => x.eng);
-                                        setOptions(shuffle([next.eng, ...wrongPool]));
-                                    }
-                                }}>下一個</button>
-                                <button className="btn" onClick={()=>setView('home')}>返回</button>
-                            </div>
-                        )}
+                                </div>
+                            )}
 
-                        {view === 'dungeon' && (
-                            <div>
-                                <div style={{background: '#2d3436', color: 'white', padding: '12px', borderRadius: '15px', display:'flex', justifyContent:'space-between', marginBottom: '15px'}}>
-                                    <span>{"❤️".repeat(hp)}</span>
-                                    <span>B{floor}/{maxFloor}</span>
+                            <div style={{textAlign: 'center', marginTop: 'auto'}}>
+                                <p style={{color: '#fff', textShadow: '1px 1px #000'}}>Game Version 11.1</p>
+                            </div>
+                        </div>
+                    </>
+                );
+            }
+
+            if (view === 'learn') {
+                const current = words[currentWordIndex];
+                return (
+                    <>
+                        <div className="global-bg"></div>
+                        <div className="container">
+                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <button className="btn btn-small" onClick={() => setView('menu')} style={{maxWidth: '80px'}}>返回</button>
+                                <h3 style={{color: '#fff', textShadow: '1px 1px #000'}}>單字瀏覽 ({currentWordIndex + 1}/{words.length})</h3>
+                            </div>
+                            
+                            <div className="card">
+                                <div style={{position: 'absolute', top: '15px', right: '15px'}}>
+                                    <button className="speaker-btn" onClick={() => playSound(current.eng)}>🔊</button>
                                 </div>
-                                <div className="battle-scene">
-                                    <div className="timer-line" style={{width:timeLeft+'%'}}></div>
-                                    
-                                    {/* 【新功能：連擊特效】 */}
-                                    {combo >= 2 && <div className="combo-text">🔥 {combo} Combo!</div>}
-                                    
-                                    <div className="monster-box">
-                                        <img src={currentMonsterImg} className={`monster-img ${monsterAnim} ${monsterHurtAnim}`} />
-                                    </div>
-                                    <div className="player-box">
-                                        <img src={currentPlayerImg} className={`player-img ${playerAnim}`} />
-                                    </div>
-                                </div>
-                                <div className="card" style={{minHeight:'60px', padding: '15px', marginBottom: '10px'}}>
-                                    <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
-                                </div>
-                                {isBossCurrent ?
-                                (
-                                    <div>
-                                        <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
-                                        <button className="btn btn-primary" onClick={()=>handleDungeonAns(bossIn.toLowerCase().trim() === currentWord?.eng.toLowerCase().trim())}>⚡ 攻擊 BOSS</button>
-                                    </div>
+                                <div className="card-eng">{current.eng}</div>
+                                {showAnswer ? (
+                                    <>
+                                        <div className="card-chi">{current.chi}</div>
+                                        <div className="example-box">
+                                            <b>例句:</b><br/>{current.eg}
+                                        </div>
+                                    </>
                                 ) : (
-                                    <div className="quiz-grid">
-                                        {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>handleDungeonAns(o === currentWord?.eng)}>{o}</button>)}
-                                    </div>
+                                    <div style={{marginTop: '20px', color: '#aaa', fontStyle: 'italic'}}>點擊"顯示中文"看答案</div>
                                 )}
-                                <button className="btn" style={{color:'#999', marginTop: '10px'}} onClick={()=>{clearInterval(timerRef.current); setView('home')}}>🏳️ 撤退</button>
                             </div>
-                        )}
 
-                        {/* 【新功能：Boss 掉落寶箱彈窗】 */}
-                        {showChest && (
-                            <div className="modal-overlay">
-                                <div className="modal-content">
-                                    <h3>🎉 擊敗 Boss！獲得寶箱</h3>
-                                    <img 
-                                        src={chestStatus === 'closed' ? "https://i.imgur.com/v8tTjD8.png" : "https://i.imgur.com/D4AOnYk.png"} 
-                                        className="chest-img"
-                                        onClick={openChest}
-                                    />
-                                    <p style={{color: '#636e72'}}>{chestStatus === 'closed' ? '點擊寶箱開啟獎勵！' : chestReward}</p>
-                                    {chestStatus === 'open' && (
-                                        <button className="btn btn-primary" style={{marginTop: '10px'}} onClick={() => { setShowChest(false); nextFloor(); }}>前往下一關</button>
-                                    )}
+                            <button className="btn btn-primary" onClick={() => setShowAnswer(!showAnswer)}>
+                                {showAnswer ? "隱藏中文" : "顯示中文"}
+                            </button>
+
+                            <div style={{display: 'flex', gap: '10px'}}>
+                                <button className="btn btn-outline btn-small" onClick={() => {
+                                    setCurrentWordIndex((currentWordIndex - 1 + words.length) % words.length);
+                                    setShowAnswer(false);
+                                }}>◀ 上一個</button>
+                                <button className="btn btn-outline btn-small" onClick={() => {
+                                    setCurrentWordIndex((currentWordIndex + 1) % words.length);
+                                    setShowAnswer(false);
+                                }}>下一個 ▶</button>
+                            </div>
+
+                            <div style={{marginTop: '20px', background: 'rgba(255,255,255,0.9)', padding: '15px', borderRadius: '15px'}}>
+                                <h4 style={{marginTop: 0}}>➕ 新增單字</h4>
+                                <input type="text" placeholder="英文" id="new-eng" />
+                                <input type="text" placeholder="中文" id="new-chi" />
+                                <textarea placeholder="例句" id="new-eg" rows="2"></textarea>
+                                <button className="btn btn-primary" onClick={() => {
+                                    const eng = document.getElementById('new-eng').value.trim();
+                                    const chi = document.getElementById('new-chi').value.trim();
+                                    const eg = document.getElementById('new-eg').value.trim();
+                                    if(eng && chi) {
+                                        setWords([...words, {eng, chi, eg: eg || `This is a ${eng}.`}]);
+                                        document.getElementById('new-eng').value = '';
+                                        document.getElementById('new-chi').value = '';
+                                        document.getElementById('new-eg').value = '';
+                                        alert("成功新增！");
+                                    } else {
+                                        alert("請輸入英文和中文");
+                                    }
+                                }}>確認新增</button>
+                            </div>
+                        </div>
+                    </>
+                );
+            }
+
+            if (view === 'quiz') {
+                const current = words[currentWordIndex];
+                return (
+                    <>
+                        <div className="dungeon-bg"></div>
+                        <div className={`hurt-flash ${screenHurtFlash ? 'anim-flash' : ''}`}></div>
+                        <div className="container">
+                            <div className="battle-scene">
+                                <div style={{position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '5px 10px', borderRadius: '5px'}}>
+                                    分數: {score}
                                 </div>
-                            </div>
-                        )}
-
-                        {(view === 'win' || view === 'lose') && (
-                            <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center'}}>
-                                <div style={{textAlign:'center'}}>
-                                    <h1>{view==='win'?"🎉":"💀"}</h1>
-                                    <h2>{view==='win'?"挑戰成功":"你倒下了"}</h2>
+                                <div style={{position: 'absolute', top: 40, left: 10, background: 'rgba(0,0,0,0.6)', color: '#ffeaa7', padding: '5px 10px', borderRadius: '5px'}}>
+                                    關卡: {curLevel + 1} / 4
                                 </div>
                                 
-                                {/* 【新功能：戰鬥結果報告】 */}
-                                <div style={{background: 'rgba(255,255,255,0.95)', padding: '15px', borderRadius: '15px', marginTop: '15px', maxHeight: '200px', overflowY: 'auto'}}>
-                                    <h4 style={{margin: '0 0 10px 0'}}>📊 本次戰果</h4>
-                                    <div style={{color: 'var(--success)', marginBottom: '5px'}}>
-                                        <strong>擊殺 ({killedWords.length})：</strong> 
-                                        {killedWords.map(w => w.eng).join(', ') || '無'}
+                                {combo > 1 && <div className="combo-text" key={combo}>{combo} COMBO!</div>}
+
+                                <div className="monster-box">
+                                    <div style={{color: '#fff', textShadow: '2px 2px #000', fontWeight: 'bold'}}>{curMonster.name}</div>
+                                    <div style={{background: '#2d3436', width: '100px', height: '10px', borderRadius: '5px', overflow: 'hidden', margin: '5px auto'}}>
+                                        <div style={{background: 'var(--danger)', width: `${(curMonster.hp / curMonster.maxHp) * 100}%`, height: '100%'}}></div>
                                     </div>
-                                    <div style={{color: 'var(--danger)'}}>
-                                        <strong>漏掉/錯過 ({missedWords.length})：</strong> 
-                                        {missedWords.map(w => w.eng).join(', ') || '無'}
-                                    </div>
+                                    <div style={{color: '#fff', fontSize: '0.8rem'}}>{curMonster.hp}/{curMonster.maxHp} HP</div>
+                                    <img src={curMonster.img} className={`monster-img ${monsterHurt ? 'anim-hurt-combined' : ''}`} alt="monster" />
                                 </div>
 
-                                <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={()=>setView('home')}>返回</button>
+                                <div className="player-box">
+                                    <img src="https://i.imgur.com/GisLhB0.png" className={`player-img ${playerHurt ? 'anim-hurt' : ''}`} alt="player" />
+                                </div>
                             </div>
-                        )}
-                    </div>
-                </div>
-            );
-        };
-        const root = ReactDOM.createRoot(document.getElementById('root'));
+
+                            <div className="card" style={{minHeight: '120px', padding: '15px', position: 'relative'}}>
+                                <div className="timer-line" style={{width: `${(timeLeft / 5) * 100}%`}}></div>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+                                    <button className="speaker-btn" onClick={() => playSound(current.eng)}>🔊</button>
+                                    <div>
+                                        <div className="card-eng" style={{fontSize: '1.8rem'}}>{current.eng}</div>
+                                        {message && <div style={{color: 'var(--danger)', fontWeight: 'bold', marginTop: '5px'}}>{message}</div>}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="quiz-grid">
+                                {quizOptions.map((opt, i) => (
+                                    <button key={i} className="btn" style={{margin: '0'}} onClick={() => handleOptionClick(opt)}>
+                                        {opt.chi}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button className="btn btn-outline" style={{marginTop: 'auto'}} onClick={() => { setTimerActive(false); setView('menu'); }}>逃跑</button>
+                        </div>
+                    </>
+                );
+            }
+
+            if (view === 'chest') {
+                const current = words[currentWordIndex];
+                const isLastLevel = curLevel >= 3;
+
+                return (
+                    <>
+                        <div className="dungeon-bg"></div>
+                        <div className={`hurt-flash ${screenHurtFlash ? 'anim-flash' : ''}`}></div>
+                        <div className="container">
+                            <div className="battle-scene" style={{height: '240px', background: 'transparent'}}>
+                                <div style={{position: 'absolute', top: 10, left: 10, background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '5px 10px', borderRadius: '5px'}}>
+                                    成功層數: {curLevel} / 4
+                                </div>
+                                
+                                {combo > 1 && <div className="combo-text" key={combo} style={{top: '40px'}}>{combo} 連對!</div>}
+
+                                {!isLastLevel && (
+                                    <div style={{position: 'absolute', top: '50px', left: '50%', transform: 'translateX(-50%)', textAlign: 'center'}}>
+                                        <img src="https://i.imgur.com/sAsVc32.png" style={{width: '120px', height: 'auto', image-rendering: 'pixelated'}} alt="chest" />
+                                        <div style={{color: '#fff', textShadow: '2px 2px #000', fontWeight: 'bold', marginTop: '10px'}}>
+                                            神秘寶箱 (Lv.{curLevel + 1})
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="card" style={{minHeight: '120px', padding: '15px', position: 'relative'}}>
+                                <div className="timer-line" style={{width: `${(timeLeft / 5) * 100}%`}}></div>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+                                    <button className="speaker-btn" onClick={() => playSound(current.eng)}>🔊</button>
+                                    <div>
+                                        <div className="card-eng" style={{fontSize: '1.8rem'}}>{current.eng}</div>
+                                        {message && <div style={{color: 'var(--danger)', fontWeight: 'bold', marginTop: '5px'}}>{message}</div>}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="quiz-grid">
+                                {quizOptions.map((opt, i) => (
+                                    <button key={i} className="btn" style={{margin: '0'}} onClick={() => handleChestOption(opt)}>
+                                        {opt.chi}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button className="btn btn-outline" style={{marginTop: 'auto'}} onClick={() => { setTimerActive(false); setView('menu'); }}>放棄並離開</button>
+                        </div>
+                    </>
+                );
+            }
+
+            if (view === 'boss-win') {
+                return (
+                    <>
+                        <div className="global-bg"></div>
+                        <div className="container" style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <div className="card" style={{width: '100%', boxSizing: 'border-box'}}>
+                                <h1 style={{color: 'var(--success)', marginBottom: '5px'}}>恭喜通關！🎉</h1>
+                                <p style={{color: '#ff9f43', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '0'}}>你擊敗了所有惡魔，保護了單字庫！</p>
+                                <div style={{fontSize: '1.2rem', margin: '20px 0'}}>
+                                    最終獲得分數: <span style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)'}}>{score}</span>
+                                </div>
+                                <p style={{color: var(--gray)}}>看來你的英文能力已經足夠探索更深的地下城了！</p>
+                                <button className="btn btn-primary" onClick={() => setView('menu')}>返回主選單</button>
+                            </div>
+                        </div>
+                    </>
+                );
+            }
+
+            if (view === 'chest-win') {
+                return (
+                    <>
+                        <div className="global-bg"></div>
+                        <div className="container" style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <div className="card" style={{width: '100%', boxSizing: 'border-box'}}>
+                                <h1 style={{color: '#ff9f43', marginBottom: '5px'}}>解鎖成功！💎</h1>
+                                <p style={{color: 'var(--success)', fontWeight: 'bold', fontSize: '1.2rem', marginTop: '0'}}>你連續答對，成功打開了終極寶箱！</p>
+                                <img src="https://i.imgur.com/sAsVc32.png" style={{width: '100px', height: 'auto', margin: '15px 0'}} alt="opened chest" />
+                                <div style={{fontSize: '1.2rem', margin: '10px 0'}}>
+                                    獲得單字積分: <span style={{fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)'}}>{score}</span>
+                                </div>
+                                <p style={{color: var(--gray)}}>神偷的技巧就是如此行雲流水！</p>
+                                <button className="btn btn-primary" onClick={() => setView('menu')}>返回主選單</button>
+                            </div>
+                        </div>
+                    </>
+                );
+            }
+
+            return null;
+        }
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
         root.render(<App />);
     </script>
 </body>
