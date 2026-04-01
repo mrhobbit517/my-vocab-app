@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v11.0 - Full Features</title>
+    <title>Vocab Dungeon v11.1 - Full Features</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -128,7 +128,7 @@ top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display
         .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%;
 max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .chest-img { width: 100px;
-height: 100px; cursor: pointer; transition: 0.2s; }
+height: 100px; cursor: pointer; transition: 0.2s; object-fit: contain; } /* object-fit ensures aspect ratio */
         .chest-img:hover { transform: scale(1.1);
 }
     </style>
@@ -722,7 +722,7 @@ btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅ 正確":"❌ �
                                 
                                     <h3>🎉 擊敗 Boss！獲得寶箱</h3>
                                     <img 
-                                        src={chestStatus === 'closed' ? "https://i.imgur.com/sAsVc32.png" : "https://i.imgur.com/D4AOnYk.png"} 
+                                        src={chestStatus === 'closed' ? "https://i.imgur.com/sAsVc32.png" : "https://i.imgur.com/JNPgpc7.png"} 
           
                                         className="chest-img"
                                         onClick={openChest}
@@ -767,16 +767,4 @@ btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅ 正確":"❌ �
                                 </div>
 
                                 
-                                <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={()=>setView('home')}>返回</button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-       
-             );
-        };
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+                                <button className="btn btn-primary" style={{marginTop: '20px'}} onClick={()=>setView('
