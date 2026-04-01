@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.8 - RPG Splash</title>
+    <title>Vocab Dungeon v10.9 - RPG Battle Update</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -41,12 +41,23 @@
         .battle-scene { position: relative; width: 100%; height: 240px; margin: 10px 0; overflow: visible; background: rgba(255, 255, 255, 0.5); border-radius: 15px; }
         .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
         .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
-        .player-img { width: 270px; height: auto; transition: 0.3s; }
+        
+        /* 玩家盒子，增加震動動畫基點 */
+        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; transition: transform 0.1s; }
+        .player-img { width: 270px; height: auto; transition: filter 0.3s; }
+        
+        /* 攻擊怪物的動畫 */
         @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px) scale(1.1); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
         .anim-hit { animation: hit-shake 0.5s forwards; }
-        @keyframes hurt-red { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); transform: translateY(10px); } 100% { filter: brightness(1); } }
-        .anim-hurt { animation: hurt-red 0.4s; }
+        
+        /* 玩家受傷的紅色濾鏡閃動動畫 */
+        @keyframes hurt-red-filter { 0% { filter: brightness(1) sepia(0) saturate(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8) hue-rotate(-50deg); } 100% { filter: brightness(1) sepia(0) saturate(1); } }
+        /* 玩家受傷的震動動畫 */
+        @keyframes hurt-vibrate { 0% { transform: translate(0, 0); } 25% { transform: translate(-10px, 10px); } 50% { transform: translate(10px, -10px); } 75% { transform: translate(-10px, -10px); } 100% { transform: translate(0, 0); } }
+        
+        /* 結合震動與紅色濾鏡 */
+        .anim-hurt { animation: hurt-vibrate 0.3s, hurt-red-filter 0.4s; }
+        
         .timer-line { position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
@@ -63,7 +74,11 @@
             "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-        const playerImg = "https://i.imgur.com/PBcBCFv.png";
+        
+        // 玩家圖片資源
+        const playerImgNormal = "https://i.imgur.com/PBcBCFv.png";
+        const playerImgHurt = "https://i.imgur.com/gsR29ty.png"; // 【新增】受傷圖片
+
         const splashImg = "https://i.imgur.com/8MUpGMJ.jpeg";
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
@@ -118,12 +133,17 @@
             const [feedback, setFeedback] = useState("");
             const [hp, setHp] = useState(10);
             const [floor, setFloor] = useState(1);
-            const [maxFloor, setMaxFloor] = useState(10);
+            const [maxFloor, setMaxFloor] = useState(20);
             const [mode, setMode] = useState('');
             const [bossIn, setBossIn] = useState("");
             const [timeLeft, setTimeLeft] = useState(100);
             const [monsterAnim, setMonsterAnim] = useState("");
             const [mImg, setMImg] = useState(monsterImages[0]);
+            
+            // 玩家狀態狀態管理
+            const [playerAnim, setPlayerAnim] = useState(""); // 【新增】玩家受傷動畫狀態
+            const [currentPlayerImg, setCurrentPlayerImg] = useState(playerImgNormal); // 【新增】玩家圖片切換狀態
+
             const timerRef = useRef(null);
             const fileInputRef = useRef(null);
             const [newEng, setNewEng] = useState("");
@@ -220,58 +240,62 @@
 
             const startDungeon = (diff) => {
                 if(wordBank.length < 4) return alert("單字不足4個");
-                
-                // 【修改】動態決定各模式總關卡數
-                let mf = diff==='low'? 10 : diff==='mid'? 15 : 20;
-                
-                let list = []; 
-                while(list.length < mf) list = [...list, ...shuffle(wordBank)];
+                let mf = diff==='low'?20 : diff==='mid'?30 : 40;
+                let list = []; while(list.length < mf) list = [...list, ...shuffle(wordBank)];
                 list = list.slice(0, mf);
+                setMode(diff); setMaxFloor(mf); setHp(10); setFloor(1); setStudyList(list);
                 
-                setMode(diff); 
-                setMaxFloor(mf); 
-                setHp(10); 
-                setFloor(1); 
-                setStudyList(list);
-                
-                loadDungeonLevel(1, list[0], diff);
+                // 重置玩家狀態
+                setCurrentPlayerImg(playerImgNormal);
+                setPlayerAnim("");
+
+                loadDungeonLevel(1, list[0], diff, true); // true = 這是第一次加載新關卡
                 setView('dungeon');
             };
 
-            const loadDungeonLevel = (f, word, m) => {
+            const loadDungeonLevel = (f, word, m, isNewLevel) => {
                 if(!word) return;
-                setCurrentWord(word); setBossIn(""); setFeedback(""); setMonsterAnim("");
                 
-                // 【修改】Boss 關卡判斷邏輯
-                const isB = (m==='mid' && (f===7 || f===15)) || (m==='high' && (f===5 || f===10 || f===15 || f===20));
+                // 只有在進入新關卡時才重置題目和選項，否則保留當前題目
+                if (isNewLevel) {
+                    setCurrentWord(word); 
+                    const isB = (m==='mid' && (f===15 || f===30)) || (m==='high' && (f===20 || f===40));
+                    setMImg(isB ? bossImages[Math.floor(Math.random()*bossImages.length)] : monsterImages[Math.floor(Math.random()*monsterImages.length)]);
+                    if(!isB) setOptions(shuffle([word.eng, ...wordBank.filter(x=>x.eng!==word.eng).slice(0,3).map(x=>x.eng)]));
+                }
                 
-                setMImg(isB ? bossImages[Math.floor(Math.random()*bossImages.length)] : monsterImages[Math.floor(Math.random()*monsterImages.length)]);
-                if(!isB) setOptions(shuffle([word.eng, ...wordBank.filter(x=>x.eng!==word.eng).slice(0,3).map(x=>x.eng)]));
+                // 每次加載（包括答錯重來）都要重置的狀態
+                setBossIn(""); 
+                setFeedback(""); 
+                setMonsterAnim("");
+                setPlayerAnim(""); // 重置玩家受傷動畫
+                setCurrentPlayerImg(playerImgNormal); // 恢復正常圖片
                 
                 clearInterval(timerRef.current);
                 
-                // 【修改】全難度強制啟動倒數計時，區分 5 秒與 7 秒
-                setTimeLeft(100);
-                
-                let totalSeconds = 5; // 預設普通選擇題 5 秒
-                if (isB) {
-                    totalSeconds = 7; // Boss 關卡 7 秒
+                // 高級模式才啟動計時
+                if(m==='high') {
+                    setTimeLeft(100);
+                    timerRef.current = setInterval(() => {
+                        setTimeLeft(p => { 
+                            if(p <= 0) { 
+                                clearInterval(timerRef.current);
+                                // 【修改】時間到，直接觸發超時罰則（扣血+重來）
+                                handleDungeonTimeOut();
+                                return 0; 
+                            } 
+                            return p-2.5; 
+                        });
+                    }, 100);
                 }
-                
-                // 每 100 毫秒 (0.1秒) 跑一次 timer
-                const intervalTime = 100; 
-                // 每次扣除的百分比
-                const step = (100 / (totalSeconds * 10)); 
+            };
 
-                timerRef.current = setInterval(() => {
-                    setTimeLeft(p => { 
-                        if(p <= 0) { 
-                            handleDungeonAns(false); 
-                            return 0; 
-                        } 
-                        return p - step; 
-                    });
-                }, intervalTime);
+            // 【新增】專門處理超時的函數，與答錯後果相同
+            const handleDungeonTimeOut = () => {
+                setFeedback("⏰ TIME OUT!");
+                triggerHurtEffects(() => {
+                    loadDungeonLevel(floor, currentWord, mode, false); // false = 停留在同一題，不重新生成選項
+                });
             };
 
             const handleDungeonAns = (correct) => {
@@ -283,18 +307,40 @@
                     setTimeout(() => {
                         if(floor >= maxFloor) return setView('win');
                         const nextF = floor + 1; setFloor(nextF);
-                        loadDungeonLevel(nextF, studyList[nextF-1], mode);
+                        loadDungeonLevel(nextF, studyList[nextF-1], mode, true); // true = 進入新一題
                     }, 500);
                 } else {
-                    setMonsterAnim("anim-hurt");
-                    setHp(h => h - 1);
                     setFeedback("💥 DAMAGED!");
-                    if(hp <= 1) setTimeout(() => setView('lose'), 600);
-                    else setTimeout(() => {
-                        const nextF = floor + 1; setFloor(nextF);
-                        loadDungeonLevel(nextF, studyList[nextF-1], mode);
-                    }, 800);
+                    // 【修改】觸發受傷特效，並停留在同一題
+                    triggerHurtEffects(() => {
+                        loadDungeonLevel(floor, currentWord, mode, false); // false = 停留在同一題，不重新生成選項
+                    });
                 }
+            };
+
+            // 【新增】封裝受傷時的視覺和震動特效
+            const triggerHurtEffects = (onComplete) => {
+                // 1. 視覺：切換受傷圖片 + CSS受傷動畫(震動+紅濾鏡)
+                setCurrentPlayerImg(playerImgHurt);
+                setPlayerAnim("anim-hurt");
+                
+                // 2. 觸覺：手機震動 (Vibrator API)
+                if (window.navigator && window.navigator.vibrate) {
+                    // 震動模式：震動200ms, 停止100ms, 再震動200ms
+                    window.navigator.vibrate([200, 100, 200]);
+                }
+
+                // 3. 邏輯：扣血
+                setHp(h => h - 1);
+
+                // 4. 延遲：動畫播放完畢後執行的邏輯（死亡檢查或重來）
+                setTimeout(() => {
+                    if(hp <= 1) {
+                        setView('lose'); // 檢查是否死亡
+                    } else {
+                        if (onComplete) onComplete(); // 執行回調函數（例如重載當前題）
+                    }
+                }, 800); // 延遲時間需略長於 CSS 動畫時間
             };
 
             // 啟動畫面
@@ -331,9 +377,9 @@
                                 <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
                                 <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
                                 <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
-                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時5秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('mid')}>中級 (15層 - Boss關7秒)</button>
-                                <button className="btn" onClick={()=>startDungeon('high')}>高級 (20層 - Boss關7秒)</button>
+                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (20層)</button>
+                                <button className="btn" onClick={()=>startDungeon('mid')}>中級 (30層)</button>
+                                <button className="btn" onClick={()=>startDungeon('high')}>高級 (40層 - 有計時)</button>
                             </div>
                         )}
 
@@ -420,19 +466,19 @@
                                     <span>B{floor}/{maxFloor}</span>
                                 </div>
                                 <div className="battle-scene">
-                                    {/* 【修改】所有難度都會有血量/計時條 */}
-                                    <div className="timer-line" style={{width:timeLeft+'%'}}></div>
+                                    {mode==='high' && <div className="timer-line" style={{width:timeLeft+'%'}}></div>}
                                     <div className="monster-box">
                                         <img src={mImg} className={`monster-img ${monsterAnim}`} />
                                     </div>
-                                    <div className="player-box">
-                                        <img src={playerImg} className="player-img" />
+                                    {/* 【修改】玩家盒子應用狀態化的圖片和受傷動畫類 */}
+                                    <div className={`player-box ${playerAnim}`}>
+                                        <img src={currentPlayerImg} className="player-img" />
                                     </div>
                                 </div>
                                 <div className="card" style={{minHeight:'60px', padding: '15px', marginBottom: '10px'}}>
                                     <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
                                 </div>
-                                {((mode==='mid' && (floor===7 || floor===15)) || (mode==='high' && (floor===5 || floor===10 || floor===15 || floor===20))) ? (
+                                {((mode==='mid' && (floor===15 || floor===30)) || (mode==='high' && (floor===20 || floor===40))) ? (
                                     <div>
                                         <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
                                         <button className="btn btn-primary" onClick={()=>handleDungeonAns(bossIn.toLowerCase().trim() === currentWord?.eng.toLowerCase().trim())}>⚡ 攻擊 BOSS</button>
