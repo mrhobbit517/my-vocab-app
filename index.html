@@ -14,14 +14,14 @@
             --gray: #636e72;
         }
         body { 
-            background: var(--bg); 
+            background: var(--bg);
             font-family: -apple-system, sans-serif; 
             margin: 0; 
             color: var(--text);
             overflow-x: hidden; 
         }
         .container { 
-            width: 100%; 
+            width: 100%;
             max-width: 480px; 
             min-height: 100vh;
             margin: 0 auto; 
@@ -42,7 +42,7 @@
             z-index: 0;
         }
         .dungeon-bg { 
-            position: fixed; 
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); 
             background-size: cover; 
@@ -61,53 +61,68 @@
             align-items: center;
         }
         .splash-img { 
-            width: 100%; height: 100%; object-fit: contain; 
-            position: absolute; top: 0; left: 0; 
+            width: 100%;
+            height: 100%; object-fit: contain; 
+            position: absolute; top: 0; left: 0;
         }
         .enter-btn-container { 
-            position: absolute; bottom: 15%; width: 100%; 
+            position: absolute;
+            bottom: 15%; width: 100%; 
             display: flex; justify-content: center; 
         }
         .btn-rpg { 
-            background: #2d3436; color: #fff; border: 4px solid #fff;
+            background: #2d3436;
+            color: #fff; border: 4px solid #fff;
             padding: 12px 40px; font-size: 1.5rem; font-weight: bold; 
-            cursor: pointer; text-transform: uppercase; letter-spacing: 2px; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
             box-shadow: 0 0 0 4px #2d3436;
             transition: 0.1s; 
         }
-        .btn-rpg:active { transform: scale(0.9); background: #636e72; }
+        .btn-rpg:active { transform: scale(0.9);
+            background: #636e72; }
 
         .btn { 
-            background: #fff; border: 1px solid #ddd; padding: 14px;
+            background: #fff;
+            border: 1px solid #ddd; padding: 14px;
             margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; 
-            width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; 
+            width: 100%; font-weight: 600;
+            box-sizing: border-box; transition: 0.2s; 
             -webkit-tap-highlight-color: transparent;
         }
-        .btn:active { transform: scale(0.96); background: #f0f0f0; }
+        .btn:active { transform: scale(0.96); background: #f0f0f0;
+        }
         .btn-primary { 
-            background: var(--primary); color: white; border: none;
+            background: var(--primary);
+            color: white; border: none;
             box-shadow: 0 4px 12px rgba(9,132,227,0.2); 
         }
         .btn-outline { 
             color: var(--primary);
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
-        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
+        .btn-small { padding: 8px; font-size: 0.85rem;
+            margin: 5px 2px; flex: 1; }
         .speaker-btn { 
-            background: #e1f0ff; border: none;
+            background: #e1f0ff;
+            border: none;
             border-radius: 50%; width: 44px; height: 44px; cursor: pointer; 
             display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
         .card { 
-            background: rgba(255,255,255,0.95); border-radius: 24px; padding: 25px; margin: 10px 0;
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px; padding: 25px; margin: 10px 0;
             min-height: 260px; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
-            position: relative; border: 1px solid #eee; 
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
+            position: relative; border: 1px solid #eee;
         }
-        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
-        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary);
+        }
+        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444;
+        }
         .example-box { 
-            margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px;
+            margin-top: 15px;
+            padding: 12px; background: #f9f9f9; border-radius: 10px;
             border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
             font-size: 0.95rem; width: 100%; box-sizing: border-box;
         }
@@ -117,87 +132,127 @@
             width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
             background: rgba(255, 255, 255, 0.5); border-radius: 15px;
         }
-        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
-        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
-        .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain; }
+        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1;
+        }
+        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s;
+        }
+        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2;
+        }
+        .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain;
+        }
         
         /* 怪物受傷動畫：融合了原本的擊飛消失，並加入了震動與濾鏡 */
         @keyframes hit-shake { 
-            0% { transform: translateX(0); } 
-            20% { transform: translateX(-15px) scale(1.1); filter: brightness(1.2) sepia(1) saturate(8); } 
-            40% { transform: translateX(10px) scale(1.05); filter: brightness(1.2) sepia(1) saturate(8); }
-            60% { transform: translateX(-10px) scale(1); filter: brightness(1.1) sepia(0.5); }
-            100% { transform: scale(0) translateX(-50px); opacity: 0; filter: brightness(1); } 
+            0% { transform: translateX(0);
+            } 
+            20% { transform: translateX(-15px) scale(1.1);
+            filter: brightness(1.2) sepia(1) saturate(8); } 
+            40% { transform: translateX(10px) scale(1.05);
+            filter: brightness(1.2) sepia(1) saturate(8); }
+            60% { transform: translateX(-10px) scale(1);
+            filter: brightness(1.1) sepia(0.5); }
+            100% { transform: scale(0) translateX(-50px);
+            opacity: 0; filter: brightness(1); } 
         }
-        .anim-hit { animation: hit-shake 0.6s forwards; }
+        .anim-hit { animation: hit-shake 0.6s forwards;
+        }
         
         @keyframes hurt-red-filter { 
-            0% { filter: brightness(1); } 
-            50% { filter: brightness(1.2) sepia(1) saturate(8); } 
-            100% { filter: brightness(1); } 
+            0% { filter: brightness(1);
+            } 
+            50% { filter: brightness(1.2) sepia(1) saturate(8);
+            } 
+            100% { filter: brightness(1);
+            } 
         }
         @keyframes hurt-vibrate { 
-            0% { transform: translate(0, 0); } 
-            10% { transform: translate(-4px, -2px); } 
-            20% { transform: translate(3px, 2px); } 
-            30% { transform: translate(-4px, 1px); } 
-            40% { transform: translate(3px, -1px); } 
-            50% { transform: translate(-2px, 2px); } 
-            60% { transform: translate(2px, 1px); } 
-            70% { transform: translate(-3px, -1px); } 
-            80% { transform: translate(3px, 2px); } 
-            90% { transform: translate(-1px, -2px); } 
-            100% { transform: translate(0, 0); } 
+            0% { transform: translate(0, 0);
+            } 
+            10% { transform: translate(-4px, -2px);
+            } 
+            20% { transform: translate(3px, 2px);
+            } 
+            30% { transform: translate(-4px, 1px);
+            } 
+            40% { transform: translate(3px, -1px);
+            } 
+            50% { transform: translate(-2px, 2px);
+            } 
+            60% { transform: translate(2px, 1px);
+            } 
+            70% { transform: translate(-3px, -1px);
+            } 
+            80% { transform: translate(3px, 2px);
+            } 
+            90% { transform: translate(-1px, -2px);
+            } 
+            100% { transform: translate(0, 0);
+            } 
         }
-        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s; }
+        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s;
+        }
 
         .timer-line { 
-            position: absolute; top: -10px; left: 0; height: 6px; 
-            background: var(--danger); transition: width 0.1s linear; 
+            position: absolute;
+            top: -10px; left: 0; height: 6px; 
+            background: var(--danger); transition: width 0.1s linear;
         }
-        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;
+        }
         input, textarea { 
-            width: 100%; padding: 14px; border: 2px solid #eee; 
+            width: 100%;
+            padding: 14px; border: 2px solid #eee; 
             border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
         }
-        .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
+        .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px;
+        }
 
         .hurt-flash { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh; 
             box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
             z-index: 999; opacity: 0; 
         }
-        .anim-flash { animation: flash-fade 0.5s ease; }
-        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+        .anim-flash { animation: flash-fade 0.5s ease;
+        }
+        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1;
+        } 100% { opacity: 0; } }
 
         .combo-text { 
-            position: absolute; left: 20px; top: 30px; font-size: 1.8rem; 
+            position: absolute;
+            left: 20px; top: 30px; font-size: 1.8rem; 
             font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
             animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
             display: none;
         }
-        @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
+        @keyframes pop { 0% { transform: scale(0.5);
+        } 100% { transform: scale(1); } }
 
         .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.7); display: none; justify-content: center; 
             align-items: center; z-index: 1000;
         }
         .modal-content { 
-            background: white; padding: 30px; border-radius: 20px; 
+            background: white;
+            padding: 30px; border-radius: 20px; 
             text-align: center; width: 80%; max-width: 320px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
         .chest-img { 
-            width: 100px; height: auto; cursor: pointer; 
+            width: 100px;
+            height: auto; cursor: pointer; 
             transition: 0.2s; object-fit: contain; 
         }
-        .chest-img:hover { transform: scale(1.1); }
+        .chest-img:hover { transform: scale(1.1);
+        }
 
-        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
-        .view-section.active { display: flex !important; }
+        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column;
+        justify-content: center; }
+        .view-section.active { display: flex !important;
+        }
     </style>
 </head>
 <body>
@@ -214,6 +269,7 @@
 
     <div class="container">
         <div id="view-home" class="view-section">
+        
             <h1 style="text-align:center; color:var(--primary)">VOCAB DUNGEON</h1>
             <button class="btn btn-primary" onclick="switchView('menu')">開始挑戰</button>
             <button class="btn" onclick="switchView('add')">新增單字</button>
@@ -234,6 +290,7 @@
         </div>
 
         <div id="view-add" class="view-section">
+            
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>新增單字</h2>
             <input type="text" id="newEng" placeholder="英文單字" />
@@ -241,6 +298,7 @@
             <textarea id="newChi" placeholder="中文意思"></textarea>
             <textarea id="newExample" placeholder="例句" rows="3"></textarea>
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
+        
         </div>
 
         <div id="view-list" class="view-section">
@@ -266,6 +324,7 @@
                     <hr/>
                     <strong>【中文】</strong><p id="flipChi"></p>
                     <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
+                
                 </div>
             </div>
             <div id="quizOptions" class="quiz-grid" style="display:none"></div>
@@ -281,11 +340,13 @@
             </div>
             <div class="battle-scene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
+             
                 <div class="combo-text" id="comboDisplay">🔥 2 Combo!</div>
                 <div class="monster-box">
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
                 </div>
                 <div class="player-box">
+                   
                     <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
                 </div>
             </div>
@@ -297,6 +358,7 @@
             <div id="dungeonBossArea" style="display:none">
                 <input type="text" id="bossInput" placeholder="拼寫單字..." />
                 <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+      
             </div>
 
             <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
@@ -308,7 +370,8 @@
                 <h2 id="endTitle"></h2>
             </div>
             
-            <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; marginTop: 15px; max-height: 200px; overflow-y: auto">
+       
+             <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; marginTop: 15px; max-height: 200px; overflow-y: auto">
                 <h4 style="margin: 0 0 10px 0">📊 本次戰果</h4>
                 <div style="color: var(--success); margin-bottom: 5px">
                     <strong>擊殺 (<span id="killedCount">0</span>)：</strong> 
@@ -326,7 +389,8 @@
 
     <div class="modal-overlay" id="chestModal">
         <div class="modal-content">
-            <h3>🎉 擊敗 Boss！獲得寶箱</h3>
+     
+           <h3>🎉 擊敗 Boss！獲得寶箱</h3>
             <img src="https://i.imgur.com/sAsVc32.png" id="chestImg" class="chest-img" onclick="openChest()" alt="寶箱" />
             <p style="color: #636e72" id="chestTip">點擊寶箱開啟獎勵！</p>
             <button class="btn btn-primary" style="margin-top: 10px; display:none" id="chestNextBtn" onclick="closeChestModal()">前往下一關</button>
@@ -338,45 +402,52 @@
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
             {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
+         
             {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
             {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
             {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
             {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
             {eng:"house", chi:"房子", example:"We live in a big white house."},
-            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
+      
+              {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
             {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
             {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
             {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
             {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
-            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+    
+                {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
             {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
             {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
             {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
             {eng:"river", chi:"河流", example:"We went fishing by the river."},
-            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+   
+                 {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
             {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
             {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
             {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
             {eng:"water", chi:"水", example:"We should drink plenty of water."},
-            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+       
+             {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
             {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
             {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
             {eng:"ball", chi:"球", example:"Throw the ball to me!"},
             {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+         
             {eng:"door", chi:"門", example:"Please close the door behind you."},
             {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
             {eng:"flower", chi:"花", example:"This flower smells wonderful."},
             {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
             {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
-            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"island", 
+            chi:"島", example:"They spent their holiday on a tropical island."},
             {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
             {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
             {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
             {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
-            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+           
+          {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
             {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
-
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -411,11 +482,14 @@
             const savedWrongs = localStorage.getItem('vocab_wrongs');
             
             if (savedBank) {
-                try { wordBank = JSON.parse(savedBank); } catch(e) { wordBank = initialWords; }
-            } else { wordBank = initialWords; }
+                try { wordBank = JSON.parse(savedBank);
+                } catch(e) { wordBank = initialWords; }
+            } else { wordBank = initialWords;
+            }
 
             if (savedWrongs) {
-                try { wrongWords = JSON.parse(savedWrongs); } catch(e) { wrongWords = []; }
+                try { wrongWords = JSON.parse(savedWrongs);
+                } catch(e) { wrongWords = []; }
             }
 
             updateGlobalCounts();
@@ -475,7 +549,6 @@
             const chi = document.getElementById('newChi').value.trim();
             const ex = document.getElementById('newExample').value.trim();
             if (!eng || !chi) return alert("內容不全！");
-
             wordBank.unshift({ eng, chi, example: ex, id: Date.now() });
             saveState();
             document.getElementById('newEng').value = '';
@@ -498,7 +571,8 @@
                     const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
                     document.getElementById('newExample').value = ex || "No example found.";
                 }
-            } catch(e) { alert("抓取失敗"); }
+            } catch(e) { alert("抓取失敗");
+            }
         }
 
         function renderWordList() {
@@ -509,7 +583,8 @@
                 div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
                 div.innerHTML = `
                     <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
-                    <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
+         
+                   <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
                     <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
                 `;
                 container.appendChild(div);
@@ -545,10 +620,12 @@
                     const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (parts.length < 2) return null;
                     return {
-                       eng: parts[0].replace(/"/g, '').trim(),
+                     
+                   eng: parts[0].replace(/"/g, '').trim(),
                        chi: parts[1].replace(/"/g, '').trim(),
                        example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
                        id: Date.now() + i
+                
                     };
                 }).filter(x => x && x.eng);
                 if (newWords.length > 0) {
@@ -560,7 +637,8 @@
             reader.readAsText(file);
         }
 
-        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5);
+        }
 
         function speak(text) {
             if(!text || !window.speechSynthesis) return;
@@ -592,7 +670,6 @@
             unflipped.style.display = 'block';
             flipped.style.display = 'none';
             isFlipped = false;
-
             if (studyMode === 'card') {
                 unflipped.innerHTML = `
                     <div class="card-eng">${currentWord.eng}</div>
@@ -604,13 +681,13 @@
                 
                 const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
                 currentOptions = shuffle([currentWord.eng, ...pool]);
-                
                 quizOpts.innerHTML = '';
                 currentOptions.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-outline';
                     btn.innerText = opt;
                     btn.onclick = () => handleQuizSelect(opt);
+   
                     quizOpts.appendChild(btn);
                 });
             }
@@ -668,10 +745,8 @@
             extraTime = 0;
             killedWords = [];
             missedWords = [];
-
             const matchedWrongs = wrongWords.filter(w => wordBank.some(bw => bw.eng === w.eng));
             let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
-            
             while (list.length < maxFloor) {
                 const randomWords = shuffle(wordBank);
                 for (let rw of randomWords) {
@@ -680,7 +755,6 @@
                 }
             }
             studyList = shuffle(list);
-            
             document.getElementById('comboDisplay').style.display = 'none';
             switchView('dungeon');
             loadDungeonLevel();
@@ -695,10 +769,8 @@
             document.getElementById('hpDisplay').innerText = "❤️".repeat(hp);
             document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
             document.getElementById('dungeonChi').innerText = currentWord.chi;
-            
             isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
-                            (dungeonMode === 'high' && (floor === 5 || floor === 10 || floor === 15 || floor === 20));
-
+            (dungeonMode === 'high' && (floor === 5 || floor === 10 || floor === 15 || floor === 20));
             const mImgElement = document.getElementById('monsterImg');
             mImgElement.className = 'monster-img';
             
@@ -710,7 +782,6 @@
                 bossInput.value = '';
                 bossInput.focus();
             } else {
-                currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
                 document.getElementById('dungeonQuizGrid').style.display = 'grid';
                 document.getElementById('dungeonBossArea').style.display = 'none';
                 
@@ -724,6 +795,7 @@
                     btn.className = 'btn btn-outline';
                     btn.innerText = opt;
                     btn.onclick = () => checkDungeonAns(opt === currentWord.eng);
+    
                     grid.appendChild(btn);
                 });
             }
@@ -733,12 +805,12 @@
             totalSeconds += extraTime;
             extraTime = 0;
             const step = (100 / (totalSeconds * 10));
-
             timerInterval = setInterval(() => {
                 timeLeft -= step;
                 document.getElementById('timerLine').style.width = timeLeft + '%';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
+                  
                     triggerPlayerHurt(true);
                 }
             }, 100);
@@ -773,12 +845,15 @@
                     if (floor >= maxFloor) {
                         endGame('win');
                     } else if (isBossCurrent) {
+ 
                         showChest();
                     } else {
                         floor++;
                         loadDungeonLevel();
+       
                     }
-                }, 600); // 配合 CSS 動畫長度改為 0.6 秒
+                }, 600);
+                // 配合 CSS 動畫長度改為 0.6 秒
             } else {
                 triggerPlayerHurt(false);
             }
@@ -807,6 +882,8 @@
             if (hp <= 0) {
                 setTimeout(() => endGame('lose'), 600);
             } else {
+                // 原本在此處會無視對錯直接進入下一關，現在修改為：
+                // 不論是超時還是答錯，都不會增加 floor，而是直接重載當前關卡 loadDungeonLevel()
                 setTimeout(() => {
                     loadDungeonLevel();
                 }, 800);
@@ -848,7 +925,6 @@
 
             document.getElementById('endEmoji').innerText = (result === 'win') ? '🎉' : '💀';
             document.getElementById('endTitle').innerText = (result === 'win') ? '挑戰成功' : '你倒下了';
-
             document.getElementById('killedCount').innerText = killedWords.length;
             document.getElementById('killedList').innerText = killedWords.map(w => w.eng).join(', ') || '無';
             
@@ -861,7 +937,6 @@
         document.getElementById('bossInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') submitBossAnswer();
         });
-
         init();
     </script>
 </body>
