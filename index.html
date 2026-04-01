@@ -35,7 +35,6 @@
             position: relative; 
             z-index: 1;
         }
-        
         .global-bg { 
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; 
@@ -52,7 +51,6 @@
             background-position: center; 
             z-index: 0; 
         }
-
         .splash-screen { 
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%; 
@@ -113,7 +111,6 @@
             border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
             font-size: 0.95rem; width: 100%; box-sizing: border-box;
         }
-        
         .battle-scene { 
             position: relative;
             width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
@@ -169,7 +166,6 @@
         }
         .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
 
-        /* 畫面邊緣受傷紅框 */
         .hurt-flash { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
@@ -178,7 +174,6 @@
         .anim-flash { animation: flash-fade 0.5s ease; }
         @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* Combo 動畫 */
         .combo-text { 
             position: absolute; left: 20px; top: 30px; font-size: 1.8rem; 
             font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
@@ -186,7 +181,6 @@
         }
         @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
 
-        /* 寶箱彈窗 */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.7); display: flex; justify-content: center; 
@@ -198,7 +192,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
         }
         
-        /* 保持圖片比例,不要走樣 */
         .chest-img { 
             width: 100px; height: auto; cursor: pointer; 
             transition: 0.2s; object-fit: contain; 
@@ -216,7 +209,6 @@
             "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
         const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-        
         const monsterHurtImages = [...monsterImages];
         const bossHurtImages = [...bossImages];
 
@@ -296,7 +288,6 @@
             const [newChi, setNewChi] = useState("");
             const [newExample, setNewExample] = useState("");
             
-            // ================= 新增功能狀態 =================
             const [wrongWords, setWrongWords] = useState([]);
             const [combo, setCombo] = useState(0);
             const [isHurtFlash, setIsHurtFlash] = useState(false);
@@ -318,7 +309,6 @@
                 } else { 
                     setWordBank(initialWords); 
                 }
-      
                 if (savedWrongs) {
                     try { setWrongWords(JSON.parse(savedWrongs)); } catch(e) { setWrongWords([]); }
                 }
@@ -400,7 +390,6 @@
                 const q = shuffle(wordBank);
                 setCurrentWord(q[0]); setStudyList(q.slice(1));
                 setIsFlipped(false); setFeedback("");
-                
                 if(m === 'quiz') {
                     const wrongPool = shuffle(wordBank.filter(x => x.eng !== q[0].eng)).slice(0, 3).map(x => x.eng);
                     setOptions(shuffle([q[0].eng, ...wrongPool]));
@@ -414,7 +403,6 @@
                 let list = [];
                 const matchedWrongs = wrongWords.filter(w => wordBank.some(bankW => bankW.eng === w.eng));
                 const shuffleWrongs = shuffle(matchedWrongs).slice(0, Math.floor(mf/2));
-                
                 list = [...shuffleWrongs];
                 while(list.length < mf) {
                     const randomWords = shuffle(wordBank);
@@ -427,7 +415,6 @@
                 setMode(diff); setMaxFloor(mf); setHp(10); setFloor(1); setStudyList(list);
                 setCombo(0); setExtraTime(0); setKilledWords([]); setMissedWords([]);
                 setCurrentPlayerImg(playerImgDefault); setPlayerAnim("");
-                
                 loadDungeonLevel(1, list[0], diff, true);
                 setView('dungeon');
             };
@@ -436,11 +423,8 @@
                 if(!word) return;
                 setCurrentWord(word); setBossIn(""); setFeedback(""); setMonsterAnim("");
                 setMonsterHurtAnim(""); setCurrentPlayerImg(playerImgDefault); setPlayerAnim("");
-                
-                const isB = (m==='mid' && (f===7 || f===15)) ||
-                            (m==='high' && (f===5 || f===10 || f===15 || f===20));
+                const isB = (m==='mid' && (f===7 || f===15)) || (m==='high' && (f===5 || f===10 || f===15 || f===20));
                 setIsBossCurrent(isB);
-
                 const randomIndex = Math.floor(Math.random() * monsterImages.length);
                 const randomBossIndex = Math.floor(Math.random() * bossImages.length);
                 const currentImg = isB ? bossImages[randomBossIndex] : monsterImages[randomIndex];
@@ -449,22 +433,18 @@
                     const wrongPool = shuffle(wordBank.filter(x => x.eng !== word.eng)).slice(0, 3).map(x => x.eng);
                     setOptions(shuffle([word.eng, ...wrongPool]));
                 }
-                
                 startTimer(m, isB);
             };
 
             const startTimer = (currentMode, isBoss) => {
                 clearInterval(timerRef.current);
                 setTimeLeft(100);
-                
                 let totalSeconds = 5; 
                 if (isBoss && (currentMode === 'mid' || currentMode === 'high')) {
                     totalSeconds = 7;
                 }
-                
                 totalSeconds += extraTime;
                 setExtraTime(0); 
-                
                 const step = (100 / (totalSeconds * 10));
                 timerRef.current = setInterval(() => {
                     setTimeLeft(p => { 
@@ -506,7 +486,6 @@
                 setFeedback(isTimeout ? "⌛ TIMEOUT!" : "💥 WRONG!");
                 setCurrentPlayerImg(playerImgHurt); 
                 setPlayerAnim("anim-hurt-combined"); 
-                
                 if (window.navigator && window.navigator.vibrate) {
                     window.navigator.vibrate(300);
                 }
@@ -518,7 +497,6 @@
                     setCombo(prev => prev + 1);
                     setKilledWords(prev => [...prev, currentWord]);
                     setMonsterAnim("anim-hit"); setMonsterHurtAnim("anim-hurt-combined"); 
-                    
                     const currentIdx = monsterImages.indexOf(mImg);
                     const currentBossIdx = bossImages.indexOf(mImg);
                     if(isBossCurrent && currentBossIdx !== -1) {
@@ -526,12 +504,9 @@
                     } else if(currentIdx !== -1) {
                         setCurrentMonsterImg(monsterHurtImages[currentIdx]);
                     }
-
                     if (window.navigator && window.navigator.vibrate) { window.navigator.vibrate(300); }
-
                     setFeedback("⚔️ SUCCESS!");
                     speak(currentWord?.eng);
-                    
                     setWrongWords(prev => prev.filter(w => w.eng !== currentWord.eng));
                     setTimeout(() => {
                         if (floor >= maxFloor) {
@@ -580,7 +555,6 @@
             return (
                 <div style={{minHeight: '100vh'}}>
                     {view === 'dungeon' ? <div className="dungeon-bg"></div> : <div className="global-bg"></div>}
-                    
                     <div className={`hurt-flash ${isHurtFlash ? 'anim-flash' : ''}`}></div>
 
                     <div className="container">
@@ -668,4 +642,49 @@
                                         </div>
                                     )}
                                 </div>
-                                {view === 'quiz' && !isFlipped
+                                {view === 'quiz' && !isFlipped && (
+                                    <div className="quiz-grid">
+                                        {options.map(o => <button key={o} className="btn btn-outline" onClick={()=>{setFeedback(o===currentWord?.eng?"✅ 正確":"❌ 錯誤"); setIsFlipped(true); speak(currentWord?.eng);}}>{o}</button>)}
+                                    </div>
+                                )}
+                                {feedback && <div style={{textAlign:'center', fontWeight:'bold', margin:'10px'}}>{feedback}</div>}
+                                <button className="btn btn-primary" onClick={()=>{
+                                    if(studyList.length === 0) return setView('home');
+                                    const next = studyList[0];
+                                    setStudyList(studyList.slice(1)); setCurrentWord(next); setIsFlipped(false); setFeedback("");
+                                    if(view==='quiz') {
+                                        const wrongPool = shuffle(wordBank.filter(x => x.eng !== next.eng)).slice(0, 3).map(x => x.eng);
+                                        setOptions(shuffle([next.eng, ...wrongPool]));
+                                    }
+                                }}>下一個</button>
+                                <button className="btn" onClick={()=>setView('home')}>返回</button>
+                            </div>
+                        )}
+
+                        {view === 'dungeon' && (
+                            <div>
+                                <div style={{background: '#2d3436', color: 'white', padding: '12px', borderRadius: '15px', display:'flex', justifyContent:'space-between', marginBottom: '15px'}}>
+                                    <span>{"❤️".repeat(hp)}</span>
+                                    <span>B{floor}/{maxFloor}</span>
+                                </div>
+                                <div className="battle-scene">
+                                    <div className="timer-line" style={{width:timeLeft+'%'}}></div>
+                                    {combo >= 2 && <div className="combo-text">🔥 {combo} Combo!</div>}
+                                    <div className="monster-box">
+                                        <img src={currentMonsterImg} className={`monster-img ${monsterAnim} ${monsterHurtAnim}`} />
+                                    </div>
+                                    <div className="player-box">
+                                        <img src={currentPlayerImg} className={`player-img ${playerAnim}`} />
+                                    </div>
+                                </div>
+                                <div className="card" style={{minHeight:'60px', padding: '15px', marginBottom: '10px'}}>
+                                    <div style={{fontSize:'1.3rem', fontWeight:'bold'}}>{currentWord?.chi}</div>
+                                </div>
+                                {isBossCurrent ? (
+                                    <div>
+                                        <input placeholder="拼寫單字..." value={bossIn} onChange={e=>setBossIn(e.target.value)} autoFocus />
+                                        <button className="btn btn-primary" onClick={()=>handleDungeonAns(bossIn.toLowerCase().trim() === currentWord?.eng.toLowerCase().trim())}>⚡ 攻擊 BOSS</button>
+                                    </div>
+                                ) : (
+                                    <div className="quiz-grid">
+                                        {options.map(o => <button key={o} className="btn btn-outline"
