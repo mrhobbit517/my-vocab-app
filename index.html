@@ -275,21 +275,24 @@
                 setMImg(currentImg);
                 setCurrentMonsterImg(currentImg); 
                 
-                // 【修復】解決地下城模式中，生字英文選擇中沒有對應答案的 Bug
+                // 【修復精準版】解決地下城模式中沒有正確答案的 Bug
                 if(!isB && shuffleOptions) {
                     const wrongPool = shuffle(wordBank.filter(x => x.eng !== word.eng)).slice(0, 3).map(x => x.eng);
                     setOptions(shuffle([word.eng, ...wrongPool]));
                 }
                 
+                startTimer(m, isB);
+            };
+
+            // 【抽出獨立的倒數計時函數】便於超時或答錯時原地重新計時
+            const startTimer = (currentMode, isBoss) => {
                 clearInterval(timerRef.current);
                 setTimeLeft(100);
                 
-                // 【修復】徹底修正地下城的時間判定
+                // 【修改】初、中、高級普通關卡皆 5 秒，中、高 Boss 關 7 秒
                 let totalSeconds = 5; 
-                if (m === 'low') {
-                    totalSeconds = 10; // 初級一律 10 秒
-                } else if (isB) {
-                    totalSeconds = 7; // 中、高級的 Boss 題 7 秒
+                if (isBoss && (currentMode === 'mid' || currentMode === 'high')) {
+                    totalSeconds = 7; 
                 }
                 
                 const intervalTime = 100;
@@ -299,28 +302,33 @@
                     setTimeLeft(p => { 
                         if(p <= 0) { 
                             clearInterval(timerRef.current);
-                            triggerHurtEffects();
+                            triggerHurtEffects(true); // true 代表超時
                             return 0; 
                         } 
                         return p - step; 
                     });
                 }, intervalTime);
-            };
+            }
 
-            const triggerHurtEffects = () => {
+            // 【修改核心邏輯】答錯或超時扣血，保留同一題原地重新計時
+            const triggerHurtEffects = (isTimeout = false) => {
                 setHp(h => {
                     const newHp = h - 1;
                     if(newHp <= 0) {
                         setTimeout(() => setView('lose'), 600);
                     } else {
+                        // 扣血後，原地重新開啟計時
                         setTimeout(() => {
-                            loadDungeonLevel(floor, currentWord, mode, false);
+                            setPlayerAnim(""); 
+                            setCurrentPlayerImg(playerImgDefault);
+                            setFeedback("");
+                            startTimer(mode, isBossCurrent);
                         }, 800);
                     }
                     return newHp;
                 });
                 
-                setFeedback("💥 DAMAGED!");
+                setFeedback(isTimeout ? "⌛ TIMEOUT!" : "💥 WRONG!");
                 setCurrentPlayerImg(playerImgHurt); 
                 setPlayerAnim("anim-hurt-combined"); 
                 
@@ -355,7 +363,7 @@
                         loadDungeonLevel(nextF, studyList[nextF-1], mode, true);
                     }, 500);
                 } else {
-                    triggerHurtEffects();
+                    triggerHurtEffects(false); // false 代表手動答錯
                 }
             };
 
@@ -391,7 +399,7 @@
                                 <button className="btn btn-outline" onClick={()=>startNormal('quiz')}>選擇題模式 (看中選英)</button>
                                 <hr style={{width:'100%', border:'none', borderTop:'1px solid #ddd', margin:'20px 0'}}/>
                                 <h3 style={{color:'var(--danger)'}}>🏰 地下城戰鬥</h3>
-                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時10秒)</button>
+                                <button className="btn" onClick={()=>startDungeon('low')}>初級 (10層 - 限時5秒)</button>
                                 <button className="btn" onClick={()=>startDungeon('mid')}>中級 (15層 - 限時5秒)</button>
                                 <button className="btn" onClick={()=>startDungeon('high')}>高級 (20層 - 限時5秒)</button>
                             </div>
