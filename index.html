@@ -283,10 +283,10 @@
             <button class="btn btn-outline" onclick="startNormal('card')">生字卡 (讀音/例句)</button>
             <button class="btn btn-outline" onclick="startNormal('quiz')">選擇題模式 (看中選英)</button>
             <hr style="width:100%; border:none; border-top:1px solid #ddd; margin:20px 0"/>
-            <h3 style="color:var(--danger)">城堡 地下城戰鬥</h3>
-            <button class="btn" onclick="startDungeon('low')">初級 (10層 - 限時5秒)</button>
-            <button class="btn" onclick="startDungeon('mid')">中級 (15層 - 限時5秒)</button>
-            <button class="btn" onclick="startDungeon('high')">高級 (20層 - 限時5秒)</button>
+            <h3 style="color:var(--danger)">🏰 地下城戰鬥</h3>
+            <button class="btn" onclick="startDungeon('low')">初級 (10層)</button>
+            <button class="btn" onclick="startDungeon('mid')">中級 (15層)</button>
+            <button class="btn" onclick="startDungeon('high')">高級 (20層)</button>
         </div>
 
         <div id="view-add" class="view-section">
@@ -402,49 +402,41 @@
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
             {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
-         
             {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
             {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
             {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
             {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
             {eng:"house", chi:"房子", example:"We live in a big white house."},
-      
-              {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
+            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
             {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
             {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
             {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
             {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
-    
-                {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
             {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
             {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
             {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
             {eng:"river", chi:"河流", example:"We went fishing by the river."},
-   
-                 {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
             {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
             {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
             {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
             {eng:"water", chi:"水", example:"We should drink plenty of water."},
-       
-             {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
             {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
             {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
             {eng:"ball", chi:"球", example:"Throw the ball to me!"},
             {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
-         
             {eng:"door", chi:"門", example:"Please close the door behind you."},
             {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
             {eng:"flower", chi:"花", example:"This flower smells wonderful."},
             {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
             {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
-            {eng:"island", 
-            chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
             {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
             {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
             {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
             {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
-           
              {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
             {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
