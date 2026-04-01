@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v10.8 - RPG Splash</title>
+    <title>Vocab Dungeon v11.0 - Complete Edition</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -51,6 +51,22 @@
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
         .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
+
+        /* 新增功能：畫面邊緣紅光閃爍 */
+        .screen-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; border: 15px solid rgba(214, 48, 49, 0.8); box-sizing: border-box; pointer-events: none; z-index: 999; opacity: 0; transition: opacity 0.1s; }
+        .flash-active { opacity: 1; animation: flash-fade 0.5s forwards; }
+        @keyframes flash-fade { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* 新增功能：Combo 文字動畫 */
+        .combo-text { position: absolute; left: 20px; top: 50px; font-size: 2rem; font-weight: bold; color: #ff7675; text-shadow: 2px 2px 0px #000; animation: combo-pop 0.3s ease-out; z-index: 10; }
+        @keyframes combo-pop { 0% { transform: scale(0.5); opacity: 0; } 80% { transform: scale(1.2); } 100% { transform: scale(1); opacity: 1; } }
+
+        /* 新增功能：寶箱彈窗樣式 */
+        .chest-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border-radius: 20px; padding: 30px; width: 80%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000; border: 4px solid #f39c12; }
+        .chest-img { width: 80px; height: 80px; cursor: pointer; transition: 0.2s; }
+        .chest-img:hover { transform: scale(1.1); }
+        .chest-img.opened { animation: open-shake 0.5s forwards; }
+        @keyframes open-shake { 0% { transform: rotate(0deg); } 20% { transform: rotate(-10deg); } 40% { transform: rotate(10deg); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -71,6 +87,10 @@
         const playerImgDefault = "https://i.imgur.com/PBcBCFv.png";
         const playerImgHurt = "https://i.imgur.com/PBcBCFv.png"; 
         const splashImg = "https://i.imgur.com/8MUpGMJ.jpeg";
+
+        const chestClosedImg = "https://i.imgur.com/v8tTjD8.png"; 
+        const chestOpenedImg = "https://i.imgur.com/D4AOnYk.png"; 
+
         const initialWords = [
             {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
             {eng:"book", chi:"書", example:"I like to read a book before bed."},
@@ -144,8 +164,22 @@
             const [newChi, setNewChi] = useState("");
             const [newExample, setNewExample] = useState("");
 
+            // 新增功能狀態
+            const [wrongWords, setWrongWords] = useState([]); // 暗黑怨念錯題庫
+            const [combo, setCombo] = useState(0); // Combo 連擊數
+            const [isFlash, setIsFlash] = useState(false); // 受傷紅光閃爍
+            const [showChest, setShowChest] = useState(false); // 寶箱彈窗顯示
+            const [chestState, setChestState] = useState('closed'); // 'closed' | 'opening' | 'opened'
+            const [chestReward, setChestReward] = useState(''); // 寶箱獎勵文字
+            const [bonusTime, setBonusTime] = useState(0); // 寶箱附加時間 (秒)
+
+            // 結算報告專用狀態
+            const [sessionKilled, setSessionKilled] = useState([]); 
+            const [sessionMissed, setSessionMissed] = useState([]); 
+
             useEffect(() => {
                 const saved = localStorage.getItem('vocab_v10_final_v2');
+                const savedWrongs = localStorage.getItem('vocab_wrongs');
                 if (saved) {
                     try {
                         const parsed = JSON.parse(saved);
@@ -154,6 +188,9 @@
                 } else {
                     setWordBank(initialWords);
                 }
+                if (savedWrongs) {
+                    try { setWrongWords(JSON.parse(savedWrongs)); } catch(e) { setWrongWords([]); }
+                }
             }, []);
 
             useEffect(() => {
@@ -161,6 +198,10 @@
                     localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
                 }
             }, [wordBank]);
+
+            useEffect(() => {
+                localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
+            }, [wrongWords]);
 
             const speak = (text) => {
                 if(!text || !window.speechSynthesis) return;
@@ -229,7 +270,6 @@
                 setCurrentWord(q[0]); setStudyList(q.slice(1));
                 setIsFlipped(false); setFeedback("");
                 
-                // 【修復】解決主選單測驗模式可能沒有答案的 Bug
                 if(m === 'quiz') {
                     const wrongPool = shuffle(wordBank.filter(x => x.eng !== q[0].eng)).slice(0, 3).map(x => x.eng);
                     setOptions(shuffle([q[0].eng, ...wrongPool]));
@@ -240,15 +280,33 @@
             const startDungeon = (diff) => {
                 if(wordBank.length < 4) return alert("單字不足4個");
                 let mf = diff==='low'? 10 : diff==='mid'? 15 : 20;
-                let list = []; 
-                while(list.length < mf) list = [...list, ...shuffle(wordBank)];
-                list = list.slice(0, mf);
+                
+                // 【新增功能：暗黑怨念】優先加入曾答錯的單字
+                let list = [];
+                const matchedWrongs = wrongWords.filter(w => wordBank.some(bankW => bankW.eng === w.eng));
+                const uniqueWrongs = shuffle(matchedWrongs).slice(0, Math.floor(mf/2)); // 最多佔關卡的一半
+                
+                list = [...uniqueWrongs];
+                while(list.length < mf) {
+                    const randomWords = shuffle(wordBank);
+                    for(let rw of randomWords) {
+                        if(list.length >= mf) break;
+                        list.push(rw);
+                    }
+                }
+                list = shuffle(list); // 再次打亂
                 
                 setMode(diff); 
                 setMaxFloor(mf); 
                 setHp(10); 
                 setFloor(1); 
                 setStudyList(list);
+                
+                // 重置狀態
+                setCombo(0);
+                setBonusTime(0);
+                setSessionKilled([]);
+                setSessionMissed([]);
                 
                 setCurrentPlayerImg(playerImgDefault);
                 setPlayerAnim("");
@@ -275,7 +333,6 @@
                 setMImg(currentImg);
                 setCurrentMonsterImg(currentImg); 
                 
-                // 【修復精準版】解決地下城模式中沒有正確答案的 Bug
                 if(!isB && shuffleOptions) {
                     const wrongPool = shuffle(wordBank.filter(x => x.eng !== word.eng)).slice(0, 3).map(x => x.eng);
                     setOptions(shuffle([word.eng, ...wrongPool]));
@@ -284,16 +341,18 @@
                 startTimer(m, isB);
             };
 
-            // 【抽出獨立的倒數計時函數】便於超時或答錯時原地重新計時
             const startTimer = (currentMode, isBoss) => {
                 clearInterval(timerRef.current);
                 setTimeLeft(100);
                 
-                // 【修改】初、中、高級普通關卡皆 5 秒，中、高 Boss 關 7 秒
                 let totalSeconds = 5; 
                 if (isBoss && (currentMode === 'mid' || currentMode === 'high')) {
                     totalSeconds = 7; 
                 }
+                
+                // 加上寶箱開出的額外秒數 (只對下一關有效，用完即重置)
+                totalSeconds += bonusTime;
+                setBonusTime(0); 
                 
                 const intervalTime = 100;
                 const step = (100 / (totalSeconds * 10));
@@ -302,7 +361,7 @@
                     setTimeLeft(p => { 
                         if(p <= 0) { 
                             clearInterval(timerRef.current);
-                            triggerHurtEffects(true); // true 代表超時
+                            triggerHurtEffects(true); 
                             return 0; 
                         } 
                         return p - step; 
@@ -310,14 +369,28 @@
                 }, intervalTime);
             }
 
-            // 【修改核心邏輯】答錯或超時扣血，保留同一題原地重新計時
             const triggerHurtEffects = (isTimeout = false) => {
+                setCombo(0); // Combo 中斷
+                
+                // 【新增功能：暗黑怨念、結算】記錄錯題
+                setWrongWords(prev => {
+                    if (prev.some(x => x.eng === currentWord.eng)) return prev;
+                    return [...prev, currentWord];
+                });
+                setSessionMissed(prev => {
+                    if (prev.some(x => x.eng === currentWord.eng)) return prev;
+                    return [...prev, currentWord];
+                });
+
+                // 【新增功能：紅光閃動】
+                setIsFlash(true);
+                setTimeout(() => setIsFlash(false), 500);
+
                 setHp(h => {
                     const newHp = h - 1;
                     if(newHp <= 0) {
                         setTimeout(() => setView('lose'), 600);
                     } else {
-                        // 扣血後，原地重新開啟計時
                         setTimeout(() => {
                             setPlayerAnim(""); 
                             setCurrentPlayerImg(playerImgDefault);
@@ -340,6 +413,9 @@
             const handleDungeonAns = (correct) => {
                 clearInterval(timerRef.current);
                 if(correct) {
+                    setCombo(c => c + 1); // Combo 累加
+                    setSessionKilled(prev => [...prev, currentWord]);
+
                     setMonsterAnim("anim-hit"); 
                     setMonsterHurtAnim("anim-hurt-combined"); 
                     
@@ -357,14 +433,45 @@
 
                     setFeedback("⚔️ SUCCESS!");
                     speak(currentWord?.eng);
+                    
+                    // 從暗黑怨念中移除成功答對的單字
+                    setWrongWords(prev => prev.filter(x => x.eng !== currentWord.eng));
+
                     setTimeout(() => {
-                        if(floor >= maxFloor) return setView('win');
-                        const nextF = floor + 1; setFloor(nextF);
-                        loadDungeonLevel(nextF, studyList[nextF-1], mode, true);
+                        // 【新增功能：Boss 掉落寶箱】
+                        if(isBossCurrent) {
+                            setShowChest(true);
+                            setChestState('closed');
+                            setChestReward('');
+                        } else {
+                            proceedToNextFloor();
+                        }
                     }, 500);
                 } else {
-                    triggerHurtEffects(false); // false 代表手動答錯
+                    triggerHurtEffects(false); 
                 }
+            };
+
+            const proceedToNextFloor = () => {
+                if(floor >= maxFloor) return setView('win');
+                const nextF = floor + 1; setFloor(nextF);
+                loadDungeonLevel(nextF, studyList[nextF-1], mode, true);
+            }
+
+            const openChest = () => {
+                if (chestState !== 'closed') return;
+                setChestState('opening');
+                setTimeout(() => {
+                    setChestState('opened');
+                    const isHpReward = Math.random() < 0.5;
+                    if (isHpReward) {
+                        setHp(p => p + 1);
+                        setChestReward('獲得：❤️ 回復 1 點血量！');
+                    } else {
+                        setBonusTime(2); // 下一關多 2 秒
+                        setChestReward('獲得：⏱️ 下一關時間延長 2 秒！');
+                    }
+                }, 500);
             };
 
             if(view === 'splash') return (
@@ -379,6 +486,7 @@
             return (
                 <div style={{minHeight: '100vh'}}>
                     {view === 'dungeon' ? <div className="dungeon-bg"></div> : <div className="global-bg"></div>}
+                    <div className={`screen-flash ${isFlash ? 'flash-active' : ''}`}></div>
                     
                     <div className="container">
                         {view === 'home' && (
@@ -492,6 +600,7 @@
                                 </div>
                                 <div className="battle-scene">
                                     <div className="timer-line" style={{width:timeLeft+'%'}}></div>
+                                    {combo >= 2 && <div className="combo-text">{combo} Combo!</div>}
                                     <div className="monster-box">
                                         <img src={currentMonsterImg} className={`monster-img ${monsterAnim} ${monsterHurtAnim}`} />
                                     </div>
@@ -514,22 +623,31 @@
                                     </div>
                                 )}
                                 <button className="btn" style={{color:'#999', marginTop: '10px'}} onClick={()=>{clearInterval(timerRef.current); setView('home')}}>🏳️ 撤退</button>
+                                
+                                {showChest && (
+                                    <div className="chest-modal">
+                                        <h3>🎉 擊敗 BOSS！</h3>
+                                        <img 
+                                            src={chestState === 'closed' ? chestClosedImg : chestOpenedImg} 
+                                            className={`chest-img ${chestState === 'opening' ? 'opened' : ''}`}
+                                            onClick={openChest}
+                                        />
+                                        <p style={{fontSize:'0.9rem', color:'#7f8c8d'}}>{chestState === 'closed' ? '點擊寶箱領取獎勵' : '寶箱開啟了！'}</p>
+                                        {chestReward && <p style={{fontWeight:'bold', color:'var(--success)', marginTop:'10px'}}>{chestReward}</p>}
+                                        {chestState === 'opened' && (
+                                            <button className="btn btn-primary" style={{marginTop:'15px'}} onClick={() => { setShowChest(false); proceedToNextFloor(); }}>前往下一關</button>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         )}
 
                         {(view === 'win' || view === 'lose') && (
-                            <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center', textAlign:'center'}}>
-                                <h1>{view==='win'?"🎉":"💀"}</h1>
-                                <h2>{view==='win'?"挑戰成功":"你倒下了"}</h2>
-                                <button className="btn btn-primary" onClick={()=>setView('home')}>返回</button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        };
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
+                            <div style={{flex:1, display:'flex', flexDirection:'column', justifyContent:'center'}}>
+                                <div style={{textAlign:'center'}}>
+                                    <h1 style={{fontSize: '3rem', margin:'10px 0'}}>{view==='win'?"🎉":"💀"}</h1>
+                                    <h2>{view==='win'?"挑戰成功！":"你倒下了..."}</h2>
+                                </div>
+                                
+                                {/* 戰鬥結算報告 */}
+                                <div style={{background: 'rgba(255,255,255,0.95)', padding: '15px', borderRadius: '15px', marginTop: '15px', maxHeight: '3
