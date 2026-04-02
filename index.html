@@ -141,7 +141,6 @@
         .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain;
         }
         
-        /* 怪物受傷動畫：融合了原本的擊飛消失，並加入了震動與濾鏡 */
         @keyframes hit-shake { 
             0% { transform: translateX(0);
             } 
@@ -269,7 +268,6 @@
 
     <div class="container">
         <div id="view-home" class="view-section">
-        
             <h1 style="text-align:center; color:var(--primary)">VOCAB DUNGEON</h1>
             <button class="btn btn-primary" onclick="switchView('menu')">開始挑戰</button>
             <button class="btn" onclick="switchView('add')">新增單字</button>
@@ -278,7 +276,6 @@
         </div>
 
         <div id="view-menu" class="view-section">
-       
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>選擇模式</h2>
             <button class="btn btn-outline" onclick="startNormal('card')">生字卡 (讀音/例句)</button>
@@ -291,7 +288,6 @@
         </div>
 
         <div id="view-add" class="view-section">
-            
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>新增單字</h2>
             <input type="text" id="newEng" placeholder="英文單字" />
@@ -299,7 +295,6 @@
             <textarea id="newChi" placeholder="中文意思"></textarea>
             <textarea id="newExample" placeholder="例句" rows="3"></textarea>
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
-  
         </div>
 
         <div id="view-list" class="view-section">
@@ -325,7 +320,6 @@
                     <hr/>
                     <strong>【中文】</strong><p id="flipChi"></p>
                     <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
-                
                 </div>
             </div>
             <div id="quizOptions" class="quiz-grid" style="display:none"></div>
@@ -341,13 +335,11 @@
             </div>
             <div class="battle-scene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
-             
                 <div class="combo-text" id="comboDisplay">🔥 2 Combo!</div>
                 <div class="monster-box">
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
                 </div>
                 <div class="player-box">
-      
                     <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
                 </div>
             </div>
@@ -359,7 +351,6 @@
             <div id="dungeonBossArea" style="display:none">
                 <input type="text" id="bossInput" placeholder="拼寫單字..." />
                 <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
-      
             </div>
 
             <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
@@ -371,7 +362,6 @@
                 <h2 id="endTitle"></h2>
             </div>
             
-       
              <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; marginTop: 15px; max-height: 200px; overflow-y: auto">
                 <h4 style="margin: 0 0 10px 0">📊 本次戰果</h4>
                 <div style="color: var(--success); margin-bottom: 5px">
@@ -390,7 +380,6 @@
 
     <div class="modal-overlay" id="chestModal">
         <div class="modal-content">
-     
            <h3>🎉 擊敗 Boss！獲得寶箱</h3>
             <img src="https://i.imgur.com/sAsVc32.png" id="chestImg" class="chest-img" onclick="openChest()" alt="寶箱" />
             <p style="color: #636e72" id="chestTip">點擊寶箱開啟獎勵！</p>
@@ -400,55 +389,208 @@
 
     <script>
         const initialWords = [
-            {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
-            {eng:"book", chi:"書", example:"I like to read a book before bed."},
-            {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
-         
-            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
-            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
-            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
-            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
-            {eng:"house", chi:"房子", example:"We live in a big white house."},
-      
-            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
-            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
-            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
-            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
-            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
-    
-            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
-            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
-            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
-            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
-            {eng:"river", chi:"河流", example:"We went fishing by the river."},
-   
-            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
-            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
-            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
-            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
-            {eng:"water", chi:"水", example:"We should drink plenty of water."},
-       
-            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
-            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
-            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
-            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
-            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
-         
-            {eng:"door", chi:"門", example:"Please close the door behind you."},
-            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
-            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
-            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
-            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
-            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
-            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
-            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
-            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
-            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
-           
-            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
-            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+            {eng:"concept", chi:"概念", example:"The teacher explained a difficult concept in class today."},
+            {eng:"curiosity", chi:"好奇心", example:"Children have a natural curiosity about the world."},
+            {eng:"focus", chi:"專注/焦點", example:"You need to focus on your studies to get good grades."},
+            {eng:"intelligence", chi:"智力/智慧", example:"Intelligence is not just about getting high scores."},
+            {eng:"memory", chi:"記憶", example:"The old photo brought back many happy memories."},
+            {eng:"opinion", chi:"意見", example:"Everyone is entitled to their own opinion."},
+            {eng:"perspective", chi:"觀點/看法", example:"Traveling helps us see things from a different perspective."},
+            {eng:"wisdom", chi:"智慧", example:"We can learn a lot from the wisdom of the elderly."},
+            {eng:"illusion", chi:"幻覺/錯覺", example:"The mirror creates an illusion of a larger space."},
+            {eng:"logic", chi:"邏輯", example:"There is no logic in your argument."},
+            {eng:"intuition", chi:"直覺", example:"My intuition told me that something was wrong."},
+            {eng:"philosophy", chi:"哲學/人生觀", example:"His philosophy of life is to be happy every day."},
+            {eng:"prejudice", chi:"偏見", example:"We should judge people by their actions, not by prejudice."},
+            {eng:"perception", chi:"感知/看法", example:"Our perception of beauty changes over time."},
+            {eng:"consciousness", chi:"意識", example:"The patient regained consciousness after the operation."},
+            {eng:"access", chi:"存取/接近的權利", example:"Students have free access to the school library."},
+            {eng:"application", chi:"應用/應用程式", example:"This new application can help you learn English faster."},
+            {eng:"device", chi:"裝置/設備", example:"Please turn off all electronic devices during the exam."},
+            {eng:"network", chi:"網路", example:"The computer network was down for two hours."},
+            {eng:"privacy", chi:"隱私", example:"We should respect other people's privacy."},
+            {eng:"security", chi:"安全/保安", example:"The bank has a very strict security system."},
+            {eng:"system", chi:"系統", example:"The school is testing a new grading system."},
+            {eng:"automatic", chi:"自動的", example:"The building has automatic sliding doors."},
+            {eng:"virtual", chi:"虛擬的", example:"Virtual reality games are becoming very popular."},
+            {eng:"digital", chi:"數位的", example:"We live in a digital age where everything is online."},
+            {eng:"browse", chi:"瀏覽", example:"I like to browse the internet before going to bed."},
+            {eng:"compatible", chi:"相容的", example:"This app is not compatible with my old phone."},
+            {eng:"algorithm", chi:"演算法", example:"Social media uses algorithms to show you posts you might like."},
+            {eng:"innovate", chi:"創新", example:"To succeed, a company must constantly innovate."},
+            {eng:"satellite", chi:"衛星", example:"The satellite sends weather information back to Earth."},
+            {eng:"ambition", chi:"抱負/野心", example:"His ambition is to become a famous doctor."},
+            {eng:"confidence", chi:"信心", example:"Practicing speaking will build your confidence."},
+            {eng:"courage", chi:"勇氣", example:"It takes courage to admit your mistakes."},
+            {eng:"creative", chi:"有創意的", example:"She came up with a very creative solution to the problem."},
+            {eng:"generous", chi:"慷慨的", example:"He is very generous and often donates money to charity."},
+            {eng:"independent", chi:"獨立的", example:"Young people should learn to be independent."},
+            {eng:"patience", chi:"耐心", example:"Learning a new language requires a lot of patience."},
+            {eng:"polite", chi:"有禮貌的", example:"It is polite to say thank you when someone helps you."},
+            {eng:"responsible", chi:"負責任的", example:"You should be responsible for your own actions."},
+            {eng:"stubborn", chi:"固執的", example:"He is too stubborn to listen to any advice."},
+            {eng:"empathy", chi:"同理心", example:"Empathy helps us understand how other people feel."},
+            {eng:"optimistic", chi:"樂觀的", example:"She is always optimistic about the future."},
+            {eng:"modest", chi:"謙虛的", example:"He is a great artist, but he is very modest."},
+            {eng:"jealous", chi:"嫉妒的", example:"Don't be jealous of other people's success."},
+            {eng:"enthusiastic", chi:"熱情的", example:"The students were very enthusiastic about the school trip."},
+            {eng:"tradition", chi:"傳統", example:"It is a tradition to eat mooncakes during the festival."},
+            {eng:"community", chi:"社群/社區", example:"The local community organized a charity run."},
+            {eng:"culture", chi:"文化", example:"We should learn to respect different cultures."},
+            {eng:"economy", chi:"經濟", example:"The country's economy is growing slowly."},
+            {eng:"government", chi:"政府", example:"The government plans to build a new hospital here."},
+            {eng:"harmony", chi:"和諧", example:"We should live in harmony with nature."},
+            {eng:"justice", chi:"正義/公正", example:"The lawyer fought hard for justice."},
+            {eng:"population", chi:"人口", example:"The population of the city has increased rapidly."},
+            {eng:"society", chi:"社會", example:"Volunteers play an important role in our society."},
+            {eng:"citizen", chi:"公民", example:"Every citizen has the duty to vote."},
+            {eng:"democracy", chi:"民主", example:"Freedom of speech is a key part of democracy."},
+            {eng:"heritage", chi:"遺產/傳統", example:"We should protect our cultural heritage."},
+            {eng:"diversity", chi:"多樣性", example:"The school celebrates cultural diversity among students."},
+            {eng:"migration", chi:"遷移/移民", example:"Bird migration happens every year in autumn."},
+            {eng:"civilization", chi:"文明", example:"We learned about ancient civilizations in history class."},
+            {eng:"academic", chi:"學術的", example:"The school awards students for their academic success."},
+            {eng:"achievement", chi:"成就", example:"Winning the competition was a great achievement."},
+            {eng:"challenge", chi:"挑戰", example:"Learning physics can be a big challenge for me."},
+            {eng:"concentrate", chi:"專心", example:"I cannot concentrate when the music is too loud."},
+            {eng:"education", chi:"教育", example:"Education is the key to a better future."},
+            {eng:"knowledge", chi:"知識", example:"Reading books is a good way to gain knowledge."},
+            {eng:"method", chi:"方法", example:"What is the best method to solve this math problem?"},
+            {eng:"motivate", chi:"激勵/激發", example:"The coach tried to motivate the team before the game."},
+            {eng:"skill", chi:"技能/技巧", example:"Cooking is a useful skill for everyone."},
+            {eng:"curriculum", chi:"課程", example:"The school is adding coding to the curriculum."},
+            {eng:"discipline", chi:"紀律", example:"Martial arts require a lot of discipline."},
+            {eng:"evaluate", chi:"評估", example:"The teacher needs to evaluate the students' work."},
+            {eng:"literacy", chi:"識字/讀寫能力", example:"Computer literacy is very important in modern jobs."},
+            {eng:"principle", chi:"原理/原則", example:"He is a man of high moral principles."},
+            {eng:"scholarship", chi:"獎學金", example:"She won a scholarship to study at a top university."},
+            {eng:"career", chi:"事業/職業", example:"She wants to pursue a career in fashion design."},
+            {eng:"colleague", chi:"同事", example:"I am going to have lunch with my colleagues."},
+            {eng:"company", chi:"公司", example:"He works for a large international company."},
+            {eng:"employ", chi:"雇用", example:"The factory employs more than five hundred workers."},
+            {eng:"experience", chi:"經驗", example:"She has five years of experience in teaching."},
+            {eng:"interview", chi:"面試", example:"I have a job interview tomorrow morning."},
+            {eng:"profession", chi:"專業/職業", example:"Nursing is a very respected profession."},
+            {eng:"salary", chi:"薪水", example:"He is happy with his new job and good salary."},
+            {eng:"success", chi:"成功", example:"Hard work is the secret to success."},
+            {eng:"office", chi:"辦公室", example:"His office is on the top floor of the building."},
+            {eng:"promotion", chi:"升職", example:"She got a promotion after working hard for a year."},
+            {eng:"qualify", chi:"取得資格", example:"You need to pass the exam to qualify as a teacher."},
+            {eng:"resign", chi:"辭職", example:"He decided to resign from his job to travel the world."},
+            {eng:"pension", chi:"退休金", example:"He lives on his pension after retiring."},
+            {eng:"strategy", chi:"策略", example:"The company needs a new strategy to increase sales."},
+            {eng:"climate", chi:"氣候", example:"Climate change is a serious problem for our planet."},
+            {eng:"disaster", chi:"災難", example:"The earthquake was a terrible natural disaster."},
+            {eng:"energy", chi:"能源/能量", example:"We should save energy by turning off the lights."},
+            {eng:"environment", chi:"環境", example:"We must protect the environment from pollution."},
+            {eng:"nature", chi:"自然", example:"I love spending time in nature on weekends."},
+            {eng:"pollution", chi:"污染", example:"Air pollution is very bad in this big city."},
+            {eng:"protect", chi:"保護", example:"Wear a hat to protect your skin from the sun."},
+            {eng:"recycle", chi:"回收", example:"We should recycle plastic bottles and paper."},
+            {eng:"resource", chi:"資源", example:"Water is a very precious natural resource."},
+            {eng:"species", chi:"物種", example:"Many species of animals are in danger of dying out."},
+            {eng:"conservation", chi:"保育/節約", example:"Energy conservation is important to save money and the planet."},
+            {eng:"ecosystem", chi:"生態系統", example:"The ocean has a complex ecosystem."},
+            {eng:"glacier", chi:"冰河", example:"Many glaciers are melting because of global warming."},
+            {eng:"habitat", chi:"棲息地", example:"The forest is the natural habitat of the tiger."},
+            {eng:"sustainable", chi:"永續的", example:"We need to find sustainable ways to produce food."},
+            {eng:"balanced", chi:"均衡的", example:"Eating a balanced diet is good for your health."},
+            {eng:"disease", chi:"疾病", example:"Regular exercise can help prevent heart disease."},
+            {eng:"exercise", chi:"運動/練習", example:"You should exercise at least three times a week."},
+            {eng:"habit", chi:"習慣", example:"Biting your nails is a bad habit."},
+            {eng:"health", chi:"健康", example:"Smoking is bad for your health."},
+            {eng:"lifestyle", chi:"生活方式", example:"A healthy lifestyle includes good food and enough sleep."},
+            {eng:"nutrition", chi:"營養", example:"Fresh vegetables are full of good nutrition."},
+            {eng:"physical", chi:"身體的/物理的", example:"Playing sports is good for your physical health."},
+            {eng:"recover", chi:"康復/恢復", example:"I hope you will recover from your cold soon."},
+            {eng:"stress", chi:"壓力", example:"Too much stress can make you feel sick."},
+            {eng:"allergy", chi:"過敏", example:"He has a severe allergy to peanuts."},
+            {eng:"immune", chi:"免疫的", example:"Vaccines help your immune system fight diseases."},
+            {eng:"infection", chi:"感染", example:"Clean the cut to prevent an infection."},
+            {eng:"symptom", chi:"症狀", example:"A high fever is a common symptom of the flu."},
+            {eng:"therapy", chi:"治療", example:"He is going to physical therapy after the accident."},
+            {eng:"accurate", chi:"準確的", example:"The weather report was not very accurate today."},
+            {eng:"ancient", chi:"古代的", example:"We visited an ancient castle during our trip."},
+            {eng:"beautiful", chi:"美麗的", example:"The view from the top of the mountain is beautiful."},
+            {eng:"complex", chi:"複雜的", example:"The human brain is a very complex organ."},
+            {eng:"convenient", chi:"方便的", example:"Online shopping is very convenient for busy people."},
+            {eng:"enormous", chi:"巨大的", example:"The elephant is an enormous animal."},
+            {eng:"famous", chi:"著名的", example:"The Louvre is a very famous museum in Paris."},
+            {eng:"frequent", chi:"頻繁的", example:"Rain is very frequent in this area during spring."},
+            {eng:"modern", chi:"現代的", example:"The city is full of tall, modern buildings."},
+            {eng:"perfect", chi:"完美的", example:"The weather today is perfect for a picnic."},
+            {eng:"abundant", chi:"豐富的/充足的", example:"The island has an abundant supply of fresh water."},
+            {eng:"artificial", chi:"人造的", example:"This juice contains no artificial flavors."},
+            {eng:"authentic", chi:"真實的/道地的", example:"This restaurant serves authentic Italian food."},
+            {eng:"vibrant", chi:"充滿活力的", example:"The city has a vibrant nightlife."},
+            {eng:"delicate", chi:"精美的/脆弱的", example:"These flowers are very delicate and need care."},
+            {eng:"efficient", chi:"有效率的", example:"An efficient worker finishes tasks quickly."},
+            {eng:"flexible", chi:"有彈性的", example:"My work hours are very flexible."},
+            {eng:"fragile", chi:"易碎的", example:"Be careful with that glass; it is fragile."},
+            {eng:"genuine", chi:"真誠的/真正的", example:"He showed a genuine interest in my project."},
+            {eng:"hostile", chi:"懷有敵意的", example:"The crowd was hostile to the speaker."},
+            {eng:"identical", chi:"完全相同的", example:"The twins are wearing identical clothes."},
+            {eng:"inevitable", chi:"不可避免的", example:"Change is an inevitable part of life."},
+            {eng:"temporary", chi:"暫時的", example:"This is only a temporary solution to the problem."},
+            {eng:"unique", chi:"獨特的", example:"Everyone has a unique fingerprint."},
+            {eng:"universal", chi:"普遍的/全球的", example:"Music is a universal language."},
+            {eng:"vague", chi:"含糊的", example:"His instructions were too vague to follow."},
+            {eng:"visible", chi:"肉眼可見的", example:"The stars are clearly visible tonight."},
+            {eng:"primitive", chi:"原始的", example:"The campers lived in a primitive hut."},
+            {eng:"superficial", chi:"膚淺的", example:"He only has a superficial knowledge of the subject."},
+            {eng:"dynamic", chi:"動態的/有活力的", example:"The business world is very dynamic and constantly changing."},
+            {eng:"appreciate", chi:"感激/欣賞", example:"I really appreciate your help with my homework."},
+            {eng:"communicate", chi:"溝通", example:"We can communicate with people online easily."},
+            {eng:"compete", chi:"競爭", example:"Many athletes will compete in the Olympic Games."},
+            {eng:"cooperate", chi:"合作", example:"We need to cooperate to finish the project on time."},
+            {eng:"encourage", chi:"鼓勵", example:"My parents always encourage me to try new things."},
+            {eng:"imagine", chi:"想像", example:"Can you imagine living without the Internet?"},
+            {eng:"improve", chi:"改善/提高", example:"I want to improve my English speaking skills."},
+            {eng:"participate", chi:"參與", example:"All students are welcome to participate in the game."},
+            {eng:"prevent", chi:"預防/阻止", example:"Regular hand washing helps prevent the spread of diseases."},
+            {eng:"survive", chi:"存活/生存", example:"Cacti can survive in the desert without much water."},
+            {eng:"abandon", chi:"放棄/拋棄", example:"They had to abandon the ship because of the storm."},
+            {eng:"accumulate", chi:"累積", example:"Dust will accumulate if you don't clean often."},
+            {eng:"advocate", chi:"提倡/主張", example:"Many people advocate for animal rights."},
+            {eng:"anticipate", chi:"預期", example:"We anticipate that the price will go up next year."},
+            {eng:"collaborate", chi:"協作/合作", example:"Musicians from different countries will collaborate on the album."},
+            {eng:"demonstrate", chi:"示範/證明", example:"Let me demonstrate how to use this machine."},
+            {eng:"dominate", chi:"主導/支配", example:"The strong team dominated the game."},
+            {eng:"eliminate", chi:"消除/淘汰", example:"You should eliminate junk food from your diet."},
+            {eng:"exaggerate", chi:"誇大", example:"Don't exaggerate; the fish wasn't that big!"},
+            {eng:"negotiate", chi:"談判/協商", example:"We are trying to negotiate a better price."},
+            {eng:"observe", chi:"觀察", example:"The scientist went to the jungle to observe monkeys."},
+            {eng:"predict", chi:"預測", example:"It is difficult to predict the weather accurately."},
+            {eng:"regulate", chi:"管制/調節", example:"The valve is used to regulate the water flow."},
+            {eng:"reinforce", chi:"加強/強化", example:"The bridge was reinforced with steel plates."},
+            {eng:"transform", chi:"轉變/改造", example:"The old warehouse was transformed into a modern apartment."},
+            {eng:"verify", chi:"證實/核對", example:"Please verify that your email address is correct."},
+            {eng:"withstand", chi:"抵擋/經受", example:"The bridge is strong enough to withstand earthquakes."},
+            {eng:"tolerate", chi:"忍受", example:"I cannot tolerate that loud noise anymore."},
+            {eng:"stimulate", chi:"刺激/激發", example:"The teacher used games to stimulate students' interest."},
+            {eng:"hesitate", chi:"猶豫", example:"Don't hesitate to ask if you need help."},
+            {eng:"alternative", chi:"替代的/另一選擇", example:"Do you have an alternative plan if it rains?"},
+            {eng:"consequence", chi:"後果", example:"Action speaks louder than words, but consequences speak the loudest."},
+            {eng:"contribute", chi:"貢獻/捐助", example:"We can all contribute to protecting the environment."},
+            {eng:"emphasize", chi:"強調", example:"The speaker emphasized the importance of hard work."},
+            {eng:"guarantee", chi:"保證", example:"I guarantee that you will love this book."},
+            {eng:"incident", chi:"事件", example:"The police are investigating the incident."},
+            {eng:"obvious", chi:"明顯的", example:"It was obvious that she was lying."},
+            {eng:"foster", chi:"培養/促進", example:"The teacher tried to foster a love of reading in her students."},
+            {eng:"random", chi:"隨機的", example:"The computer will pick a random winner."},
+            {eng:"significant", chi:"顯著的/重要的", example:"There is a significant difference between the two products."},
+            {eng:"substitute", chi:"代替", example:"You can use honey as a substitute for sugar."},
+            {eng:"sufficient", chi:"足夠的", example:"Do we have sufficient time to finish the task?"},
+            {eng:"tendency", chi:"傾向/趨勢", example:"He has a tendency to forget people's names."},
+            {eng:"valid", chi:"有效的/有根據的", example:"Your passport must be valid for at least six months."},
+            {eng:"wealth", chi:"財富", example:"Health is more important than wealth."},
+            {eng:"adequate", chi:"足夠的/適當的", example:"The room is small but adequate for my needs."},
+            {eng:"burden", chi:"負擔", example:"The heavy bags were a burden to carry."},
+            {eng:"candidate", chi:"候選人", example:"There are three candidates running for president."},
+            {eng:"chaos", chi:"混亂", example:"The room was in complete chaos after the party."},
+            {eng:"debate", chi:"辯論", example:"The two politicians will have a debate on TV tonight."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
-        
+
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -584,7 +726,6 @@
                 div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
                 div.innerHTML = `
                     <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
-         
                     <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
                     <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
                 `;
@@ -598,17 +739,12 @@
             renderWordList();
         }
 
-        // 這是幫你更新後的匯出 CSV 功能，解決了亂碼問題
         function exportCSV() {
-            // 在最前端加上 \ufeff (BOM)，解決 Excel 開啟時中文亂碼的問題
             let csvContent = "\ufeff英文,中文,例句\n" 
                 + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
-            
-            // 將內容轉為 Blob 物件，指定為 utf-8 格式，更安全穩固
             const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             
-            // 建立下載連結
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
             link.setAttribute("download", "my_vocab_list.csv");
@@ -616,7 +752,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            URL.revokeObjectURL(url); // 釋放記憶體
+            URL.revokeObjectURL(url); 
         }
 
         function importCSV(e) {
@@ -630,13 +766,10 @@
                     const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (parts.length < 2) return null;
                     return {
-                     
                         eng: parts[0].replace(/"/g, '').trim(),
                        chi: parts[1].replace(/"/g, '').trim(),
                        example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
-                    
                        id: Date.now() + i
-                
                     };
                 }).filter(x => x && x.eng);
                 if (newWords.length > 0) {
@@ -698,7 +831,6 @@
                     btn.className = 'btn btn-outline';
                     btn.innerText = opt;
                     btn.onclick = () => handleQuizSelect(opt);
-   
                     quizOpts.appendChild(btn);
                 });
             }
@@ -807,7 +939,6 @@
                     btn.className = 'btn btn-outline';
                     btn.innerText = opt;
                     btn.onclick = () => checkDungeonAns(opt === currentWord.eng);
-    
                     grid.appendChild(btn);
                 });
             }
@@ -857,7 +988,6 @@
                 
                 speak(currentWord.eng);
                 if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
-
                 setTimeout(() => {
                     mImgElement.classList.remove('anim-hit');
                     if (floor >= maxFloor) {
