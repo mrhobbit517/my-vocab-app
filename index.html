@@ -79,7 +79,7 @@
             transition: 0.1s; 
         }
         .btn-rpg:active { transform: scale(0.9);
-            background: #636e72; }
+        background: #636e72; }
 
         .btn { 
             background: #fff;
@@ -101,7 +101,7 @@
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
         .btn-small { padding: 8px; font-size: 0.85rem;
-            margin: 5px 2px; flex: 1; }
+        margin: 5px 2px; flex: 1; }
         .speaker-btn { 
             background: #e1f0ff;
             border: none;
@@ -250,7 +250,7 @@
         }
 
         .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column;
-            justify-content: center; }
+        justify-content: center; }
         .view-section.active { display: flex !important;
         }
     </style>
@@ -269,6 +269,7 @@
 
     <div class="container">
         <div id="view-home" class="view-section">
+        
             <h1 style="text-align:center; color:var(--primary)">VOCAB DUNGEON</h1>
             <button class="btn btn-primary" onclick="switchView('menu')">開始挑戰</button>
             <button class="btn" onclick="switchView('add')">新增單字</button>
@@ -289,6 +290,7 @@
         </div>
 
         <div id="view-add" class="view-section">
+            
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>新增單字</h2>
             <input type="text" id="newEng" placeholder="英文單字" />
@@ -296,6 +298,7 @@
             <textarea id="newChi" placeholder="中文意思"></textarea>
             <textarea id="newExample" placeholder="例句" rows="3"></textarea>
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
+        
         </div>
 
         <div id="view-list" class="view-section">
@@ -321,6 +324,7 @@
                     <hr/>
                     <strong>【中文】</strong><p id="flipChi"></p>
                     <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
+                
                 </div>
             </div>
             <div id="quizOptions" class="quiz-grid" style="display:none"></div>
@@ -336,11 +340,13 @@
             </div>
             <div class="battle-scene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
+             
                 <div class="combo-text" id="comboDisplay">🔥 2 Combo!</div>
                 <div class="monster-box">
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
                 </div>
                 <div class="player-box">
+                   
                     <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
                 </div>
             </div>
@@ -352,6 +358,7 @@
             <div id="dungeonBossArea" style="display:none">
                 <input type="text" id="bossInput" placeholder="拼寫單字..." />
                 <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+      
             </div>
 
             <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
@@ -363,6 +370,7 @@
                 <h2 id="endTitle"></h2>
             </div>
             
+       
              <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; marginTop: 15px; max-height: 200px; overflow-y: auto">
                 <h4 style="margin: 0 0 10px 0">📊 本次戰果</h4>
                 <div style="color: var(--success); margin-bottom: 5px">
@@ -381,6 +389,7 @@
 
     <div class="modal-overlay" id="chestModal">
         <div class="modal-content">
+     
            <h3>🎉 擊敗 Boss！獲得寶箱</h3>
             <img src="https://i.imgur.com/sAsVc32.png" id="chestImg" class="chest-img" onclick="openChest()" alt="寶箱" />
             <p style="color: #636e72" id="chestTip">點擊寶箱開啟獎勵！</p>
@@ -390,715 +399,515 @@
 
     <script>
         const initialWords = [
-            {eng:"accommodation", chi:"住宿", example:"We need to book our accommodation before we fly to Japan."},
-            {eng:"affordable", chi:"負擔得起的 / 實惠的", example:"This restaurant offers delicious food at affordable prices."},
-            {eng:"appetite", chi:"胃口 / 食慾", example:"The long walk in the countryside gave me a good appetite."},
-            {eng:"appointment", chi:"預約 / 約定", example:"I have a dental appointment at 3 p.m. tomorrow."},
-            {eng:"atmosphere", chi:"氣氛", example:"I love the relaxing atmosphere of this coffee shop."},
-            {eng:"budget", chi:"預算", example:"We are traveling on a tight budget, so we cannot stay in luxury hotels."},
-            {eng:"casual", chi:"便服的 / 休閒的", example:"You can wear casual clothes to the barbecue party."},
-            {eng:"chore", chi:"家務 / 雜務", example:"My brother and I take turns doing household chores like washing dishes."},
-            {eng:"commute", chi:"通勤 (上下課/上下班)", example:"It takes me about 45 minutes to commute from home to school."},
-            {eng:"complimentary", chi:"免費贈送的", example:"The hotel provides complimentary breakfast for all guests."},
-            {eng:"convenient", chi:"方便的", example:"Living near the MTR station is very convenient."},
-            {eng:"craving", chi:"（對食物的）渴望", example:"I have a sudden craving for bubble tea."},
-            {eng:"deadline", chi:"截止日期", example:"The deadline for submitting the English assignment is this Friday."},
-            {eng:"delay", chi:"延誤", example:"Our flight was delayed for two hours because of the heavy rain."},
-            {eng:"discount", chi:"折扣", example:"Students can enjoy a 10% discount at this bookstore."},
-            {eng:"distracted", chi:"分心的", example:"It's hard to study when you are distracted by your phone."},
-            {eng:"entertainment", chi:"娛樂", example:"The mall offers a wide range of entertainment, including a cinema."},
-            {eng:"exhausted", chi:"精疲力竭的", example:"I was totally exhausted after the 2-hour PE lesson."},
-            {eng:"expired", chi:"過期的", example:"Don't drink that milk; it has already expired."},
-            {eng:"flavor", chi:"口味 / 風味", example:"What is your favorite ice cream flavor?"},
-            {eng:"frustrated", chi:"感到挫折的 / 灰心的", example:"She felt frustrated when she couldn't solve the math problem."},
-            {eng:"gadget", chi:"電子小配件 / 小裝置", example:"He loves buying the latest tech gadgets, like smartwatches."},
-            {eng:"gathering", chi:"聚會", example:"We are planning a family gathering for the Mid-Autumn Festival."},
-            {eng:"grocery", chi:"食品雜貨", example:"I need to go to the supermarket to buy some groceries."},
-            {eng:"habit", chi:"習慣", example:"You should get into the habit of saving money."},
-            {eng:"hangout", chi:"（去某處）消遣 / 聚會", example:"The shopping mall is a popular hangout for teenagers."},
-            {eng:"hesitate", chi:"猶豫", example:"If you need any help, please do not hesitate to ask me."},
-            {eng:"hygiene", chi:"衛生", example:"We must pay attention to personal hygiene to stay healthy."},
-            {eng:"ingredient", chi:"（烹調的）原料 / 材料", example:"Fresh ingredients are the secret to making good food."},
-            {eng:"interact", chi:"互動", example:"Teachers should encourage students to interact with each other in class."},
-            {eng:"leisure", chi:"空閒 / 悠閒", example:"What do you usually do in your leisure time?"},
-            {eng:"messy", chi:"凌亂的", example:"My mom always complains that my bedroom is too messy."},
-            {eng:"mood", chi:"心情", example:"Listening to soft music always puts me in a good mood."},
-            {eng:"neighborhood", chi:"鄰里 / 社社區", example:"There are many nice restaurants in our neighborhood."},
-            {eng:"overdue", chi:"過期的 / 遲到的", example:"You must return these library books because they are overdue."},
-            {eng:"package", chi:"包裹 / 套裝", example:"The courier just delivered a package for you."},
-            {eng:"postpone", chi:"延期", example:"The picnic was postponed to next week due to the bad weather."},
-            {eng:"preference", chi:"偏好 / 喜好", example:"Do you have any preference for lunch, Chinese or Western food?"},
-            {eng:"purchase", chi:"購買 / 購買的物品", example:"Please keep the receipt for your purchase."},
-            {eng:"queue", chi:"排隊 / 隊伍", example:"There is a long queue outside the new bakehouse."},
-            {eng:"recommend", chi:"推薦", example:"Can you recommend a good movie for me to watch this weekend?"},
-            {eng:"refundable", chi:"可退款的", example:"The concert tickets are non-refundable once sold."},
-            {eng:"relaxing", chi:"令人放鬆的", example:"Taking a hot bath is a very relaxing way to end the day."},
-            {eng:"routine", chi:"常規 / 慣常的生活手法", example:"Exercise has become part of my daily routine."},
-            {eng:"schedule", chi:"時間表 / 日程表", example:"I have a very tight schedule this week with lots of tests."},
-            {eng:"souvenir", chi:"紀念品", example:"I bought some local snacks as souvenirs for my classmates."},
-            {eng:"stressful", chi:"壓力大的", example:"Preparing for the DSE exam can be very stressful."},
-            {eng:"stuff", chi:"東西 / 物品", example:"I need to clear some old stuff out of my desk."},
-            {eng:"trendy", chi:"潮的 / 時髦的", example:"Sneakers are very trendy among Hong Kong students nowadays."},
-            {eng:"urgent", chi:"緊急的", example:"I need to make an urgent phone call right now."},
-            {eng:"abundant", chi:"豐富的", example:"There is an abundant supply of fresh vegetables in the market."},
-            {eng:"accidental", chi:"意外的 / 偶然的", example:"It was an accidental discovery that changed his life."},
-            {eng:"active", chi:"活躍的", example:"She plays an active role in the school's drama club."},
-            {eng:"adjust", chi:"調整", example:"You can adjust the height of the chair to make it comfortable."},
-            {eng:"adventure", chi:"冒險", example:"Going camping in the wild was a real adventure for us."},
-            {eng:"alarm", chi:"鬧鐘 / 警報", example:"I set my alarm for 6:30 a.m. every morning."},
-            {eng:"album", chi:"相簿 / 音樂專輯", example:"She showed me her old family photo album."},
-            {eng:"allergic", chi:"過敏的", example:"I am allergic to seafood, so I cannot eat prawns."},
-            {eng:"amusing", chi:"有趣的 / 好笑的", example:"The teacher told us an amusing story during the lesson."},
-            {eng:"announcement", chi:"公告 / 廣播", example:"Did you hear the school announcement about the sports day?"},
-            {eng:"apologize", chi:"道歉", example:"You should apologize to her for being late."},
-            {eng:"applause", chi:"掌聲", example:"The audience gave the performers a big round of applause."},
-            {eng:"apply", chi:"申請", example:"I want to apply for a part-time job this summer."},
-            {eng:"appreciate", chi:"感激 / 欣賞", example:"I really appreciate your help with my homework."},
-            {eng:"arrange", chi:"安排", example:"Let's arrange a meeting to discuss the project."},
-            {eng:"arrival", chi:"到達", example:"We are waiting for the arrival of the next train."},
-            {eng:"audience", chi:"觀眾", example:"The audience was very quiet during the concert."},
-            {eng:"automatic", chi:"自動的", example:"The glass doors at the mall entrance are automatic."},
-            {eng:"average", chi:"平均的", example:"The average student spends two hours on homework every day."},
-            {eng:"avoid", chi:"避免", example:"We should try to avoid eating too much fast food."},
-            {eng:"baggage", chi:"行李", example:"We checked our baggage at the airport counter."},
-            {eng:"bakery", chi:"麵包店", example:"The smell of fresh bread from the bakery is amazing."},
-            {eng:"balance", chi:"平衡", example:"It's important to keep a balance between study and play."},
-            {eng:"barcode", chi:"條碼", example:"The cashier scanned the barcode on the milk carton."},
-            {eng:"bargain", chi:"討價還價 / 特價品", example:"I got this jacket for a bargain at the street market."},
-            {eng:"basement", chi:"地下室", example:"The parking lot is located in the basement of the building."},
-            {eng:"battery", chi:"電池", example:"My phone battery is low; I need a charger."},
-            {eng:"beauty", chi:"美麗 / 美人", example:"She is known for both her beauty and her intelligence."},
-            {eng:"behave", chi:"表現 / 舉止", example:"The children behaved very well during the museum visit."},
-            {eng:"belongings", chi:"隨身物品", example:"Please make sure you have all your personal belongings before leaving."},
-            {eng:"benefit", chi:"好處 / 利益", example:"One of the benefits of walking is that it's good for your heart."},
-            {eng:"beverage", chi:"飲料", example:"Hot beverages like tea and coffee are served here."},
-            {eng:"blanket", chi:"毛毯", example:"It's cold tonight, so I need an extra blanket."},
-            {eng:"blogger", chi:"部落客", example:"She is a famous travel blogger who visits many countries."},
-            {eng:"booking", chi:"預訂", example:"I made a booking for a table of four at the restaurant."},
-            {eng:"boost", chi:"提升 / 促進", example:"Eating breakfast can boost your energy for the day."},
-            {eng:"boredom", chi:"無聊", example:"I read a book to kill boredom while waiting for the bus."},
-            {eng:"borrow", chi:"借入", example:"Can I borrow your umbrella? It's raining outside."},
-            {eng:"bottle", chi:"瓶子", example:"Don't forget to bring a water bottle to the picnic."},
-            {eng:"branch", chi:"分店 / 樹枝", example:"This bank has a branch in almost every district in HK."},
-            {eng:"brand", chi:"品牌", example:"This is my favorite brand of running shoes."},
-            {eng:"brief", chi:"簡短的", example:"The principal gave a brief speech at the assembly."},
-            {eng:"bright", chi:"明亮的 / 聰明的", example:"The sun is very bright today; you should wear sunglasses."},
-            {eng:"brilliant", chi:"出色的 / 傑出的", example:"She came up with a brilliant idea for the school fair."},
-            {eng:"browse", chi:"瀏覽", example:"I like to browse the internet before going to sleep."},
-            {eng:"brunch", chi:"早午餐", example:"Let's have brunch together this Sunday morning."},
-            {eng:"buffet", chi:"自助餐", example:"We had a seafood buffet to celebrate my birthday."},
-            {eng:"bulletin", chi:"布告 / 簡報", example:"The school bulletin board is updated every week."},
-            {eng:"button", chi:"按鈕 / 鈕扣", example:"Press this button to start the washing machine."},
-            {eng:"cafeteria", chi:"自助食堂", example:"Students usually have lunch in the school cafeteria."},
-            {eng:"customer", chi:"顧客 / 客戶", example:"The customer complained about the poor service of the shop."},
-            {eng:"damage", chi:"損壞 / 損害", example:"The storm caused serious damage to the roof of the house."},
-            {eng:"data", chi:"數據 / 資料", example:"We need to collect more data before making a decision."},
-            {eng:"debate", chi:"辯論 / 討論", example:"There is a lot of debate about the use of AI in schools."},
-            {eng:"decrease", chi:"減少 / 下降", example:"The number of car accidents has decreased this year."},
-            {eng:"delicious", chi:"美味的", example:"My mother cooked a delicious dinner for us."},
-            {eng:"deliver", chi:"遞送 / 交付", example:"The courier will deliver the package to your home tomorrow."},
-            {eng:"demand", chi:"需求 / 要求", example:"There is a high demand for organic vegetables nowadays."},
-            {eng:"demonstrate", chi:"展示 / 示範", example:"The teacher demonstrated how to use the new software."},
-            {eng:"dentist", chi:"牙醫", example:"I have to go to the dentist for a regular check-up."},
-            {eng:"depart", chi:"出發 / 離開", example:"The train to Lo Wu will depart from platform 3."},
-            {eng:"depend", chi:"取決於 / 依靠", example:"Whether we go for a picnic depends on the weather."},
-            {eng:"describe", chi:"描述 / 形容", example:"Can you describe what the missing person looked like?"}
+            {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
+            {eng:"book", chi:"書", example:"I like to read a book before bed."},
+            {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
+            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
+            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
+            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
+            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
+            {eng:"house", chi:"房子", example:"We live in a big white house."},
+            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
+            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
+            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
+            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
+            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
+            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
+            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
+            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
+            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
+            {eng:"river", chi:"河流", example:"We went fishing by the river."},
+            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
+            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
+            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
+            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
+            {eng:"water", chi:"水", example:"We should drink plenty of water."},
+            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
+            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
+            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
+            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
+            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
+            {eng:"door", chi:"門", example:"Please close the door behind you."},
+            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
+            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
+            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
+            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
+            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
+            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
+            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
+            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
+            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
+             {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
+            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
+        const monsterImages = [
+            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
+            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
+            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
 
-        let wordBank = [...initialWords];
-        let currentMode = ''; 
-        let currentWordIndex = 0;
-        let cardFlipped = false;
-        
-        let hp = 5;
+        let wordBank = [];
+        let wrongWords = [];
+        let studyList = [];
+        let currentWord = null;
+        let studyMode = 'card'; 
+        let isFlipped = false;
+        let currentOptions = [];
+
+        let hp = 10;
         let floor = 1;
         let maxFloor = 10;
-        let dungeonLevel = 'low'; 
+        let dungeonMode = 'low';
+        let timeLeft = 100;
         let timerInterval = null;
-        let timeLeft = 5;
-        let currentCorrectWord = null;
         let combo = 0;
-        let extraTime = 0; 
-        
+        let extraTime = 0;
+        let isBossCurrent = false;
+        let chestStatus = 'closed';
         let killedWords = [];
         let missedWords = [];
+        let currentMImg = "";
 
-        // 載入與儲存 LocalStorage
-        function loadState() {
-            const saved = localStorage.getItem('vocabDungeonBank');
-            if (saved) {
-                wordBank = JSON.parse(saved);
+        function init() {
+            const savedBank = localStorage.getItem('vocab_v10_final_v2');
+            const savedWrongs = localStorage.getItem('vocab_wrongs');
+            
+            if (savedBank) {
+                try { wordBank = JSON.parse(savedBank);
+                } catch(e) { wordBank = initialWords; }
+            } else { wordBank = initialWords;
             }
-            updateBankCounts();
+
+            if (savedWrongs) {
+                try { wrongWords = JSON.parse(savedWrongs);
+                } catch(e) { wrongWords = []; }
+            }
+
+            updateGlobalCounts();
+            switchView('splash');
         }
 
         function saveState() {
-            localStorage.setItem('vocabDungeonBank', JSON.stringify(wordBank));
-            updateBankCounts();
+            localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+            localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
+            updateGlobalCounts();
         }
 
-        function updateBankCounts() {
+        function updateGlobalCounts() {
             document.getElementById('bankCount').innerText = wordBank.length;
             document.getElementById('listCount').innerText = wordBank.length;
         }
 
         function resetDefaultBank() {
-            if(confirm('確定要重置回預設的單字嗎？所有新增的單字都會消失。')) {
-                wordBank = [...initialWords];
+            if(confirm('確定要重置回預設單字嗎？')) {
+                wordBank = initialWords;
+                wrongWords = [];
                 saveState();
-                renderWordList();
-                alert('已重置成功！');
+                switchView('home');
             }
         }
 
-        // 畫面切換：處理背景與重置
         function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-            
+            const sections = document.querySelectorAll('.view-section');
+            for(let i=0; i<sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+
+            const splash = document.getElementById('view-splash');
             if (viewId === 'splash') {
-                document.getElementById('view-splash').style.display = 'flex';
-                return;
+                splash.style.setProperty('display', 'flex', 'important');
             } else {
-                document.getElementById('view-splash').style.display = 'none';
+                splash.style.setProperty('display', 'none', 'important');
+                const target = document.getElementById('view-' + viewId);
+                if (target) {
+                    target.classList.add('active');
+                }
             }
-            
-            const targetView = document.getElementById('view-' + viewId);
-            if(targetView) targetView.classList.add('active');
-            
-            if (viewId === 'home') {
-                document.getElementById('globalBg').style.display = 'block';
-                document.getElementById('dungeonBg').style.display = 'none';
-                clearInterval(timerInterval);
-            } else if (viewId === 'dungeon') {
-                document.getElementById('globalBg').style.display = 'none';
+
+            if (viewId === 'dungeon') {
                 document.getElementById('dungeonBg').style.display = 'block';
+                document.getElementById('globalBg').style.display = 'none';
             } else {
-                document.getElementById('globalBg').style.display = 'block';
                 document.getElementById('dungeonBg').style.display = 'none';
+                document.getElementById('globalBg').style.display = 'block';
             }
 
-            if(viewId === 'list') renderWordList();
-        }
-
-        // ================= 全域鍵盤事件 =================
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                const splash = document.getElementById('view-splash');
-                const isSplashVisible = splash && splash.style.display !== 'none';
-                
-                // 如果在開始畫面，則進入 Home 主畫面
-                if (isSplashVisible) {
-                    switchView('home');
-                    return;
-                }
-                
-                // 如果是在 Boss 關卡且輸入框聚焦，這段交由原有的 keypress 處理，此處不做處理。
-                if (document.activeElement === document.getElementById('bossInput')) {
-                    return;
-                }
-            }
-        });
-
-        // 原本的 Boss 關卡 Enter 事件處理保留
-        document.getElementById('bossInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') submitBossAnswer();
-        });
-
-        // 隨機獲取圖片：地下城怪物
-        const monsterImgs = [
-            "https://i.imgur.com/BbjA5GC.png",
-            "https://i.imgur.com/GzB9v0L.png",
-            "https://i.imgur.com/rQ0B0t6.png",
-            "https://i.imgur.com/n67mEId.png",
-            "https://i.imgur.com/r62Kq4K.png"
-        ];
-        function getRandomMonsterImg() {
-            const idx = Math.floor(Math.random() * monsterImgs.length);
-            return monsterImgs[idx];
-        }
-
-        // ================= 字庫管理 (CRUD) =================
-        function renderWordList() {
-            const container = document.getElementById('wordListContainer');
-            container.innerHTML = '';
-            wordBank.forEach((w, index) => {
-                const div = document.createElement('div');
-                div.style.background = '#fff';
-                div.style.padding = '10px';
-                div.style.marginBottom = '8px';
-                div.style.borderRadius = '8px';
-                div.style.border = '1px solid #ddd';
-                div.style.fontSize = '0.9rem';
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between;">
-                        <strong style="color:var(--primary)">${w.eng}</strong>
-                        <div>
-                            <button class="btn btn-outline btn-small" style="padding:2px 6px" onclick="deleteWord(${index})">刪除</button>
-                        </div>
-                    </div>
-                    <div style="color:#636e72">${w.chi}</div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function deleteWord(index) {
-            if(confirm('確定要刪除這個單字嗎？')) {
-                wordBank.splice(index, 1);
-                saveState();
-                renderWordList();
-            }
-        }
-
-        async function autoFetch() {
-            const eng = document.getElementById('newEng').value.trim();
-            if(!eng) { alert('請先輸入英文單字！'); return; }
-            const api = `https://api.dictionaryapi.dev/api/v2/entries/en/${eng}`;
-            try {
-                const res = await fetch(api);
-                const data = await res.json();
-                if(data && data[0]) {
-                    const meanings = data[0].meanings;
-                    let defStr = '';
-                    meanings.forEach(m => {
-                        defStr += `[${m.partOfSpeech}] ${m.definitions[0].definition}\n`;
-                    });
-                    document.getElementById('newChi').value = `(API翻譯僅提供英英解析，請自行修飾中文)\n${defStr}`;
-                    
-                    let example = '';
-                    for(let m of meanings) {
-                        for(let d of m.definitions) {
-                            if(d.example) { example = d.example; break; }
-                        }
-                        if(example) break;
-                    }
-                    document.getElementById('newExample').value = example || "無提供例句。";
-                } else {
-                    alert('找不到該單字的解析。');
-                }
-            } catch(e) {
-                alert('網路請求失敗或API異常。');
-            }
+            if (viewId === 'list') renderWordList();
         }
 
         function addNewWord() {
             const eng = document.getElementById('newEng').value.trim();
             const chi = document.getElementById('newChi').value.trim();
-            const example = document.getElementById('newExample').value.trim();
-            if(!eng || !chi) { alert('英文與中文為必填！'); return; }
-            wordBank.push({eng, chi, example});
+            const ex = document.getElementById('newExample').value.trim();
+            if (!eng || !chi) return alert("內容不全！");
+            wordBank.unshift({ eng, chi, example: ex, id: Date.now() });
             saveState();
-            alert('儲存成功！');
             document.getElementById('newEng').value = '';
             document.getElementById('newChi').value = '';
             document.getElementById('newExample').value = '';
-            switchView('home');
+            alert("儲存成功");
         }
 
-        // ================= 匯入 / 匯出 CSV =================
-        function exportCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF英文單字,中文意思,例句\n";
+        async function autoFetch() {
+            const eng = document.getElementById('newEng').value.trim();
+            if(!eng) return;
+            try {
+                const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
+                const tData = await tRes.json();
+                document.getElementById('newChi').value = tData.responseData.translatedText;
+                
+                const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
+                const dData = await dRes.json();
+                if(Array.isArray(dData)) {
+                    const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
+                    document.getElementById('newExample').value = ex || "No example found.";
+                }
+            } catch(e) { alert("抓取失敗");
+            }
+        }
+
+        function renderWordList() {
+            const container = document.getElementById('wordListContainer');
+            container.innerHTML = '';
             wordBank.forEach(w => {
-                const row = `"${w.eng}","${w.chi}","${w.example || ''}"`;
-                csvContent += row + "\n";
+                const div = document.createElement('div');
+                div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
+                div.innerHTML = `
+                    <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
+         
+                    <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
+                    <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
+                `;
+                container.appendChild(div);
             });
+        }
+
+        function deleteWord(id) {
+            wordBank = wordBank.filter(x => x.id !== id);
+            saveState();
+            renderWordList();
+        }
+
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,英文,中文,例句\n" 
+                + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `vocab_dungeon_bank_${new Date().toLocaleDateString()}.csv`);
+            link.setAttribute("download", "my_vocab_list.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        function importCSV(event) {
-            const file = event.target.files[0];
+        function importCSV(e) {
+            const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result;
-                const rows = text.split('\n');
-                let newCount = 0;
-                for (let i = 1; i < rows.length; i++) {
-                    if (!rows[i].trim()) continue;
-                    const cols = rows[i].split(',');
-                    if (cols.length >= 2) {
-                        const eng = cols[0].replace(/"/g, '').trim();
-                        const chi = cols[1].replace(/"/g, '').trim();
-                        let example = cols[2] ? cols[2].replace(/"/g, '').trim() : '';
-                        if (eng && chi) {
-                            wordBank.push({ eng, chi, example });
-                            newCount++;
-                        }
-                    }
+            reader.onload = (evt) => {
+                const text = evt.target.result;
+                const lines = text.split("\n").slice(1);
+                const newWords = lines.map((line, i) => {
+                    const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    if (parts.length < 2) return null;
+                    return {
+                     
+                        eng: parts[0].replace(/"/g, '').trim(),
+                       chi: parts[1].replace(/"/g, '').trim(),
+                       example: parts[2] ? parts[2].replace(/"/g, '').trim() : "",
+                       id: Date.now() + i
+                
+                    };
+                }).filter(x => x && x.eng);
+                if (newWords.length > 0) {
+                    wordBank = [...newWords, ...wordBank];
+                    saveState();
+                    alert(`成功匯入 ${newWords.length} 個單字！`);
                 }
-                saveState();
-                renderWordList();
-                alert(`成功匯入 ${newCount} 個單字！`);
-                event.target.value = '';
             };
             reader.readAsText(file);
         }
 
-        // ================= 普通模式 (生字卡 & 選擇題) =================
-        function startNormal(mode) {
-            if(wordBank.length < 4) { alert('字庫單字不足4個，無法開始！'); return; }
-            currentMode = mode;
-            currentWordIndex = 0;
-            switchView('study');
-            loadStudyWord();
-        }
-
-        function loadStudyWord() {
-            cardFlipped = false;
-            document.getElementById('studyFeedback').innerText = '';
-            const card = document.getElementById('studyCard');
-            card.style.borderColor = "#eee";
-            card.style.background = "rgba(255,255,255,0.95)";
-            
-            if (currentWordIndex >= wordBank.length) {
-                currentWordIndex = 0; 
-                shuffleArray(wordBank);
-            }
-            
-            const w = wordBank[currentWordIndex];
-            
-            document.getElementById('card-unflipped').innerHTML = `<div class="card-eng">${w.eng}</div><div style="color:#aaa;margin-top:10px">點擊卡片翻面</div>`;
-            document.getElementById('card-unflipped').style.display = 'block';
-            document.getElementById('card-flipped').style.display = 'none';
-            
-            document.getElementById('flipEng').innerText = w.eng;
-            document.getElementById('flipChi').innerText = w.chi;
-            document.getElementById('flipEx').innerText = w.example || "無提供例句。";
-            
-            document.getElementById('flipSpeakBtn').onclick = (e) => {
-                e.stopPropagation(); 
-                speak(w.eng);
-            };
-
-            if (currentMode === 'quiz') {
-                document.getElementById('quizOptions').style.display = 'grid';
-                generateQuizOptions(w);
-            } else {
-                document.getElementById('quizOptions').style.display = 'none';
-            }
-        }
-
-        function handleCardFlip() {
-            if (currentMode === 'card') {
-                const unflipped = document.getElementById('card-unflipped');
-                const flipped = document.getElementById('card-flipped');
-                if(unflipped.style.display !== 'none') {
-                    unflipped.style.display = 'none';
-                    flipped.style.display = 'block';
-                    cardFlipped = true;
-                } else {
-                    unflipped.style.display = 'block';
-                    flipped.style.display = 'none';
-                    cardFlipped = false;
-                }
-            }
-        }
-
-        function generateQuizOptions(correctWord) {
-            const grid = document.getElementById('quizOptions');
-            grid.innerHTML = '';
-            const options = [correctWord];
-            while(options.length < 4) {
-                const randomW = wordBank[Math.floor(Math.random()*wordBank.length)];
-                if(!options.find(o => o.eng === randomW.eng)) {
-                    options.push(randomW);
-                }
-            }
-            shuffleArray(options);
-            options.forEach(opt => {
-                const b = document.createElement('button');
-                b.className = 'btn btn-outline';
-                b.style.margin = '4px 0';
-                b.innerText = opt.chi; 
-                b.onclick = () => checkQuizAnswer(opt, correctWord, b);
-                grid.appendChild(b);
-            });
-        }
-
-        function checkQuizAnswer(selected, correct, btnDom) {
-            const grid = document.getElementById('quizOptions');
-            const buttons = grid.querySelectorAll('button');
-            buttons.forEach(btn => btn.onclick = null);
-
-            if (selected.eng === correct.eng) {
-                document.getElementById('studyFeedback').innerHTML = '⭕ 正確！';
-                document.getElementById('studyFeedback').style.color = 'var(--success)';
-                btnDom.style.background = '#d4edda';
-                btnDom.style.borderColor = 'var(--success)';
-                
-                document.getElementById('card-unflipped').style.display = 'none';
-                document.getElementById('card-flipped').style.display = 'block';
-                cardFlipped = true;
-                speak(correct.eng);
-            } else {
-                document.getElementById('studyFeedback').innerHTML = '❌ 答錯了！正確答案是：' + correct.chi;
-                document.getElementById('studyFeedback').style.color = 'var(--danger)';
-                btnDom.style.background = '#f8d7da';
-                btnDom.style.borderColor = 'var(--danger)';
-                
-                document.getElementById('card-unflipped').style.display = 'none';
-                document.getElementById('card-flipped').style.display = 'block';
-                cardFlipped = true;
-            }
-        }
-
-        function nextStudyWord() {
-            currentWordIndex++;
-            loadStudyWord();
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5);
         }
 
         function speak(text) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            speechSynthesis.speak(utterance);
+            if(!text || !window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
         }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+        function startNormal(m) {
+            if(wordBank.length < 4) return alert("單字不足 4 個，無法開始！");
+            studyMode = m;
+            studyList = shuffle(wordBank);
+            currentWord = studyList[0];
+            studyList = studyList.slice(1);
+            isFlipped = false;
+            document.getElementById('studyFeedback').innerText = '';
+            
+            setupStudyCard();
+            switchView('study');
+        }
+
+        function setupStudyCard() {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            const quizOpts = document.getElementById('quizOptions');
+
+            quizOpts.style.display = 'none';
+            unflipped.style.display = 'block';
+            flipped.style.display = 'none';
+            isFlipped = false;
+            if (studyMode === 'card') {
+                unflipped.innerHTML = `
+                    <div class="card-eng">${currentWord.eng}</div>
+                    <button class="speaker-btn" onclick="event.stopPropagation(); speak('${currentWord.eng}')">🔊</button>
+                `;
+            } else { 
+                unflipped.innerHTML = `<div class="card-chi">${currentWord.chi}</div>`;
+                quizOpts.style.display = 'grid';
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                quizOpts.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-outline';
+                    btn.innerText = opt;
+                    btn.onclick = () => handleQuizSelect(opt);
+   
+                    quizOpts.appendChild(btn);
+                });
             }
+
+            document.getElementById('flipEng').innerText = currentWord.eng;
+            document.getElementById('flipChi').innerText = currentWord.chi;
+            document.getElementById('flipEx').innerText = currentWord.example || '無例句';
+            document.getElementById('flipSpeakBtn').onclick = (e) => { e.stopPropagation(); speak(currentWord.eng); };
         }
 
-        // ================= 地下城戰鬥模式 =================
-        function startDungeon(level) {
-            if(wordBank.length < 5) { alert('字庫單字不足5個，無法進行挑戰！'); return; }
-            dungeonLevel = level;
-            hp = 5;
+        function handleCardFlip() {
+            if (studyMode !== 'card') return;
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            if (!isFlipped) {
+                unflipped.style.display = 'none';
+                flipped.style.display = 'block';
+            } else {
+                unflipped.style.display = 'block';
+                flipped.style.display = 'none';
+            }
+            isFlipped = !isFlipped;
+        }
+
+        function handleQuizSelect(selected) {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            
+            speak(currentWord.eng);
+            if (selected === currentWord.eng) {
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
+            } else {
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
+            }
+            
+            unflipped.style.display = 'none';
+            flipped.style.display = 'block';
+        }
+
+        function nextStudyWord() {
+            if (studyList.length === 0) return switchView('home');
+            currentWord = studyList[0];
+            studyList = studyList.slice(1);
+            document.getElementById('studyFeedback').innerText = '';
+            setupStudyCard();
+        }
+
+        function startDungeon(diff) {
+            if(wordBank.length < 4) return alert("單字不足 4 個！");
+            dungeonMode = diff;
+            maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
+            hp = 10;
             floor = 1;
             combo = 0;
+            extraTime = 0;
             killedWords = [];
             missedWords = [];
-            
-            if (level === 'low') maxFloor = 10;
-            if (level === 'mid') maxFloor = 15;
-            if (level === 'high') maxFloor = 20;
-
-            document.getElementById('playerImg').className = 'player-img';
-            document.getElementById('monsterImg').className = 'monster-img';
-            document.getElementById('monsterImg').src = getRandomMonsterImg();
-
+            const matchedWrongs = wrongWords.filter(w => wordBank.some(bw => bw.eng === w.eng));
+            let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
+            while (list.length < maxFloor) {
+                const randomWords = shuffle(wordBank);
+                for (let rw of randomWords) {
+                    if (list.length >= maxFloor) break;
+                    if (!list.some(l => l.eng === rw.eng)) list.push(rw);
+                }
+            }
+            studyList = shuffle(list);
+            document.getElementById('comboDisplay').style.display = 'none';
             switchView('dungeon');
             loadDungeonLevel();
         }
 
         function loadDungeonLevel() {
             clearInterval(timerInterval);
-            document.getElementById('hpDisplay').innerText = `❤️ HP: ${hp}`;
-            document.getElementById('floorDisplay').innerText = `🏰 第 ${floor} / ${maxFloor} 層`;
+            currentWord = studyList[floor - 1];
+            timeLeft = 100;
             
-            const isBossFloor = (floor === maxFloor);
-            const monsterImgDom = document.getElementById('monsterImg');
-            
-            // 怪物與主角受傷效果還原
-            monsterImgDom.className = 'monster-img';
-            monsterImgDom.style.opacity = '1';
-            monsterImgDom.style.transform = 'scale(1)';
-            document.getElementById('playerImg').className = 'player-img';
-
-            if (isBossFloor) {
-                // Boss層特定視覺與設定
-                monsterImgDom.style.width = '120px';
-                monsterImgDom.style.filter = 'drop-shadow(0 0 10px rgba(214,48,49,0.8))';
-                timeLeft = 15; 
-                extraTime = 0; 
-            } else {
-                monsterImgDom.style.width = '90px';
-                monsterImgDom.style.filter = 'none';
-                if (dungeonLevel === 'low') timeLeft = 7;
-                else if (dungeonLevel === 'mid') timeLeft = 5;
-                else timeLeft = 3.5;
-
-                timeLeft += extraTime; 
-                extraTime = 0; 
-            }
-
-            const totalTime = timeLeft;
             document.getElementById('timerLine').style.width = '100%';
-            document.getElementById('timerLine').style.background = 'var(--danger)';
-
-            currentCorrectWord = wordBank[Math.floor(Math.random()*wordBank.length)];
-            document.getElementById('dungeonChi').innerText = currentCorrectWord.chi;
-
-            const grid = document.getElementById('dungeonQuizGrid');
-            const bossArea = document.getElementById('dungeonBossArea');
-
-            if (isBossFloor) {
-                grid.style.display = 'none';
-                bossArea.style.display = 'block';
-                document.getElementById('bossInput').value = '';
-                document.getElementById('dungeonChi').innerHTML = `👹 <strong>【最終BOSS】</strong><br/>請拼寫：${currentCorrectWord.chi}`;
-                setTimeout(() => { document.getElementById('bossInput').focus(); }, 100);
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(hp);
+            document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
+            document.getElementById('dungeonChi').innerText = currentWord.chi;
+            isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
+            (dungeonMode === 'high' && (floor === 5 || floor === 10 || floor === 15 || floor === 20));
+            const mImgElement = document.getElementById('monsterImg');
+            mImgElement.className = 'monster-img';
+            
+            if (isBossCurrent) {
+                currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'none';
+                document.getElementById('dungeonBossArea').style.display = 'block';
+                const bossInput = document.getElementById('bossInput');
+                bossInput.value = '';
+                bossInput.focus();
             } else {
-                grid.style.display = 'grid';
-                bossArea.style.display = 'none';
-                generateDungeonOptions(currentCorrectWord);
+                currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'grid';
+                document.getElementById('dungeonBossArea').style.display = 'none';
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                
+                const grid = document.getElementById('dungeonQuizGrid');
+                grid.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-outline';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkDungeonAns(opt === currentWord.eng);
+    
+                    grid.appendChild(btn);
+                });
             }
+            mImgElement.src = currentMImg;
 
-            // 倒數計時器
+            // 啟動計時器 (獨立成一個函數，方便答錯/超時保留原地時呼叫)
+            startTimer();
+        }
+
+        // 新增/抽離：開始計時器的邏輯
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 100;
+            document.getElementById('timerLine').style.width = '100%';
+
+            let totalSeconds = isBossCurrent ? 7 : 5;
+            totalSeconds += extraTime;
+            extraTime = 0;
+            const step = (100 / (totalSeconds * 10));
+
             timerInterval = setInterval(() => {
-                timeLeft -= 0.1;
-                const percent = (timeLeft / totalTime) * 100;
-                document.getElementById('timerLine').style.width = percent + '%';
-
+                timeLeft -= step;
+                document.getElementById('timerLine').style.width = timeLeft + '%';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleTimeOut();
+                    triggerPlayerHurt(true);
                 }
             }, 100);
         }
 
-        function generateDungeonOptions(correctWord) {
-            const grid = document.getElementById('dungeonQuizGrid');
-            grid.innerHTML = '';
-            const options = [correctWord];
-            while(options.length < 4) {
-                const randomW = wordBank[Math.floor(Math.random()*wordBank.length)];
-                if(!options.find(o => o.eng === randomW.eng)) {
-                    options.push(randomW);
-                }
-            }
-            shuffleArray(options);
-            options.forEach(opt => {
-                const b = document.createElement('button');
-                b.className = 'btn btn-outline';
-                b.style.margin = '4px 0';
-                b.innerText = opt.eng;
-                b.onclick = () => checkDungeonAnswer(opt, correctWord);
-                grid.appendChild(b);
-            });
-        }
-
-        function checkDungeonAnswer(selected, correct) {
-            clearInterval(timerInterval);
-            if (selected.eng === correct.eng) {
-                combo++;
-                killedWords.push(correct);
-                showCombo();
-                triggerMonsterHitAnimation();
-                speak(correct.eng);
-                
-                setTimeout(() => {
-                    floor++;
-                    if(floor > maxFloor) {
-                        endGame('win');
-                    } else {
-                        loadDungeonLevel();
-                    }
-                }, 600); 
-            } else {
-                missedWords.push(correct);
-                handleMistake();
-            }
-        }
-
         function submitBossAnswer() {
-            const input = document.getElementById('bossInput').value.trim().toLowerCase();
-            const correct = currentCorrectWord.eng.toLowerCase();
+            const val = document.getElementById('bossInput').value.trim().toLowerCase();
+            checkDungeonAns(val === currentWord.eng.toLowerCase());
+        }
+
+        function checkDungeonAns(isCorrect) {
             clearInterval(timerInterval);
+            if (isCorrect) {
+                combo++;
+                if (combo >= 2) {
+                    const cb = document.getElementById('comboDisplay');
+                    cb.style.display = 'block';
+                    cb.innerText = `🔥 ${combo} Combo!`;
+                }
+                killedWords.push(currentWord);
+                wrongWords = wrongWords.filter(w => w.eng !== currentWord.eng);
+                
+                const mImgElement = document.getElementById('monsterImg');
+                // 觸發修改後的敵人受傷特效（含震動與血紅濾鏡）
+                mImgElement.classList.add('anim-hit');
+                
+                speak(currentWord.eng);
+                if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
 
-            if (input === correct) {
-                killedWords.push(currentCorrectWord);
-                speak(currentCorrectWord.eng);
-                
-                const monsterImgDom = document.getElementById('monsterImg');
-                monsterImgDom.className = 'monster-img anim-hit';
-                
                 setTimeout(() => {
-                    document.getElementById('chestModal').style.display = 'flex';
-                    document.getElementById('chestTip').innerText = '點擊寶箱開啟獎勵！';
-                    document.getElementById('chestNextBtn').style.display = 'none';
-                    document.getElementById('chestImg').src = 'https://i.imgur.com/sAsVc32.png'; 
+                    mImgElement.classList.remove('anim-hit');
+                    if (floor >= maxFloor) {
+                        endGame('win');
+                    } else if (isBossCurrent) {
+ 
+                        showChest();
+                    } else {
+                        floor++;
+                        loadDungeonLevel();
+       
+                    }
                 }, 600);
+                // 配合 CSS 動畫長度改為 0.6 秒
             } else {
-                missedWords.push(currentCorrectWord);
-                handleMistake();
+                // 答錯：呼叫受傷邏輯 (非超時超時)，但「不切換下一題」
+                triggerPlayerHurt(false);
             }
         }
 
-        function handleMistake() {
+        function triggerPlayerHurt(isTimeout) {
             combo = 0;
-            hideCombo();
-            hp--;
-            document.getElementById('hpDisplay').innerText = `❤️ HP: ${hp}`;
-            
-            document.getElementById('playerImg').className = 'player-img anim-hurt-combined';
-            triggerHurtFlash();
-
-            setTimeout(() => {
-                document.getElementById('playerImg').className = 'player-img';
-                if (hp <= 0) {
-                    endGame('lose');
-                } else {
-                    floor++;
-                    if(floor > maxFloor) {
-                        endGame('win');
-                    } else {
-                        loadDungeonLevel();
-                    }
-                }
-            }, 600);
-        }
-
-        function handleTimeOut() {
-            missedWords.push(currentCorrectWord);
-            combo = 0;
-            hideCombo();
-            hp--;
-            document.getElementById('hpDisplay').innerText = `❤️ HP: ${hp}`;
-            
-            document.getElementById('playerImg').className = 'player-img anim-hurt-combined';
-            triggerHurtFlash();
-
-            setTimeout(() => {
-                document.getElementById('playerImg').className = 'player-img';
-                if (hp <= 0) {
-                    endGame('lose');
-                } else {
-                    floor++;
-                    if(floor > maxFloor) {
-                        endGame('win');
-                    } else {
-                        loadDungeonLevel();
-                    }
-                }
-            }, 600);
-        }
-
-        function showCombo() {
-            if (combo >= 2) {
-                const dom = document.getElementById('comboDisplay');
-                dom.innerText = `🔥 ${combo} Combo!`;
-                dom.style.display = 'block';
-            }
-        }
-        function hideCombo() {
             document.getElementById('comboDisplay').style.display = 'none';
-        }
+            
+            if (!wrongWords.some(w => w.eng === currentWord.eng)) wrongWords.push(currentWord);
+            if (!missedWords.some(w => w.eng === currentWord.eng)) missedWords.push(currentWord);
+            
+            hp--;
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(hp);
 
-        function triggerHurtFlash() {
             const flash = document.getElementById('hurtFlash');
-            flash.className = 'hurt-flash anim-flash';
-            setTimeout(() => { flash.className = 'hurt-flash'; }, 500);
+            flash.classList.add('anim-flash');
+            setTimeout(() => flash.classList.remove('anim-flash'), 500);
+
+            const pImg = document.getElementById('playerImg');
+            pImg.classList.add('anim-hurt-combined');
+            setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
+
+            if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
+
+            if (hp <= 0) {
+                setTimeout(() => endGame('lose'), 600);
+            } else {
+                // 原本此處為 800 毫秒後無條件執行 loadDungeonLevel() 跳下一題。
+                // 現改為：維持同一題，並重新給予作答時間（重啟計時器）
+                setTimeout(() => {
+                    startTimer(); // 重置計時條並重新倒數，不切換題目
+                }, 800);
+            }
         }
 
-        function triggerMonsterHitAnimation() {
-            const monsterImgDom = document.getElementById('monsterImg');
-            monsterImgDom.className = 'monster-img anim-hit';
+        function showChest() {
+            chestStatus = 'closed';
+            document.getElementById('chestImg').src = "https://i.imgur.com/sAsVc32.png";
+            document.getElementById('chestTip').innerText = '點擊寶箱開啟獎勵！';
+            document.getElementById('chestNextBtn').style.display = 'none';
+            document.getElementById('chestModal').style.display = 'flex';
         }
 
         function openChest() {
-            const img = document.getElementById('chestImg');
-            img.src = 'https://i.imgur.com/7Yf3Yt0.png'; 
-            
-            const rand = Math.random();
-            if (rand < 0.5) {
+            if (chestStatus !== 'closed') return;
+            chestStatus = 'open';
+            document.getElementById('chestImg').src = "https://i.imgur.com/JNPgpc7.png";
+
+            if (Math.random() < 0.5) {
                 hp++;
                 document.getElementById('chestTip').innerText = '你獲得了：❤️ 回復 1 點生命！';
             } else {
@@ -1129,8 +938,10 @@
             switchView('end');
         }
 
-        // 初始化
-        loadState();
+        document.getElementById('bossInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitBossAnswer();
+        });
+        init();
     </script>
 </body>
 </html>
