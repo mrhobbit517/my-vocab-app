@@ -400,53 +400,406 @@
 
     <script>
         const initialWords = [
-            {eng:"apple", chi:"蘋果", example:"An apple a day keeps the doctor away."},
-            {eng:"book", chi:"書", example:"I like to read a book before bed."},
-            {eng:"cat", chi:"貓", example:"The cat is sleeping on the sofa."},
-         
-            {eng:"dog", chi:"狗", example:"My dog loves to play with a ball."},
-            {eng:"egg", chi:"蛋", example:"I had a boiled egg for breakfast."},
-            {eng:"fish", chi:"魚", example:"There are many colorful fish in the sea."},
-            {eng:"girl", chi:"女孩", example:"The little girl is wearing a red dress."},
-            {eng:"house", chi:"房子", example:"We live in a big white house."},
-      
-            {eng:"ice", chi:"冰", example:"Put some ice in my drink, please."},
-            {eng:"jump", chi:"跳", example:"The kids like to jump on the bed."},
-            {eng:"kite", chi:"風箏", example:"The wind is perfect for flying a kite."},
-            {eng:"lion", chi:"獅子", example:"The lion is the king of the jungle."},
-            {eng:"moon", chi:"月亮", example:"The moon shines brightly at night."},
-    
-            {eng:"nest", chi:"鳥巢", example:"The bird built a nest in the tree."},
-            {eng:"orange", chi:"橙子", example:"This orange is very sweet and juicy."},
-            {eng:"pen", chi:"筆", example:"Can I borrow your pen for a moment?"},
-            {eng:"queen", chi:"女王", example:"The queen lives in a beautiful palace."},
-            {eng:"river", chi:"河流", example:"We went fishing by the river."},
-   
-            {eng:"sun", chi:"太陽", example:"The sun rises in the east."},
-            {eng:"tree", chi:"樹", example:"The apple tree is full of fruit."},
-            {eng:"umbrella", chi:"雨傘", example:"Don't forget your umbrella, it's raining."},
-            {eng:"violin", chi:"小提琴", example:"She plays the violin very well."},
-            {eng:"water", chi:"水", example:"We should drink plenty of water."},
-       
-            {eng:"xylophone", chi:"木琴", example:"The child is learning to play the xylophone."},
-            {eng:"yellow", chi:"黃色", example:"The sunflower is bright yellow."},
-            {eng:"zoo", chi:"動物園", example:"We saw many animals at the zoo."},
-            {eng:"ball", chi:"球", example:"Throw the ball to me!"},
-            {eng:"cake", chi:"蛋糕", example:"She baked a chocolate cake for my birthday."},
-         
-            {eng:"door", chi:"門", example:"Please close the door behind you."},
-            {eng:"elephant", chi:"大象", example:"The elephant has a very long trunk."},
-            {eng:"flower", chi:"花", example:"This flower smells wonderful."},
-            {eng:"garden", chi:"花園", example:"My grandmother grows roses in her garden."},
-            {eng:"hat", chi:"帽子", example:"Take off your hat inside the house."},
-            {eng:"island", chi:"島", example:"They spent their holiday on a tropical island."},
-            {eng:"juice", chi:"果汁", example:"Would you like some orange juice?"},
-            {eng:"king", chi:"國王", example:"The king ruled the country for many years."},
-            {eng:"lamp", chi:"燈", example:"Turn on the lamp, it's getting dark."},
-            {eng:"milk", chi:"牛奶", example:"A glass of warm milk helps me sleep."},
-           
-            {eng:"night", chi:"夜晚", example:"The stars are beautiful tonight."},
-            {eng:"ocean", chi:"海洋", example:"The ocean is vast and deep."}
+             {eng:"accommodation", chi:"住宿", example:"We need to book our accommodation before we fly to Japan."}
+             {eng:"affordable", chi:"負擔得起的 / 實惠的", example:"This restaurant offers delicious food at affordable prices."}
+             {eng:"appetite", chi:"胃口 / 食慾", example:"The long walk in the countryside gave me a good appetite."}
+             {eng:"appointment", chi:"預約 / 約定", example:"I have a dental appointment at 3 p.m. tomorrow."}
+             {eng:"atmosphere", chi:"氣氛", example:"I love the relaxing atmosphere of this coffee shop."}
+             {eng:"budget", chi:"預算", example:"We are traveling on a tight budget, so we cannot stay in luxury hotels."}
+             {eng:"casual", chi:"便服的 / 休閒的", example:"You can wear casual clothes to the barbecue party."}
+             {eng:"chore", chi:"家務 / 雜務", example:"My brother and I take turns doing household chores like washing dishes."}
+             {eng:"commute", chi:"通勤 (上下課/上下班)", example:"It takes me about 45 minutes to commute from home to school."}
+             {eng:"complimentary", chi:"免費贈送的", example:"The hotel provides complimentary breakfast for all guests."}
+             {eng:"convenient", chi:"方便的", example:"Living near the MTR station is very convenient."}
+             {eng:"craving", chi:"（對食物的）渴望", example:"I have a sudden craving for bubble tea."}
+             {eng:"deadline", chi:"截止日期", example:"The deadline for submitting the English assignment is this Friday."}
+             {eng:"delay", chi:"延誤", example:"Our flight was delayed for two hours because of the heavy rain."}
+             {eng:"discount", chi:"折扣", example:"Students can enjoy a 10% discount at this bookstore."}
+             {eng:"distracted", chi:"分心的", example:"It's hard to study when you are distracted by your phone."}
+             {eng:"entertainment", chi:"娛樂", example:"The mall offers a wide range of entertainment, including a cinema."}
+             {eng:"exhausted", chi:"精疲力竭的", example:"I was totally exhausted after the 2-hour PE lesson."}
+             {eng:"expired", chi:"過期的", example:"Don't drink that milk; it has already expired."}
+             {eng:"flavor", chi:"口味 / 風味", example:"What is your favorite ice cream flavor?"}
+             {eng:"frustrated", chi:"感到挫折的 / 灰心的", example:"She felt frustrated when she couldn't solve the math problem."}
+             {eng:"gadget", chi:"電子小配件 / 小裝置", example:"He loves buying the latest tech gadgets, like smartwatches."}
+             {eng:"gathering", chi:"聚會", example:"We are planning a family gathering for the Mid-Autumn Festival."}
+             {eng:"grocery", chi:"食品雜貨", example:"I need to go to the supermarket to buy some groceries."}
+             {eng:"habit", chi:"習慣", example:"You should get into the habit of saving money."}
+             {eng:"hangout", chi:"（去某處）消遣 / 聚會", example:"The shopping mall is a popular hangout for teenagers."}
+             {eng:"hesitate", chi:"猶豫", example:"If you need any help, please do not hesitate to ask me."}
+             {eng:"hygiene", chi:"衛生", example:"We must pay attention to personal hygiene to stay healthy."}
+             {eng:"ingredient", chi:"（烹調的）原料 / 材料", example:"Fresh ingredients are the secret to making good food."}
+             {eng:"interact", chi:"互動", example:"Teachers should encourage students to interact with each other in class."}
+             {eng:"leisure", chi:"空閒 / 悠閒", example:"What do you usually do in your leisure time?"}
+             {eng:"messy", chi:"凌亂的", example:"My mom always complains that my bedroom is too messy."}
+             {eng:"mood", chi:"心情", example:"Listening to soft music always puts me in a good mood."}
+             {eng:"neighborhood", chi:"鄰里 / 社區", example:"There are many nice restaurants in our neighborhood."}
+             {eng:"overdue", chi:"過期的 / 遲到的", example:"You must return these library books because they are overdue."}
+             {eng:"package", chi:"包裹 / 套裝", example:"The courier just delivered a package for you."}
+             {eng:"postpone", chi:"延期", example:"The picnic was postponed to next week due to the bad weather."}
+             {eng:"preference", chi:"偏好 / 喜好", example:"Do you have any preference for lunch, Chinese or Western food?"}
+             {eng:"purchase", chi:"購買 / 購買的物品", example:"Please keep the receipt for your purchase."}
+             {eng:"queue", chi:"排隊 / 隊伍", example:"There is a long queue outside the new bakehouse."}
+             {eng:"recommend", chi:"推薦", example:"Can you recommend a good movie for me to watch this weekend?"}
+             {eng:"refundable", chi:"可退款的", example:"The concert tickets are non-refundable once sold."}
+             {eng:"relaxing", chi:"令人放鬆的", example:"Taking a hot bath is a very relaxing way to end the day."}
+             {eng:"routine", chi:"常規 / 慣常的生活手法", example:"Exercise has become part of my daily routine."}
+             {eng:"schedule", chi:"時間表 / 日程表", example:"I have a very tight schedule this week with lots of tests."}
+             {eng:"souvenir", chi:"紀念品", example:"I bought some local snacks as souvenirs for my classmates."}
+             {eng:"stressful", chi:"壓力大的", example:"Preparing for the DSE exam can be very stressful."}
+             {eng:"stuff", chi:"東西 / 物品", example:"I need to clear some old stuff out of my desk."}
+             {eng:"trendy", chi:"潮的 / 時髦的", example:"Sneakers are very trendy among Hong Kong students nowadays."}
+             {eng:"urgent", chi:"緊急的", example:"I need to make an urgent phone call right now."}
+             {eng:"abundant", chi:"豐富的", example:"There is an abundant supply of fresh vegetables in the market."}
+             {eng:"accidental", chi:"意外的 / 偶然的", example:"It was an accidental discovery that changed his life."}
+             {eng:"active", chi:"活躍的", example:"She plays an active role in the school's drama club."}
+             {eng:"adjust", chi:"調整", example:"You can adjust the height of the chair to make it comfortable."}
+             {eng:"adventure", chi:"冒險", example:"Going camping in the wild was a real adventure for us."}
+             {eng:"alarm", chi:"鬧鐘 / 警報", example:"I set my alarm for 6:30 a.m. every morning."}
+             {eng:"album", chi:"相簿 / 音樂專輯", example:"She showed me her old family photo album."}
+             {eng:"allergic", chi:"過敏的", example:"I am allergic to seafood, so I cannot eat prawns."}
+             {eng:"amusing", chi:"有趣的 / 好笑的", example:"The teacher told us an amusing story during the lesson."}
+             {eng:"announcement", chi:"公告 / 廣播", example:"Did you hear the school announcement about the sports day?"}
+             {eng:"apologize", chi:"道歉", example:"You should apologize to her for being late."}
+             {eng:"applause", chi:"掌聲", example:"The audience gave the performers a big round of applause."}
+             {eng:"apply", chi:"申請", example:"I want to apply for a part-time job this summer."}
+             {eng:"appreciate", chi:"感激 / 欣賞", example:"I really appreciate your help with my homework."}
+             {eng:"arrange", chi:"安排", example:"Let's arrange a meeting to discuss the project."}
+             {eng:"arrival", chi:"到達", example:"We are waiting for the arrival of the next train."}
+             {eng:"audience", chi:"觀眾", example:"The audience was very quiet during the concert."}
+             {eng:"automatic", chi:"自動的", example:"The glass doors at the mall entrance are automatic."}
+             {eng:"average", chi:"平均的", example:"The average student spends two hours on homework every day."}
+             {eng:"avoid", chi:"避免", example:"We should try to avoid eating too much fast food."}
+             {eng:"baggage", chi:"行李", example:"We checked our baggage at the airport counter."}
+             {eng:"bakery", chi:"麵包店", example:"The smell of fresh bread from the bakery is amazing."}
+             {eng:"balance", chi:"平衡", example:"It's important to keep a balance between study and play."}
+             {eng:"barcode", chi:"條碼", example:"The cashier scanned the barcode on the milk carton."}
+             {eng:"bargain", chi:"討價還價 / 特價品", example:"I got this jacket for a bargain at the street market."}
+             {eng:"basement", chi:"地下室", example:"The parking lot is located in the basement of the building."}
+             {eng:"battery", chi:"電池", example:"My phone battery is low; I need a charger."}
+             {eng:"beauty", chi:"美麗 / 美人", example:"She is known for both her beauty and her intelligence."}
+             {eng:"behave", chi:"表現 / 舉止", example:"The children behaved very well during the museum visit."}
+             {eng:"belongings", chi:"隨身物品", example:"Please make sure you have all your personal belongings before leaving."}
+             {eng:"benefit", chi:"好處 / 利益", example:"One of the benefits of walking is that it's good for your heart."}
+             {eng:"beverage", chi:"飲料", example:"Hot beverages like tea and coffee are served here."}
+             {eng:"blanket", chi:"毛毯", example:"It's cold tonight, so I need an extra blanket."}
+             {eng:"blogger", chi:"部落客", example:"She is a famous travel blogger who visits many countries."}
+             {eng:"booking", chi:"預訂", example:"I made a booking for a table of four at the restaurant."}
+             {eng:"boost", chi:"提升 / 促進", example:"Eating breakfast can boost your energy for the day."}
+             {eng:"boredom", chi:"無聊", example:"I read a book to kill boredom while waiting for the bus."}
+             {eng:"borrow", chi:"借入", example:"Can I borrow your umbrella? It's raining outside."}
+             {eng:"bottle", chi:"瓶子", example:"Don't forget to bring a water bottle to the picnic."}
+             {eng:"branch", chi:"分店 / 樹枝", example:"This bank has a branch in almost every district in HK."}
+             {eng:"brand", chi:"品牌", example:"This is my favorite brand of running shoes."}
+             {eng:"brief", chi:"簡短的", example:"The principal gave a brief speech at the assembly."}
+             {eng:"bright", chi:"明亮的 / 聰明的", example:"The sun is very bright today; you should wear sunglasses."}
+             {eng:"brilliant", chi:"出色的 / 傑出的", example:"She came up with a brilliant idea for the school fair."}
+             {eng:"browse", chi:"瀏覽", example:"I like to browse the internet before going to sleep."}
+             {eng:"brunch", chi:"早午餐", example:"Let's have brunch together this Sunday morning."}
+             {eng:"buffet", chi:"自助餐", example:"We had a seafood buffet to celebrate my birthday."}
+             {eng:"bulletin", chi:"布告 / 簡報", example:"The school bulletin board is updated every week."}
+             {eng:"button", chi:"按鈕 / 鈕扣", example:"Press this button to start the washing machine."}
+             {eng:"cafeteria", chi:"自助食堂", example:"Students usually have lunch in the school cafeteria."}
+             {eng:"customer", chi:"顧客 / 客戶", example:"The customer complained about the poor service of the shop."}
+             {eng:"damage", chi:"損壞 / 損害", example:"The storm caused serious damage to the roof of the house."}
+             {eng:"data", chi:"數據 / 資料", example:"We need to collect more data before making a decision."}
+             {eng:"debate", chi:"辯論 / 討論", example:"There is a lot of debate about the use of AI in schools."}
+             {eng:"decrease", chi:"減少 / 下降", example:"The number of car accidents has decreased this year."}
+             {eng:"delicious", chi:"美味的", example:"My mother cooked a delicious dinner for us."}
+             {eng:"deliver", chi:"遞送 / 交付", example:"The courier will deliver the package to your home tomorrow."}
+             {eng:"demand", chi:"需求 / 要求", example:"There is a high demand for organic vegetables nowadays."}
+             {eng:"demonstrate", chi:"展示 / 示範", example:"The teacher demonstrated how to use the new software."}
+             {eng:"dentist", chi:"牙醫", example:"I have to go to the dentist for a regular check-up."}
+             {eng:"depart", chi:"出發 / 離開", example:"The train to Lo Wu will depart from platform 3."}
+             {eng:"depend", chi:"取決於 / 依靠", example:"Whether we go for a picnic depends on the weather."}
+             {eng:"describe", chi:"描述 / 形容", example:"Can you describe what the missing person looked like?"}
+             {eng:"design", chi:"設計", example:"She wants to study graphic design at university."}
+             {eng:"dessert", chi:"甜點", example:"We had mango pudding for dessert after dinner."}
+             {eng:"destination", chi:"目的地", example:"Spain is a popular holiday destination for many tourists."}
+             {eng:"detail", chi:"細節", example:"Please read the instructions carefully for more details."}
+             {eng:"detect", chi:"發現 / 察覺", example:"The smoke detector will make a sound if there is a fire."}
+             {eng:"develop", chi:"發展 / 培養", example:"The government is trying to develop new towns in the New Territories."}
+             {eng:"device", chi:"裝置 / 設備", example:"You can connect your mobile devices to the free Wi-Fi here."}
+             {eng:"diary", chi:"日記", example:"I like to write in my diary before going to bed."}
+             {eng:"dictionary", chi:"字典", example:"You should look up the new word in a dictionary."}
+             {eng:"diet", chi:"飲食 / 節食", example:"A balanced diet is essential for maintaining good health."}
+             {eng:"difference", chi:"差別 / 不同", example:"Can you tell the difference between these two pictures?"}
+             {eng:"difficult", chi:"困難的", example:"Math has always been a difficult subject for me."}
+             {eng:"digital", chi:"數位的", example:"We are living in a digital age where everything is online."}
+             {eng:"direction", chi:"方向 / 指示", example:"Excuse me, could you tell me the direction to the museum?"}
+             {eng:"disappear", chi:"消失", example:"The sun disappeared behind the thick clouds."}
+             {eng:"disappoint", chi:"使失望", example:"I don't want to disappoint my parents, so I study hard."}
+             {eng:"disaster", chi:"災難 / 徹底的失敗", example:"The school party was a disaster because of the heavy rain."}
+             {eng:"discover", chi:"發現", example:"Scientists are trying to discover a cure for the disease."}
+             {eng:"discuss", chi:"討論", example:"Let's discuss the plan for our project after school."}
+             {eng:"disease", chi:"疾病", example:"Washing hands regularly can help prevent the spread of diseases."}
+             {eng:"dislike", chi:"不喜歡 / 厭惡", example:"I dislike eating onions because of their strong smell."}
+             {eng:"display", chi:"展示 / 顯示", example:"The new products are on display in the shop window."}
+             {eng:"distance", chi:"距離", example:"The distance from my home to school is about two kilometers."}
+             {eng:"distribute", chi:"分發 / 分配", example:"The teacher distributed the test papers to the students."}
+             {eng:"district", chi:"區域 / 地區", example:"Mong Kok is one of the busiest districts in Hong Kong."}
+             {eng:"divide", chi:"劃分 / 分割", example:"The teacher divided the class into four small groups."}
+             {eng:"document", chi:"文件", example:"Please keep this important document in a safe place."}
+             {eng:"donate", chi:"捐贈", example:"Many people donated clothes and food to the victims."}
+             {eng:"download", chi:"下載", example:"You can download the app for free from the app store."}
+             {eng:"drama", chi:"戲劇 / 戲劇性事件", example:"I joined the school drama club to improve my acting skills."}
+             {eng:"drawer", chi:"抽屜", example:"I put my keys in the top drawer of the desk."}
+             {eng:"drawing", chi:"圖畫 / 繪畫", example:"She showed me her beautiful drawing of a cat."}
+             {eng:"dream", chi:"夢想 / 做夢", example:"My dream is to travel around the world in the future."}
+             {eng:"dress", chi:"連身裙 / 穿衣", example:"She wore a beautiful pink dress to the birthday party."}
+             {eng:"drill", chi:"演習 / 練習", example:"We had a fire drill at school this morning."}
+             {eng:"drink", chi:"飲料 / 喝", example:"Would you like something to drink, like tea or water?"}
+             {eng:"drive", chi:"駕駛", example:"It takes about 30 minutes to drive to the airport."}
+             {eng:"dusty", chi:"佈滿灰塵的", example:"The old books in the storeroom were very dusty."}
+             {eng:"duty", chi:"責任 / 義務", example:"It is our duty to keep the classroom clean and tidy."}
+             {eng:"eager", chi:"熱切的 / 渴望的", example:"The students were eager to hear the exam results."}
+             {eng:"earn", chi:"賺取 / 贏得", example:"He works part-time at a coffee shop to earn some pocket money."}
+             {eng:"earrings", chi:"耳環", example:"She bought a pair of silver earrings as a gift for her mother."}
+             {eng:"easily", chi:"容易地", example:"You can easily find the library by following the signs."}
+             {eng:"ecology", chi:"生態", example:"We should learn more about the ecology of marine life."}
+             {eng:"economy", chi:"經濟", example:"The government is trying hard to boost the local economy."}
+             {eng:"edge", chi:"邊緣", example:"Don't put your glass near the edge of the table."}
+             {eng:"editor", chi:"編輯", example:"The editor decided to put the story on the front page."}
+             {eng:"educate", chi:"教育", example:"Schools play an important role in educating young people."}
+             {eng:"effect", chi:"效果 / 影響", example:"The medicine had an immediate effect on my headache."}
+             {eng:"effective", chi:"有效的", example:"Using flashcards is an effective way to learn vocabulary."}
+             {eng:"efficiency", chi:"效率", example:"The new machine has greatly improved our work efficiency."}
+             {eng:"effort", chi:"努力", example:"You need to put more effort into your studies if you want to improve."}
+             {eng:"elderly", chi:"長者 / 年老的", example:"We should respect the elderly and help them when needed."}
+             {eng:"electric", chi:"電動的 / 用電的", example:"More and more people in HK are driving electric cars now."}
+             {eng:"elegant", chi:"優雅的", example:"The bride looked very elegant in her white wedding dress."}
+             {eng:"elementary", chi:"初級的 / 基礎的", example:"He is taking an elementary course in Spanish."}
+             {eng:"eliminate", chi:"消除 / 淘汰", example:"Our school team was eliminated in the first round of the match."}
+             {eng:"embarrassed", chi:"尷尬的", example:"I felt very embarrassed when I forgot my friend's name."}
+             {eng:"emergency", chi:"緊急情況", example:"In case of emergency, please call 999 immediately."}
+             {eng:"emotion", chi:"情感 / 情緒", example:"Love and fear are two of the most powerful human emotions."}
+             {eng:"emphasis", chi:"強調 / 重點", example:"Our school puts a strong emphasis on moral education."}
+             {eng:"employ", chi:"僱用", example:"The company plans to employ more staff next year."}
+             {eng:"empty", chi:"空的", example:"The classroom was completely empty after the last bell rang."}
+             {eng:"encourage", chi:"鼓勵", example:"My parents always encourage me to try new things."}
+             {eng:"energy", chi:"能量 / 精力", example:"Children always seem to have a lot of energy."}
+             {eng:"engage", chi:"參與 / 吸引", example:"The teacher used games to engage students in learning."}
+             {eng:"engine", chi:"引擎", example:"The mechanic is checking the engine of the car."}
+             {eng:"enjoyable", chi:"令人愉快的", example:"We spent an enjoyable afternoon at the beach."}
+             {eng:"enormous", chi:"巨大的 / 龐大的", example:"The new shopping mall is absolutely enormous."}
+             {eng:"enough", chi:"足夠的", example:"I don't have enough money to buy that expensive game."}
+             {eng:"ensure", chi:"確保", example:"Please check the locks to ensure that all windows are closed."}
+             {eng:"enter", chi:"進入 / 參加", example:"Please knock on the door before you enter the room."}
+             {eng:"entertaining", chi:"有趣的 / 具娛樂性的", example:"The magic show was very entertaining for both kids and adults."}
+             {eng:"enthusiastic", chi:"熱情的 / 熱心的", example:"He is very enthusiastic about playing basketball."}
+             {eng:"entire", chi:"整個的 / 全部的", example:"I spent the entire weekend studying for the exams."}
+             {eng:"entrance", chi:"入口 / 進入", example:"We will meet at the main entrance of the park."}
+             {eng:"envelope", chi:"信封", example:"I put the letter in an envelope and mailed it."}
+             {eng:"environment", chi:"環境", example:"We should all do our part to protect the environment."}
+             {eng:"equal", chi:"平等的 / 相等的", example:"Men and women should have equal opportunities at work."}
+             {eng:"equip", chi:"配備 / 裝備", example:"The new computer room is equipped with the latest technology."}
+             {eng:"error", chi:"錯誤", example:"There are a few spelling errors in your essay."}
+             {eng:"escape", chi:"逃跑 / 逃避", example:"They managed to escape from the burning building."}
+             {eng:"essay", chi:"短文 / 文章", example:"We have to write a 300-word essay on climate change."}
+             {eng:"essential", chi:"不可或缺的 / 基本的", example:"Good communication skills are essential for this job."}
+             {eng:"establish", chi:"建立 / 設立", example:"The school was established more than fifty years ago."}
+             {eng:"estimate", chi:"估計", example:"We estimate that the journey will take about two hours."}
+             {eng:"event", chi:"活動 / 事件", example:"The sports day is one of the biggest events of the school year."}
+             {eng:"evidence", chi:"證據", example:"There is no clear evidence that he stole the money."}
+             {eng:"excellent", chi:"優秀的 / 極好的", example:"She did an excellent job on her science project."}
+             {eng:"exchange", chi:"交換 / 交流", example:"I would like to exchange this shirt for a smaller size."}
+             {eng:"excited", chi:"興奮的", example:"The children were very excited about going to Disneyland."}
+             {eng:"exercise", chi:"運動 / 練習", example:"You should do some exercise every day to stay fit."}
+             {eng:"exhibition", chi:"展覽", example:"We went to see a dinosaur exhibition at the museum."}
+             {eng:"expect", chi:"預期 / 期待", example:"I expect to finish my homework in half an hour."}
+             {eng:"expensive", chi:"昂貴的", example:"I cannot afford to buy such an expensive watch."}
+             {eng:"experience", chi:"經驗 / 經歷", example:"She has a lot of experience in teaching children."}
+             {eng:"expert", chi:"專家 / 熟練的", example:"My father is an expert at fixing computers."}
+             {eng:"explain", chi:"解釋", example:"Could you please explain how to solve this math problem?"}
+             {eng:"explore", chi:"探索", example:"Let's explore the new shopping mall this weekend."}
+             {eng:"express", chi:"表達 / 快速的", example:"It is important to express your feelings to your friends."}
+             {eng:"expression", chi:"表情 / 表達", example:"There was a puzzled expression on his face."}
+             {eng:"extra", chi:"額外的", example:"You need to pay extra money for the popcorn."}
+             {eng:"extremely", chi:"極其 / 非常", example:"The weather today is extremely hot, so drink more water."}
+             {eng:"facility", chi:"設施 / 設備", example:"The school has excellent sports facilities, including a pool."}
+             {eng:"factor", chi:"因素", example:"Health is an important factor in human happiness."}
+             {eng:"factory", chi:"工廠", example:"My uncle works as a manager in a toy factory."}
+             {eng:"failure", chi:"失敗", example:"Don't be afraid of failure; it is the mother of success."}
+             {eng:"familiar", chi:"熟悉的", example:"His voice sounds very familiar to me."}
+             {eng:"famous", chi:"著名的", example:"The Peak is one of the most famous tourist spots in HK."}
+             {eng:"fantastic", chi:"極好的 / 了不起的", example:"We had a fantastic time at the concert last night."}
+             {eng:"fashion", chi:"時尚", example:"She always follows the latest fashion trends."}
+             {eng:"favorite", chi:"最喜愛的", example:"What is your favorite subject at school?"}
+             {eng:"feature", chi:"特徵 / 特色", example:"The camera is the best feature of this new smartphone."}
+             {eng:"feedback", chi:"回饋 / 意見", example:"The teacher gave me some useful feedback on my essay."}
+             {eng:"feeling", chi:"感覺 / 情感", example:"I have a feeling that something good is going to happen."}
+             {eng:"festival", chi:"節日", example:"The Dragon Boat Festival is a traditional holiday in China."}
+             {eng:"fiction", chi:"小說 / 虛構之事", example:"I prefer reading science fiction to romance novels."}
+             {eng:"field", chi:"田野 / 領域 / 球場", example:"The cows were grazing peacefully in the green field."}
+             {eng:"fight", chi:"爭吵 / 打架", example:"The two boys had a fight over a video game."}
+             {eng:"figure", chi:"數字 / 身影 / 人物", example:"The unemployment figure has dropped slightly this month."}
+             {eng:"file", chi:"檔案 / 檔案夾", example:"I saved the document in a file on my computer."}
+             {eng:"fill", chi:"填滿", example:"Please fill this bottle with cold water."}
+             {eng:"film", chi:"電影 / 軟片", example:"We are going to watch an action film tonight."}
+             {eng:"final", chi:"最後的 / 期末考", example:"The final decision will be made by the principal."}
+             {eng:"finance", chi:"財務 / 金融", example:"The course teaches students how to manage their personal finances."}
+             {eng:"finger", chi:"手指", example:"She wears a silver ring on her middle finger."}
+             {eng:"finish", chi:"完成 / 結束", example:"I will call you as soon as I finish my dinner."}
+             {eng:"fit", chi:"合適 / 健康的", example:"I try to run every morning to keep fit."}
+             {eng:"fix", chi:"修理 / 固定", example:"Can you help me fix the broken leg of this chair?"}
+             {eng:"flag", chi:"旗幟", example:"The national flag was raised at the ceremony."}
+             {eng:"flat", chi:"公寓 / 平的", example:"They live in a small flat in Mong Kok."}
+             {eng:"flexible", chi:"靈活的 / 有彈性的", example:"My working hours are quite flexible, so I can go to the gym."}
+             {eng:"flight", chi:"航班 / 飛行", example:"Our flight to London will take about twelve hours."}
+             {eng:"floor", chi:"地板 / 樓層", example:"The library is on the second floor of the building."}
+             {eng:"flow", chi:"流動", example:"The river flows through the center of the city."}
+             {eng:"flower", chi:"花朵", example:"She received a beautiful bouquet of flowers on her birthday."}
+             {eng:"fluent", chi:"流利的", example:"She speaks fluent English and can communicate easily."}
+             {eng:"focus", chi:"專注 / 焦點", example:"We need to focus on our study during lesson time."}
+             {eng:"follow", chi:"跟隨 / 遵循", example:"Please follow the teacher's instructions carefully."}
+             {eng:"fond", chi:"喜愛的", example:"My grandmother is very fond of listening to Cantonese opera."}
+             {eng:"foodie", chi:"美食家 / 吃貨", example:"As a foodie, she loves trying out new restaurants in HK."}
+             {eng:"foolish", chi:"愚蠢的", example:"It was foolish of him to leave his phone in the taxi."}
+             {eng:"forbid", chi:"禁止", example:"Smoking is strictly forbidden inside the shopping mall."}
+             {eng:"forecast", chi:"預測 / 預報", example:"According to the weather forecast, it will rain tomorrow."}
+             {eng:"foreign", chi:"外國的", example:"I like learning foreign languages like Spanish and Japanese."}
+             {eng:"forest", chi:"森林", example:"Many wild animals live in this tropical forest."}
+             {eng:"forgetful", chi:"健忘的", example:"He is getting forgetful as he grows older."}
+             {eng:"forgive", chi:"原諒", example:"I hope you can forgive me for breaking your pen."}
+             {eng:"formal", chi:"正式的", example:"You should wear a formal suit for the job interview."}
+             {eng:"former", chi:"先前的 / 前任的", example:"The former principal of our school came back to visit us."}
+             {eng:"fortunate", chi:"幸運的", example:"I am fortunate to have such a supportive family."}
+             {eng:"fortune", chi:"財富 / 運氣", example:"He made a large fortune by selling real estate."}
+             {eng:"forward", chi:"向前", example:"I am looking forward to the coming summer holiday."}
+             {eng:"frame", chi:"框架 / 相框", example:"I put the photo in a wooden frame on my desk."}
+             {eng:"free", chi:"免費的 / 自由的", example:"Admission to the public museum is free on Wednesdays."}
+             {eng:"freeze", chi:"結冰 / 凍結", example:"Water will freeze when the temperature drops to 0°C."}
+             {eng:"frequency", chi:"頻率", example:"The frequency of buses is increased during rush hours."}
+             {eng:"frequent", chi:"頻繁的", example:"He is a frequent visitor to the school library."}
+             {eng:"fresh", chi:"新鮮的", example:"I always buy fresh milk from the convenience store."}
+             {eng:"friendship", chi:"友誼", example:"Our friendship has lasted for more than ten years."}
+             {eng:"frightened", chi:"受驚嚇的", example:"The little girl was frightened by the loud thunder."}
+             {eng:"front", chi:"前面的", example:"I usually sit in the front row in the classroom."}
+             {eng:"frozen", chi:"冷凍的 / 結冰的", example:"You can buy frozen dumplings at the supermarket."}
+             {eng:"fruit", chi:"水果", example:"Eating more fruit is good for your health."}
+             {eng:"fry", chi:"油炸 / 油煎", example:"I like to fry eggs for breakfast on Sunday."}
+             {eng:"fuel", chi:"燃料", example:"Electric cars do not use fossil fuel like gasoline."}
+             {eng:"fulfill", chi:"實現 / 履行", example:"He worked hard to fulfill his dream of being a doctor."}
+             {eng:"fun", chi:"好玩的 / 樂趣", example:"Playing mobile games is a lot of fun for teenagers."}
+             {eng:"function", chi:"功能 / 起作用", example:"What is the main function of this new app?"}
+             {eng:"fund", chi:"基金 / 資金", example:"The school raised funds to help the poor children."}
+             {eng:"funny", chi:"滑稽的 / 好笑的", example:"The clown made some funny faces to make the kids laugh."}
+             {eng:"furniture", chi:"家具", example:"We bought some new furniture for our living room."}
+             {eng:"further", chi:"進一步的", example:"Please contact us if you need any further information."}
+             {eng:"future", chi:"未來", example:"No one can tell what will happen in the future."}
+             {eng:"gain", chi:"獲得 / 增加", example:"I gained a lot of knowledge from the reading camp."}
+             {eng:"gallery", chi:"畫廊 / 美術館", example:"The art gallery is showing works by local artists."}
+             {eng:"game", chi:"遊戲 / 比賽", example:"I enjoy playing chess with my father on weekends."}
+             {eng:"garage", chi:"車庫 / 修車廠", example:"I parked my car in the garage of the building."}
+             {eng:"garbage", chi:"垃圾", example:"Please put your garbage in the bin over there."}
+             {eng:"garden", chi:"花園", example:"My mother grows many beautiful roses in the garden."}
+             {eng:"gate", chi:"大門", example:"I will wait for you at the school gate after class."}
+             {eng:"general", chi:"一般的 / 普遍的", example:"In general, women live longer than men."}
+             {eng:"generate", chi:"產生 / 引起", example:"The new policy generated a lot of discussion in the city."}
+             {eng:"generous", chi:"慷慨的", example:"He is very generous and often donates money to charity."}
+             {eng:"genius", chi:"天才", example:"Albert Einstein was a scientific genius."}
+             {eng:"gentle", chi:"溫和的 / 輕柔的", example:"Be gentle with the puppy; it is still very small."}
+             {eng:"genuine", chi:"真誠的 / 真正的", example:"His apology seemed genuine, so I forgave him."}
+             {eng:"gesture", chi:"手勢 / 姿態", example:"He made a gesture to show that he was okay."}
+             {eng:"gift", chi:"禮物 / 天賦", example:"I bought a small gift for my sister's birthday."}
+             {eng:"glance", chi:"掃視 / 瞥見", example:"I took a quick glance at my watch and realized I was late."}
+             {eng:"global", chi:"全球的", example:"Climate change is a global problem that affects everyone."}
+             {eng:"gloomy", chi:"陰暗的 / 憂鬱的", example:"The weather today is very gloomy and depressing."}
+             {eng:"glorious", chi:"光榮的 / 壯麗的", example:"We had a glorious view of the sunset from the beach."}
+             {eng:"glossary", chi:"詞彙表", example:"You can find the meanings of the terms in the glossary."}
+             {eng:"glove", chi:"手套", example:"You should wear gloves to protect your hands when cleaning."}
+             {eng:"goal", chi:"目標 / 進球", example:"My main goal this year is to pass the DSE exam."}
+             {eng:"goodbye", chi:"再見", example:"We said goodbye to each other at the airport."}
+             {eng:"goodness", chi:"善良 / 美德", example:"I believe in the basic goodness of human nature."}
+             {eng:"goods", chi:"商品 / 貨物", example:"The shop sells a variety of leather goods."}
+             {eng:"gorgeous", chi:"極其美麗的", example:"She looked absolutely gorgeous in her evening gown."}
+             {eng:"gossip", chi:"閒話 / 八卦", example:"Don't believe everything you hear; it's just gossip."}
+             {eng:"govern", chi:"統治 / 管理", example:"The country is governed by a prime minister."}
+             {eng:"government", chi:"政府", example:"The government has launched a new campaign against smoking."}
+             {eng:"grab", chi:"抓取 / 奪取", example:"I had to grab my bag and run for the bus."}
+             {eng:"grace", chi:"優雅 / 恩典", example:"She dances with great grace and beauty."}
+             {eng:"grade", chi:"成績 / 等級", example:"She got a good grade on her English test."}
+             {eng:"gradual", chi:"逐漸的", example:"There has been a gradual improvement in his health."}
+             {eng:"graduate", chi:"畢業 / 畢業生", example:"He graduated from university with a degree in law."}
+             {eng:"grain", chi:"穀物 / 顆粒", example:"Rice is the most important grain in many Asian countries."}
+             {eng:"grammar", chi:"文法", example:"You need to pay attention to English grammar when writing."}
+             {eng:"grand", chi:"宏偉的 / 豪華的", example:"The wedding was held in a grand hotel."}
+             {eng:"grant", chi:"准許 / 撥款", example:"The school was granted money to build a new library."}
+             {eng:"grape", chi:"葡萄", example:"I bought a bunch of sweet green grapes at the market."}
+             {eng:"grateful", chi:"感激的", example:"I am very grateful for your kind help."}
+             {eng:"grave", chi:"墳墓 / 嚴重的", example:"The doctor had a grave look on his face."}
+             {eng:"greed", chi:"貪婪", example:"His actions were driven by pure greed."}
+             {eng:"greet", chi:"問候 / 打招呼", example:"He greeted me with a warm smile."}
+             {eng:"grey", chi:"灰色的", example:"The sky turned grey before the storm started."}
+             {eng:"grocery", chi:"食品雜貨", example:"I need to go to the supermarket to buy some groceries."}
+             {eng:"ground", chi:"地面", example:"I sat on the ground to rest for a while."}
+             {eng:"group", chi:"群體 / 小組", example:"The teacher divided the class into small groups."}
+             {eng:"grow", chi:"增長 / 成長", example:"The company is growing rapidly and hiring more staff."}
+             {eng:"guarantee", chi:"保證", example:"I can guarantee that you will like this movie."}
+             {eng:"guard", chi:"守衛 / 保衛", example:"There is a security guard at the entrance of the building."}
+             {eng:"guess", chi:"猜測", example:"Can you guess how old our new teacher is?"}
+             {eng:"guest", chi:"客人", example:"We are expecting some guests for dinner tonight."}
+             {eng:"guide", chi:"嚮導 / 引導", example:"The tour guide showed us around the ancient temple."}
+             {eng:"guilty", chi:"內疚的 / 有罪的", example:"I felt guilty about not telling the truth."}
+             {eng:"guitar", chi:"吉他", example:"He is learning to play the acoustic guitar."}
+             {eng:"habit", chi:"習慣", example:"You should break the habit of eating late at night."}
+             {eng:"haircut", chi:"剪髮", example:"Your hair is too long; you need to get a haircut."}
+             {eng:"hall", chi:"大廳 / 禮堂", example:"The morning assembly is held in the school hall."}
+             {eng:"hammer", chi:"鐵鎚 / 敲打", example:"He used a hammer to drive the nail into the wall."}
+             {eng:"handbag", chi:"手提包", example:"She left her handbag in the taxi."}
+             {eng:"handsome", chi:"英俊的", example:"He is a tall and handsome young man."}
+             {eng:"handwriting", chi:"字跡", example:"Her handwriting is very neat and easy to read."}
+             {eng:"handy", chi:"便利的 / 手巧的", example:"The store is very handy because it stays open 24 hours."}
+             {eng:"harbor", chi:"海港", example:"Victoria Harbor is famous for its beautiful night view."}
+             {eng:"hardly", chi:"幾乎不", example:"I could hardly believe my eyes when I saw the score."}
+             {eng:"hardship", chi:"艱難 / 困苦", example:"Many families faced financial hardship during the crisis."}
+             {eng:"harmful", chi:"有害的", example:"Smoking is harmful to your health."}
+             {eng:"harvest", chi:"收穫", example:"Farmers are busy with the rice harvest in autumn."}
+             {eng:"haste", chi:"匆忙", example:"In his haste to leave, he forgot his umbrella."}
+             {eng:"headline", chi:"標題", example:"I read the news headlines on my phone this morning."}
+             {eng:"heal", chi:"治癒 / 癒合", example:"It took several weeks for the wound on my leg to heal."}
+             {eng:"healthy", chi:"健康的", example:"Eating more vegetables and fruit is a healthy habit."}
+             {eng:"hearty", chi:"豐盛的 / 熱誠的", example:"We had a hearty breakfast before our long hike."}
+             {eng:"heaven", chi:"天堂 / 天空", example:"I believe that good people will go to heaven after they die."}
+             {eng:"heavy", chi:"重的", example:"This box is too heavy for me to carry alone."}
+             {eng:"height", chi:"高度 / 身高", example:"Please state your height and weight on the form."}
+             {eng:"helmet", chi:"頭盔", example:"You must wear a helmet when riding a bicycle."}
+             {eng:"helpful", chi:"有幫助的", example:"The tips the teacher gave us were very helpful for the exam."}
+             {eng:"helpless", chi:"無助的", example:"I felt helpless when I couldn't find my lost wallet."}
+             {eng:"herb", chi:"草藥 / 香草", example:"She added some fresh herbs to the soup to make it smell good."}
+             {eng:"hero", chi:"英雄", example:"Firefighters are real heroes who save people's lives."}
+             {eng:"highlight", chi:"最精彩的部分 / 強調", example:"The highlight of the trip was the visit to the theme park."}
+             {eng:"highly", chi:"高度地 / 非常", example:"He is a highly successful businessman."}
+             {eng:"highway", chi:"公路", example:"The traffic on the highway was very slow this morning."}
+             {eng:"hike", chi:"遠足", example:"We are going for a hike in the country park this Sunday."}
+             {eng:"hint", chi:"暗示", example:"He gave me a hint to help me solve the puzzle."}
+             {eng:"hire", chi:"租用 / 僱用", example:"We decided to hire a car for our trip in Japan."}
+             {eng:"historic", chi:"具有歷史意義的", example:"The signing of the agreement was a historic event."}
+             {eng:"history", chi:"歷史", example:"History has always been my favorite subject at school."}
+             {eng:"hobby", chi:"嗜好", example:"My main hobby is collecting vintage stamps."}
+             {eng:"hold", chi:"握住 / 舉行", example:"Please hold my hand when we cross the road."}
+             {eng:"holiday", chi:"假期", example:"Where are you going for the coming Easter holiday?"}
+             {eng:"honest", chi:"誠實的", example:"Be honest with me; did you really do your homework?"}
+             {eng:"honey", chi:"蜂蜜", example:"I like to add a spoonful of honey to my lemon tea."}
+             {eng:"honor", chi:"榮譽 / 尊敬", example:"It is a great honor to represent our school in the contest."}
+             {eng:"hopeful", chi:"抱有希望的", example:"We are hopeful that the weather will clear up tomorrow."}
+             {eng:"hopeless", chi:"絕望的", example:"I am hopeless at math; I just don't understand it."}
+             {eng:"horizon", chi:"地平線", example:"The sun was sinking slowly below the horizon."}
+             {eng:"horrible", chi:"可怕的 / 糟糕的", example:"I had a horrible dream last night and couldn't sleep."}
+             {eng:"hospital", chi:"醫院", example:"My grandmother is in the hospital for a check-up."}
+             {eng:"host", chi:"主人 / 主持人", example:"The host of the party made everyone feel welcome."}
+             {eng:"hostel", chi:"青年旅舍", example:"We stayed in a cheap youth hostel during our trip."}
+             {eng:"hot", chi:"熱的 / 熱門的", example:"Be careful; the coffee is still very hot."}
+             {eng:"hotel", chi:"飯店", example:"We booked a five-star hotel for our stay in Tokyo."}
+             {eng:"household", chi:"家庭的 / 家喻戶曉的", example:"'Samsung' is a household brand name in HK."}
+             {eng:"however", chi:"然而", example:"I studied hard for the test; however, I failed."}
+             {eng:"huge", chi:"巨大的", example:"The new shopping mall is absolutely huge."}
+             {eng:"human", chi:"人類的 / 人性", example:"Mistakes are part of being human."}
+             {eng:"humor", chi:"幽默", example:"He has a great sense of humor and makes everyone laugh."}
+             {eng:"hunger", chi:"飢餓", example:"The boy cried out in hunger after not eating all day."}
+             {eng:"hunt", chi:"尋找 / 打獵", example:"I need to hunt for my lost keys."}
+             {eng:"hurry", chi:"趕快 / 匆忙", example:"We need to hurry or we will miss the last bus."}
+             {eng:"hurt", chi:"受傷 / 疼痛", example:"I hurt my leg when I fell off the bicycle."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
         
         const monsterImages = [
