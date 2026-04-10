@@ -49,7 +49,7 @@
             background-size: cover; 
             background-position: center; 
             transition: background-image 0.5s ease;
-            z-index: 0; 
+            z-index: 0;
             display: none;
         }
 
@@ -80,7 +80,8 @@
             box-shadow: 0 0 0 4px #2d3436;
             transition: 0.1s; 
         }
-        .btn-rpg:active { transform: scale(0.9); background: #636e72; }
+        .btn-rpg:active { transform: scale(0.9);
+            background: #636e72; }
 
         .btn { 
             background: #fff;
@@ -90,7 +91,8 @@
             box-sizing: border-box; transition: 0.2s; 
             -webkit-tap-highlight-color: transparent;
         }
-        .btn:active { transform: scale(0.96); background: #f0f0f0; }
+        .btn:active { transform: scale(0.96); background: #f0f0f0;
+        }
         .btn-primary { 
             background: var(--primary);
             color: white; border: none;
@@ -100,7 +102,8 @@
             color: var(--primary);
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
-        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
+        .btn-small { padding: 8px; font-size: 0.85rem;
+            margin: 5px 2px; flex: 1; }
         .speaker-btn { 
             background: #e1f0ff;
             border: none;
@@ -116,19 +119,25 @@
             display: flex; justify-content: space-between; align-items: center;
         }
         .exp-bar-container {
-            flex-grow: 1; height: 10px; background: #eee; border-radius: 5px; margin: 0 15px; overflow: hidden;
+            flex-grow: 1;
+            height: 10px; background: #eee; border-radius: 5px; margin: 0 15px; overflow: hidden;
         }
-        .exp-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.3s; }
+        .exp-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.3s;
+        }
 
         /* Shop Grid */
         .shop-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr; gap: 10px;
         }
         .shop-item {
-            background: white; border: 2px solid #eee; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
+            background: white;
+            border: 2px solid #eee; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
         }
-        .shop-item:hover { border-color: var(--primary); }
-        .shop-item.owned { border-color: var(--success); background: #f0fff4; }
+        .shop-item:hover { border-color: var(--primary);
+        }
+        .shop-item.owned { border-color: var(--success); background: #f0fff4;
+        }
 
         .card { 
             background: rgba(255,255,255,0.95);
@@ -138,8 +147,10 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
             position: relative; border: 1px solid #eee;
         }
-        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
-        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary);
+        }
+        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444;
+        }
         .example-box { 
             margin-top: 15px;
             padding: 12px; background: #f9f9f9; border-radius: 10px;
@@ -157,99 +168,135 @@
             border: 2px solid #f39c12;
         }
         
-        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
-        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
-        .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain; }
+        .monster-box { position: absolute; top: 10px; right: 15px; text-align: center; z-index: 1; }
+        .monster-img { width: 90px;
+            height: auto; image-rendering: pixelated; transition: 0.3s; }
+        .player-box { position: absolute; bottom: -10px; left: 15px; z-index: 2; }
+        .player-img { width: 270px; height: auto; transition: 0.3s;
+            object-fit: contain; }
         
         /* Floating Text & Slash FX */
         .floating-text {
-            position: absolute; right: 60px; top: 40px; font-weight: bold; font-size: 1.5rem; z-index: 10;
-            animation: float-up 0.8s ease-out forwards; pointer-events: none; text-shadow: 1px 1px 2px #000;
+            position: absolute;
+            right: 60px; top: 40px; font-weight: bold; font-size: 1.5rem; z-index: 10;
+            animation: float-up 0.8s ease-out forwards; pointer-events: none;
+            text-shadow: 1px 1px 2px #000;
         }
         @keyframes float-up {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+            0% { opacity: 1;
+            transform: translateY(0) scale(1); }
+            100% { opacity: 0;
+            transform: translateY(-50px) scale(1.2); }
         }
         .slash-fx {
-            position: absolute; right: 30px; top: 10px; width: 120px; height: 120px; z-index: 5;
+            position: absolute;
+            right: 30px; top: 10px; width: 120px; height: 120px; z-index: 5;
             background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
             clip-path: polygon(0 40%, 100% 45%, 100% 55%, 0 60%);
             animation: slash-anim 0.3s forwards; pointer-events: none; opacity: 0; transform: rotate(45deg);
         }
         @keyframes slash-anim {
-            0% { opacity: 1; transform: scale(0.5) rotate(45deg) translateX(-50px); }
-            100% { opacity: 0; transform: scale(1.5) rotate(45deg) translateX(50px); }
+            0% { opacity: 1;
+            transform: scale(0.5) rotate(45deg) translateX(-50px); }
+            100% { opacity: 0;
+            transform: scale(1.5) rotate(45deg) translateX(50px); }
         }
 
+        /* 怪物被擊中的特效：清脆的高光與俐落的水平震動 */
         @keyframes hit-shake { 
-            0% { transform: translateX(0); } 
-            20% { transform: translateX(-15px) scale(1.1); filter: brightness(1.2) sepia(1) saturate(8); } 
-            40% { transform: translateX(10px) scale(1.05); filter: brightness(1.2) sepia(1) saturate(8); }
-            60% { transform: translateX(-10px) scale(1); filter: brightness(1.1) sepia(0.5); }
-            100% { transform: scale(1) translateX(0); filter: brightness(1); } 
+            0% { transform: translate(0, 0) scale(1); filter: brightness(1); } 
+            15% { transform: translate(-8px, 0) scale(1.02); filter: brightness(1.6) sepia(1) saturate(5); } 
+            30% { transform: translate(8px, 0) scale(1.02); filter: brightness(1.6) sepia(1) saturate(5); }
+            45% { transform: translate(-5px, 0) scale(1); filter: brightness(1.2); }
+            60% { transform: translate(3px, 0) scale(1); filter: brightness(1); }
+            75% { transform: translate(-1px, 0) scale(1); }
+            100% { transform: translate(0, 0) scale(1); filter: brightness(1); } 
         }
-        .anim-hit { animation: hit-shake 0.4s forwards; }
+        .anim-hit { animation: hit-shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards; }
         
-        @keyframes hurt-red-filter { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); } 100% { filter: brightness(1); } }
+        /* 玩家受擊特效：強烈的紅色濾鏡與短促震動 */
+        @keyframes hurt-red-filter { 
+            0% { filter: brightness(1); } 
+            30% { filter: brightness(1.2) sepia(1) saturate(8) hue-rotate(-20deg); } 
+            100% { filter: brightness(1); } 
+        }
         @keyframes hurt-vibrate { 
             0% { transform: translate(0, 0); } 
-            20% { transform: translate(3px, 2px); } 
-            40% { transform: translate(3px, -1px); } 
-            60% { transform: translate(2px, 1px); } 
-            80% { transform: translate(3px, 2px); } 
+            15% { transform: translate(4px, 2px); } 
+            30% { transform: translate(-4px, -1px); } 
+            45% { transform: translate(3px, 1px); } 
+            60% { transform: translate(-2px, 0); } 
+            75% { transform: translate(1px, 0); } 
             100% { transform: translate(0, 0); } 
         }
-        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s; }
+        .anim-hurt-combined { animation: hurt-vibrate 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97), hurt-red-filter 0.35s ease-out; }
 
         .timer-line { 
-            position: absolute; top: -10px; left: 0; height: 6px; 
+            position: absolute;
+            top: -10px; left: 0; height: 6px; 
             background: var(--danger); transition: width 0.1s linear, background-color 0.3s;
         }
-        .timer-fever { background: #f1c40f !important; box-shadow: 0 0 10px #f1c40f; }
+        .timer-fever { background: #f1c40f !important; box-shadow: 0 0 10px #f1c40f;
+        }
         
-        .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .quiz-grid { display: grid;
+            grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         input, textarea { 
-            width: 100%; padding: 14px; border: 2px solid #eee; 
+            width: 100%;
+            padding: 14px; border: 2px solid #eee; 
             border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
         }
-        .footer-img { width: 100%; height: auto; border-radius: 15px; }
+        .footer-img { width: 100%; height: auto; border-radius: 15px;
+        }
 
         .hurt-flash { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh; 
             box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
             z-index: 999; opacity: 0; 
         }
-        .anim-flash { animation: flash-fade 0.5s ease; }
-        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+        .anim-flash { animation: flash-fade 0.5s ease;
+        }
+        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1;
+        } 100% { opacity: 0; } }
 
         .combo-text { 
-            position: absolute; left: 20px; top: 30px; font-size: 1.8rem; 
+            position: absolute;
+            left: 20px; top: 30px; font-size: 1.8rem; 
             font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
             animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); display: none;
         }
-        @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
+        @keyframes pop { 0% { transform: scale(0.5);
+        } 100% { transform: scale(1); } }
 
         .boss-hp-bar {
-            width: 100%; height: 8px; background: #555; border-radius: 4px; margin-bottom: 10px; overflow: hidden; display: none;
+            width: 100%;
+            height: 8px; background: #555; border-radius: 4px; margin-bottom: 10px; overflow: hidden; display: none;
         }
-        .boss-hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s; }
+        .boss-hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s;
+        }
 
         .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.7); display: none; justify-content: center; 
             align-items: center; z-index: 1000;
         }
         .modal-content { 
-            background: white; padding: 30px; border-radius: 20px; 
+            background: white;
+            padding: 30px; border-radius: 20px; 
             text-align: center; width: 80%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
-        .chest-img { width: 100px; height: auto; cursor: pointer; transition: 0.2s; object-fit: contain; }
-        .chest-img:hover { transform: scale(1.1); }
+        .chest-img { width: 100px;
+            height: auto; cursor: pointer; transition: 0.2s; object-fit: contain; }
+        .chest-img:hover { transform: scale(1.1);
+        }
 
-        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
-        .view-section.active { display: flex !important; }
+        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column;
+            justify-content: center; }
+        .view-section.active { display: flex !important;
+        }
     </style>
 </head>
 <body>
@@ -266,6 +313,7 @@
 
     <div class="container">
         <div id="view-home" class="view-section">
+        
             <h1 style="text-align:center; color:var(--primary); margin-top:0;">VOCAB DUNGEON</h1>
             
             <div class="hero-stats">
@@ -277,6 +325,7 @@
                     <div class="exp-bar" id="statExpBar"></div>
                 </div>
                 <div style="text-align:center">
+           
                     <div style="font-size: 0.8rem; color: var(--gray)">Gold</div>
                     <div id="statGold" style="font-size: 1.2rem; font-weight: bold; color: var(--gold)">0</div>
                 </div>
@@ -304,11 +353,13 @@
             <div class="shop-grid">
                 <div class="shop-item" onclick="buyItem('potion', 50)">
                     <div style="font-size:2rem;">❤️</div>
+   
                     <strong>生命藥水</strong><br><small>戰鬥初始 HP+1</small><br><span style="color:var(--gold)">🪙 50</span>
                 </div>
                 <div class="shop-item" onclick="buyItem('hourglass', 50)">
                     <div style="font-size:2rem;">⏳</div>
                     <strong>時間沙漏</strong><br><small>單題作答時間+2秒</small><br><span style="color:var(--gold)">🪙 50</span>
+  
                 </div>
             </div>
 
@@ -318,6 +369,7 @@
         </div>
 
         <div id="view-menu" class="view-section">
+        
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>選擇模式</h2>
             <button class="btn btn-outline" onclick="startNormal('card')">📖 生字卡 (讀音/例句)</button>
@@ -332,6 +384,7 @@
 
         <div id="view-add" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
+    
             <h2>新增單字</h2>
             <input type="text" id="newEng" placeholder="英文單字" />
             <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯</button>
@@ -340,6 +393,7 @@
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
         </div>
 
+      
         <div id="view-list" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h3>我的字庫 (<span id="listCount">0</span>)</h3>
@@ -366,6 +420,7 @@
                     <hr/>
                     <strong>【中文】</strong><p id="flipChi"></p>
                     <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
+                
                 </div>
             </div>
             <div id="readAgainArea" style="text-align:center; display:none; margin-bottom: 15px;">
@@ -389,6 +444,7 @@
                 <div class="monster-box">
                     <div class="boss-hp-bar" id="bossHpBar"><div class="boss-hp-fill" id="bossHpFill"></div></div>
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
+              
                 </div>
                 <div class="player-box">
                     <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
@@ -403,6 +459,7 @@
             <div id="dungeonBossArea" style="display:none">
                 <input type="text" id="bossInput" placeholder="拼寫單字..." autocomplete="off"/>
                 <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+    
             </div>
 
             <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
@@ -422,6 +479,7 @@
                 </div>
                 <div style="color: var(--danger)">
                     <strong>漏掉/錯過 (<span id="missedCount">0</span>)</strong> 
+                   
                     <div id="missedListContainer" style="margin-top: 5px;"></div>
                 </div>
             </div>
@@ -433,6 +491,7 @@
     <div class="modal-overlay" id="chestModal">
         <div class="modal-content">
             <h3>🎉 擊敗 Boss！獲得寶箱</h3>
+          
             <img src="https://i.imgur.com/sAsVc32.png" id="chestImg" class="chest-img" onclick="openChest()" alt="寶箱" />
             <p style="color: #636e72" id="chestTip">點擊寶箱開啟獎勵！</p>
             <button class="btn btn-primary" style="margin-top: 10px; display:none" id="chestNextBtn" onclick="closeChestModal()">前往下一關</button>
@@ -444,6 +503,7 @@
             {eng:"concept", chi:"[n.] 概念", example:"The teacher explained a difficult concept in class today."},
             {eng:"curiosity", chi:"[n.] 好奇心", example:"Children have a natural curiosity about the world."},
             {eng:"focus", chi:"[v.] 專注/焦點", example:"You need to focus on your studies to get good grades."},
+ 
             {eng:"intelligence", chi:"[n.] 智力/智慧", example:"Intelligence is not just about getting high scores."},
             {eng:"memory", chi:"[n.] 記憶", example:"The old photo brought back many happy memories."},
             {eng:"opinion", chi:"[n.] 意見", example:"Everyone is entitled to their own opinion."},
@@ -457,6 +517,7 @@
             {eng:"perception", chi:"[n.] 感知/看法", example:"Our perception of beauty changes over time."},
             {eng:"consciousness", chi:"[n.] 意識", example:"The patient regained consciousness after the operation."},
             {eng:"access", chi:"[n.] 存取/接近的權利", example:"Students have free access to the school library."},
+          
             {eng:"application", chi:"[n.] 應用/應用程式", example:"This new application can help you learn English faster."},
             {eng:"device", chi:"[n.] 裝置/設備", example:"Please turn off all electronic devices during the exam."},
             {eng:"network", chi:"[n.] 網路", example:"The computer network was down for two hours."},
@@ -472,7 +533,6 @@
             {eng:"innovate", chi:"[v.] 創新", example:"To succeed, a company must constantly innovate."},
             {eng:"satellite", chi:"[n.] 衛星", example:"The satellite sends weather information back to Earth."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
-
         const monsterImages = [
             "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
             "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
@@ -484,7 +544,6 @@
             "https://i.imgur.com/SwmBCNA.jpeg", // B6-B10 Cave
             "https://i.imgur.com/8MUpGMJ.jpeg", // B11+ Ice/Dark
         ];
-
         // RPG Data
         let playerState = { level: 1, exp: 0, gold: 0, skin: 'default', potion: 0, hourglass: 0 };
         const skins = [
@@ -492,12 +551,11 @@
             { id: 'tofu', name: '🐱 白貓劍士 (とうふ)', img: 'https://i.imgur.com/Y7WZlES.png', price: 300 }, // 借用白色怪物圖代用
             { id: 'goma', name: '🐱 黑貓刺客 (ごま)', img: 'https://i.imgur.com/bI7Y6tX.png', price: 300 }  // 借用深色圖代用
         ];
-
         let wordBank = [];
         let wrongWords = [];
         let studyList = [];
         let currentWord = null;
-        let studyMode = 'card'; 
+        let studyMode = 'card';
         let isFlipped = false;
         let currentOptions = [];
 
@@ -516,7 +574,6 @@
         let killedWords = [];
         let missedWords = [];
         let currentMImg = "";
-        
         // Multi-hit Boss Vars
         let bossWords = [];
         let bossMaxHp = 3;
@@ -527,11 +584,15 @@
             const savedWrongs = localStorage.getItem('vocab_wrongs');
             const savedPlayer = localStorage.getItem('vocab_player');
             
-            if (savedBank) { try { wordBank = JSON.parse(savedBank); } catch(e) { wordBank = initialWords; } } 
-            else { wordBank = initialWords; }
+            if (savedBank) { try { wordBank = JSON.parse(savedBank);
+            } catch(e) { wordBank = initialWords; } } 
+            else { wordBank = initialWords;
+            }
 
-            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs); } catch(e) { wrongWords = []; } }
-            if (savedPlayer) { try { playerState = {...playerState, ...JSON.parse(savedPlayer)}; } catch(e) {} }
+            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs);
+            } catch(e) { wrongWords = []; } }
+            if (savedPlayer) { try { playerState = {...playerState, ...JSON.parse(savedPlayer)};
+            } catch(e) {} }
 
             updateGlobalCounts();
             renderShop();
@@ -556,9 +617,9 @@
             const expReq = playerState.level * 100;
             const expPercent = Math.min(100, (playerState.exp / expReq) * 100);
             document.getElementById('statExpBar').style.width = expPercent + '%';
-
             // Set Player Skin globally
-            const skinObj = skins.find(s => s.id === playerState.skin) || skins[0];
+            const skinObj = skins.find(s => s.id === playerState.skin) ||
+            skins[0];
             document.getElementById('playerImg').src = skinObj.img;
         }
 
@@ -570,11 +631,13 @@
                 const btn = document.createElement('div');
                 btn.className = `shop-item ${isOwned ? 'owned' : ''}`;
                 btn.innerHTML = `
+          
                     <img src="${skin.img}" style="width:60px; height:60px; object-fit:contain"/>
                     <div style="font-weight:bold; font-size:0.9rem; margin-top:5px">${skin.name}</div>
                     ${isOwned ? '<small style="color:var(--success)">已裝備/擁有</small>' : `<span style="color:var(--gold)">🪙 ${skin.price}</span>`}
                 `;
-                btn.onclick = () => buySkin(skin.id, skin.price);
+                btn.onclick = () => 
+                buySkin(skin.id, skin.price);
                 grid.appendChild(btn);
             });
         }
@@ -591,7 +654,8 @@
         }
 
         function buySkin(id, price) {
-            if (playerState.skin === id) return; // Already equipped
+            if (playerState.skin === id) return;
+            // Already equipped
             if (price === 0 || playerState.skin === id /* simplified check, ideally store owned array */) {
                 playerState.skin = id;
                 saveState(); renderShop(); return;
@@ -608,12 +672,14 @@
 
         function clearAllWords() {
             if(confirm('⚠️ 警告：這將會移除所有生字，並且無法復原！\n確定要清空嗎？')) {
-                wordBank = []; wrongWords = []; saveState(); renderWordList(); alert('已成功清空所有生字！');
+                wordBank = [];
+                wrongWords = []; saveState(); renderWordList(); alert('已成功清空所有生字！');
             }
         }
         function resetDefaultBank() {
             if(confirm('確定要還原回預設的生字庫嗎？此動作會覆蓋您目前的單字。')) {
-                wordBank = initialWords; wrongWords = []; saveState(); renderWordList();
+                wordBank = initialWords;
+                wrongWords = []; saveState(); renderWordList();
             }
         }
 
@@ -669,7 +735,6 @@
                 
                 const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
                 const dData = await dRes.json();
-                
                 let pos = "", example = "";
                 if(Array.isArray(dData) && dData.length > 0) {
                     for(let meaning of dData[0].meanings) {
@@ -679,7 +744,8 @@
                         }
                     }
                 }
-                const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.' };
+                const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.'
+                };
                 let posPrefix = pos ? `[${posMap[pos] || pos}] ` : "";
                 
                 document.getElementById('newChi').value = posPrefix + chiTranslation;
@@ -700,6 +766,7 @@
                 div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
                 div.innerHTML = `
                     <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
+         
                     <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
                     <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
                 `;
@@ -717,7 +784,8 @@
             const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url); link.setAttribute("download", "my_vocab_list.csv");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "my_vocab_list.csv");
             document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); 
         }
 
@@ -732,15 +800,18 @@
                     const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     if (parts.length < 2) return null;
                     return { eng: parts[0].replace(/"/g, '').trim(), chi: parts[1].replace(/"/g, '').trim(), example: parts[2] ? parts[2].replace(/"/g, '').trim() : "", id: Date.now() + i };
+   
                 }).filter(x => x && x.eng);
                 if (newWords.length > 0) {
-                    wordBank = [...newWords, ...wordBank]; saveState(); alert(`成功匯入 ${newWords.length} 個單字！`);
+                    wordBank = [...newWords, ...wordBank];
+                    saveState(); alert(`成功匯入 ${newWords.length} 個單字！`);
                 }
             };
             reader.readAsText(file);
         }
 
-        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5);
+        }
 
         function speak(text) {
             if(!text || !window.speechSynthesis) return;
@@ -771,7 +842,8 @@
             const quizOpts = document.getElementById('quizOptions');
             const readAgainArea = document.getElementById('readAgainArea');
 
-            quizOpts.style.display = 'none'; unflipped.style.display = 'block'; flipped.style.display = 'none'; isFlipped = false;
+            quizOpts.style.display = 'none'; unflipped.style.display = 'block';
+            flipped.style.display = 'none'; isFlipped = false;
             
             if (studyMode === 'card') {
                 unflipped.innerHTML = `<div class="card-eng">${currentWord.eng}</div><p style="color:#999; font-size:0.85rem; margin-top:5px;">點擊卡片翻面</p>`;
@@ -797,15 +869,19 @@
         function handleCardFlip() {
             if (studyMode !== 'card') return;
             const unflipped = document.getElementById('card-unflipped'); const flipped = document.getElementById('card-flipped');
-            if (!isFlipped) { unflipped.style.display = 'none'; flipped.style.display = 'block'; } 
-            else { unflipped.style.display = 'block'; flipped.style.display = 'none'; }
+            if (!isFlipped) { unflipped.style.display = 'none'; flipped.style.display = 'block';
+            } 
+            else { unflipped.style.display = 'block';
+            flipped.style.display = 'none'; }
             isFlipped = !isFlipped;
         }
 
         function handleQuizSelect(selected) {
-            const unflipped = document.getElementById('card-unflipped'); const flipped = document.getElementById('card-flipped');
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
             if (selected === currentWord.eng) {
-                speak(currentWord.eng); document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
+                speak(currentWord.eng);
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
             } else {
                 document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
             }
@@ -825,17 +901,17 @@
             if(wordBank.length < 4) return alert("單字不足 4 個！");
             dungeonMode = diff;
             maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
-            
             // Apply Potion buffs
-            maxHp = 10 + (playerState.level > 5 ? 2 : 0); // Base HP
-            if (playerState.potion > 0) { maxHp += playerState.potion; playerState.potion = 0; }
+            maxHp = 10 + (playerState.level > 5 ? 2 : 0);
+            // Base HP
+            if (playerState.potion > 0) { maxHp += playerState.potion;
+            playerState.potion = 0; }
             hp = maxHp;
-            
             // Apply Hourglass buffs
-            extraTime = playerState.hourglass * 2; playerState.hourglass = 0;
+            extraTime = playerState.hourglass * 2;
+            playerState.hourglass = 0;
             
             floor = 1; combo = 0; killedWords = []; missedWords = [];
-            
             const matchedWrongs = wrongWords.filter(w => wordBank.some(bw => bw.eng === w.eng));
             let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
             while (list.length < maxFloor) {
@@ -864,11 +940,10 @@
             document.getElementById('timerLine').style.width = '100%';
             document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
             document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
-            
-            isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) || (dungeonMode === 'high' && (floor % 5 === 0));
+            isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
+            (dungeonMode === 'high' && (floor % 5 === 0));
             const mImgElement = document.getElementById('monsterImg');
             mImgElement.className = 'monster-img';
-            
             if (isBossCurrent) {
                 currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
                 document.getElementById('dungeonQuizGrid').style.display = 'none';
@@ -876,17 +951,19 @@
                 document.getElementById('bossHpBar').style.display = 'block';
                 
                 // Multi-hit setup
-                bossMaxHp = 3; bossCurrentHp = 3;
+                bossMaxHp = 3;
+                bossCurrentHp = 3;
                 document.getElementById('bossHpFill').style.width = '100%';
                 
                 bossWords = shuffle(wordBank).slice(0, bossMaxHp);
-                if(!bossWords.some(w => w.eng === currentWord.eng)) bossWords[0] = currentWord; // Ensure current word is in
-                currentWord = bossWords[bossMaxHp - bossCurrentHp]; // Target 1
+                if(!bossWords.some(w => w.eng === currentWord.eng)) bossWords[0] = currentWord;
+                // Ensure current word is in
+                currentWord = bossWords[bossMaxHp - bossCurrentHp];
+                // Target 1
                 
                 document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + currentWord.chi;
                 document.getElementById('bossEngHint').innerText = currentWord.eng.substring(0,2) + "..."; // Hint for boss
                 document.getElementById('bossEngHint').style.display = 'block';
-                
                 const bossInput = document.getElementById('bossInput');
                 bossInput.value = ''; bossInput.focus();
             } else {
@@ -896,7 +973,6 @@
                 document.getElementById('bossHpBar').style.display = 'none';
                 document.getElementById('bossEngHint').style.display = 'none';
                 document.getElementById('dungeonChi').innerText = currentWord.chi;
-                
                 const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
                 currentOptions = shuffle([currentWord.eng, ...pool]);
                 
@@ -917,12 +993,14 @@
             timeLeft = 100;
             document.getElementById('timerLine').style.width = '100%';
 
-            let totalSeconds = isBossCurrent ? 12 : 6; // Boss gets more base time
+            let totalSeconds = isBossCurrent ? 12 : 6;
+            // Boss gets more base time
             totalSeconds += extraTime;
             const isFever = combo >= 5;
             
             if(isFever) {
-                totalSeconds *= 2; // Time flows 2x slower in Fever
+                totalSeconds *= 2;
+                // Time flows 2x slower in Fever
                 document.getElementById('battleScene').classList.add('fever-active');
                 document.getElementById('timerLine').classList.add('timer-fever');
             } else {
@@ -931,13 +1009,13 @@
             }
 
             const step = (100 / (totalSeconds * 10));
-
             timerInterval = setInterval(() => {
                 timeLeft -= step;
                 document.getElementById('timerLine').style.width = timeLeft + '%';
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval); triggerPlayerHurt(true);
                 }
+ 
             }, 100);
         }
 
@@ -968,9 +1046,9 @@
                 inputEl.value = '';
                 
                 setTimeout(() => document.getElementById('monsterImg').classList.remove('anim-hit'), 400);
-
                 if (bossCurrentHp <= 0) {
-                    checkDungeonAns(true); // Boss defeated
+                    checkDungeonAns(true);
+                // Boss defeated
                 } else {
                     // Load next word for multi-hit
                     currentWord = bossWords[bossMaxHp - bossCurrentHp];
@@ -979,7 +1057,8 @@
                     inputEl.focus();
                 }
             } else {
-                inputEl.value = ''; // clear wrong input
+                inputEl.value = '';
+                // clear wrong input
                 triggerPlayerHurt(false);
             }
         }
@@ -1008,6 +1087,7 @@
                     if (floor >= maxFloor) endGame('win');
                     else if (isBossCurrent) showChest();
                     else { floor++; loadDungeonLevel(); }
+ 
                 }, 600);
             } else {
                 triggerPlayerHurt(false);
@@ -1027,13 +1107,11 @@
 
             const flash = document.getElementById('hurtFlash');
             flash.classList.add('anim-flash'); setTimeout(() => flash.classList.remove('anim-flash'), 500);
-
             const pImg = document.getElementById('playerImg');
             pImg.classList.add('anim-hurt-combined');
             setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
 
             if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
-
             if (hp <= 0) setTimeout(() => endGame('lose'), 600);
             else setTimeout(() => startTimer(), 800);
         }
@@ -1056,9 +1134,11 @@
             playerState.gold += goldDrop;
 
             if (Math.random() < 0.5) {
-                hp++; document.getElementById('chestTip').innerText = `你獲得了：❤️ 生命+1 / 🪙 金幣+${goldDrop}`;
+                hp++;
+                document.getElementById('chestTip').innerText = `你獲得了：❤️ 生命+1 / 🪙 金幣+${goldDrop}`;
             } else {
-                extraTime += 2; document.getElementById('chestTip').innerText = `你獲得了：⏱️ 時間+2s / 🪙 金幣+${goldDrop}`;
+                extraTime += 2;
+                document.getElementById('chestTip').innerText = `你獲得了：⏱️ 時間+2s / 🪙 金幣+${goldDrop}`;
             }
             document.getElementById('chestNextBtn').style.display = 'block';
         }
@@ -1070,14 +1150,12 @@
 
         function endGame(result) {
             clearInterval(timerInterval);
-            
             // Calculate RPG Rewards
             const expGain = killedWords.length * 15 + (result === 'win' ? 100 : 0);
             const goldGain = killedWords.length * 2 + (result === 'win' ? 30 : 0);
             
             playerState.exp += expGain;
             playerState.gold += goldGain;
-            
             let levelUpMsg = "";
             const expReq = playerState.level * 100;
             if (playerState.exp >= expReq) {
@@ -1086,15 +1164,13 @@
                 levelUpMsg = "✨ LEVEL UP! ✨";
             }
             
-            saveState(); 
-
+            saveState();
             document.getElementById('endEmoji').innerText = (result === 'win') ? '🎉' : '💀';
             document.getElementById('endTitle').innerText = (result === 'win') ? '挑戰成功' : '你倒下了';
             document.getElementById('endRewards').innerText = `獲得 ${expGain} EXP / 🪙 ${goldGain} ${levelUpMsg ? '\n'+levelUpMsg : ''}`;
             
             document.getElementById('killedCount').innerText = killedWords.length;
             document.getElementById('missedCount').innerText = missedWords.length;
-            
             // Enhanced Missed List with Audio
             const missedContainer = document.getElementById('missedListContainer');
             missedContainer.innerHTML = '';
@@ -1105,7 +1181,8 @@
                     const d = document.createElement('div');
                     d.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#fff; padding:5px; border-radius:5px; margin-top:5px; border:1px solid #ddd;";
                     d.innerHTML = `<span><strong>${w.eng}</strong> <span style="font-size:0.8rem;color:#666">${w.chi}</span></span>
-                                   <button class="speaker-btn" style="width:28px; height:28px; font-size:0.8rem;" onclick="speak('${w.eng}')">🔊</button>`;
+  
+                                 <button class="speaker-btn" style="width:28px; height:28px; font-size:0.8rem;" onclick="speak('${w.eng}')">🔊</button>`;
                     missedContainer.appendChild(d);
                 });
             }
@@ -1116,7 +1193,6 @@
         document.getElementById('bossInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') submitBossAnswer();
         });
-
         init();
     </script>
 </body>
