@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v22.0 - Stable Build</title>
+    <title>Vocab Dungeon v23.0 - Full Management & Audio</title>
     <style>
         :root { 
             --bg: #f4f7f6;
@@ -94,6 +94,7 @@
             color: white; border: none;
             box-shadow: 0 4px 12px rgba(9,132,227,0.2); 
         }
+        .btn-danger { background: var(--danger); color: white; border: none; }
         .btn-outline { 
             color: var(--primary);
             border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
@@ -103,14 +104,16 @@
         .speaker-btn { 
             background: #e1f0ff;
             border: none;
-            border-radius: 50%; width: 44px; height: 44px; cursor: pointer; 
-            display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            border-radius: 50%; width: 50px; height: 50px; cursor: pointer; 
+            display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-top: 10px;
         }
 
         .card { 
             background: rgba(255,255,255,0.95);
             border-radius: 24px; padding: 25px; margin: 10px 0;
-            min-height: 200px; display: flex; flex-direction: column; justify-content: center; 
+            min-height: 220px; display: flex; flex-direction: column; justify-content: center; 
             align-items: center;
             box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
             position: relative; border: 1px solid #eee;
@@ -124,7 +127,6 @@
             font-size: 0.95rem; width: 100%; box-sizing: border-box;
         }
         
-        /* Dungeon Scene */
         .battle-scene { 
             position: relative;
             width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
@@ -147,12 +149,12 @@
             border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
         }
 
-        /* 底部圖片樣式 */
-        .footer-img-container {
-            margin-top: auto;
-            padding-top: 20px;
+        /* 底部圖片樣式調整 - 提高位置 */
+        .home-footer-img {
+            margin-top: 30px;
             width: 100%;
             text-align: center;
+            transform: translateY(-20px); /* 向上提高一點 */
         }
         .footer-img { width: 100%; height: auto; border-radius: 15px; }
 
@@ -164,13 +166,6 @@
         }
         .anim-flash { animation: flash-fade 0.5s ease; }
         @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
-
-        .combo-text { 
-            position: absolute;
-            left: 20px; top: 30px; font-size: 1.8rem; 
-            font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
-            display: none;
-        }
 
         .modal-overlay { 
             position: fixed;
@@ -184,9 +179,13 @@
         }
         
         .chest-img { width: 100px; height: auto; cursor: pointer; transition: 0.2s; }
-
         .view-section { display: none; width: 100%; flex-direction: column; flex-grow: 1; }
         .view-section.active { display: flex; }
+
+        .word-item {
+            padding: 12px; border-bottom: 1px solid #eee; display: flex; 
+            justify-content: space-between; align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -208,7 +207,7 @@
             <button class="btn" onclick="switchView('add')">新增單字</button>
             <button class="btn" onclick="switchView('list')">字庫管理 (<span id="bankCount">0</span>)</button>
             
-            <div class="footer-img-container">
+            <div class="home-footer-img">
                 <img src="https://i.imgur.com/6UDmnhC.png" class="footer-img" />
             </div>
         </div>
@@ -243,22 +242,33 @@
                 <button class="btn btn-outline btn-small" onclick="document.getElementById('csvInput').click()">📥 匯入 CSV</button>
                 <input type="file" id="csvInput" style="display:none" accept=".csv" onchange="importCSV(event)" />
             </div>
+            
+            <div style="display:flex; gap:5px; margin-bottom:10px">
+                <button class="btn btn-danger btn-small" onclick="clearAllWords()">🗑️ 移除所有生字</button>
+                <button class="btn btn-primary btn-small" onclick="resetDefaultBank()">🔄 還原預設生字</button>
+            </div>
+
             <div id="wordListContainer" style="max-height: 400px; overflow-y: auto; background:rgba(255,255,255,0.8); border-radius:10px;"></div>
         </div>
 
         <div id="view-study" class="view-section">
             <div class="card" id="studyCard" onclick="handleCardFlip()">
-                <div id="card-unflipped" style="width:100%"></div>
+                <div id="card-unflipped" style="width:100%">
+                    </div>
                 <div id="card-flipped" style="display:none; text-align:left; width:100%">
                     <div style="display:flex; justify-content:space-between; align-items:center">
                         <strong style="font-size:1.4rem; color:var(--primary)" id="flipEng"></strong>
-                        <button class="speaker-btn" id="flipSpeakBtn" onclick="event.stopPropagation(); speak(document.getElementById('flipEng').innerText)">🔊</button>
                     </div>
                     <hr/>
                     <strong>【翻譯】</strong><p id="flipChi"></p>
                     <div class="example-box"><strong>【常用例句】</strong><p id="flipEx"></p></div>
                 </div>
             </div>
+            
+            <div id="studySpeakerArea" style="text-align:center; display:none; margin-bottom:10px;">
+                <button class="speaker-btn" onclick="speak(currentWord.eng)">🔊 再讀一次</button>
+            </div>
+
             <div id="quizOptions" class="quiz-grid" style="display:none"></div>
             <div id="studyFeedback" style="text-align:center; font-weight:bold; margin:10px; min-height:24px"></div>
             <button class="btn btn-primary" onclick="nextStudyWord()">下一個</button>
@@ -272,7 +282,6 @@
             </div>
             <div class="battle-scene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
-                <div class="combo-text" id="comboDisplay">🔥 0 Combo!</div>
                 <div class="monster-box">
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
                 </div>
@@ -316,264 +325,6 @@
 
     <script>
         const initialWords = [
-            {eng:"concept", chi:"概念", example:"Explain a difficult concept."},
-            {eng:"focus", chi:"專注/焦點", example:"Focus on your studies."},
-            {eng:"memory", chi:"記憶", example:"Brought back happy memories."},
-            {eng:"opinion", chi:"意見", example:"Everyone has an opinion."}
-        ];
-
-        let wordBank = [];
-        let studyList = [];
-        let currentWord = null;
-        let hp = 10, floor = 1, maxFloor = 10, combo = 0;
-        let timeLeft = 100, timerInterval = null;
-        let killedWords = [], missedWords = [];
-        const monsterImages = ["https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png", "https://i.imgur.com/ToQhBZL.png"];
-        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-
-        function init() {
-            const saved = localStorage.getItem('vocab_dungeon_v22');
-            wordBank = saved ? JSON.parse(saved) : [...initialWords];
-            updateGlobalCounts();
-        }
-
-        function saveState() {
-            localStorage.setItem('vocab_dungeon_v22', JSON.stringify(wordBank));
-            updateGlobalCounts();
-        }
-
-        function updateGlobalCounts() {
-            document.getElementById('bankCount').innerText = wordBank.length;
-            document.getElementById('listCount').innerText = wordBank.length;
-            renderWordList();
-        }
-
-        function switchView(id) {
-            document.querySelectorAll('.view-section, .splash-screen').forEach(s => {
-                s.classList.remove('active');
-                s.style.display = 'none';
-            });
-            const target = document.getElementById('view-' + id);
-            target.classList.add('active');
-            target.style.display = 'flex';
-            if(id === 'home') document.getElementById('dungeonBg').style.display = 'none';
-        }
-
-        function speak(text) {
-            if (!text) return;
-            window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = 'en-US';
-            window.speechSynthesis.speak(msg);
-        }
-
-        async function autoFetch() {
-            const eng = document.getElementById('newEng').value.trim();
-            if(!eng) return;
-            try {
-                const res = await fetch(`https://api.mymemory.translated.net/get?q=${eng}&langpair=en|zh-TW`);
-                const data = await res.json();
-                document.getElementById('newChi').value = data.responseData.translatedText;
-                document.getElementById('newExample').value = `I like the ${eng} of this idea.`;
-            } catch (e) { console.error(e); }
-        }
-
-        function addNewWord() {
-            const eng = document.getElementById('newEng').value.trim();
-            const chi = document.getElementById('newChi').value.trim();
-            const ex = document.getElementById('newExample').value.trim();
-            if(!eng || !chi) return;
-            wordBank.push({ eng, chi, example: ex, id: Date.now() });
-            saveState();
-            alert('OK');
-        }
-
-        // Study Mode Logic
-        function startNormal(mode) {
-            studyMode = mode;
-            studyList = [...wordBank].sort(() => Math.random() - 0.5);
-            switchView('study');
-            nextStudyWord();
-        }
-
-        function nextStudyWord() {
-            if(studyList.length === 0) return switchView('home');
-            currentWord = studyList.pop();
-            isFlipped = false;
-            if(studyMode === 'card') {
-                document.getElementById('quizOptions').style.display = 'none';
-                document.getElementById('card-unflipped').style.display = 'block';
-                document.getElementById('card-flipped').style.display = 'none';
-                document.getElementById('card-unflipped').innerHTML = `<div class="card-eng">${currentWord.eng}</div>`;
-                speak(currentWord.eng); 
-            } else { showQuizOptions(); }
-        }
-
-        function handleCardFlip() {
-            if(isFlipped) return;
-            isFlipped = true;
-            document.getElementById('card-unflipped').style.display = 'none';
-            document.getElementById('card-flipped').style.display = 'block';
-            document.getElementById('flipEng').innerText = currentWord.eng;
-            document.getElementById('flipChi').innerText = currentWord.chi;
-            document.getElementById('flipEx').innerText = currentWord.example;
-        }
-
-        function showQuizOptions() {
-            document.getElementById('quizOptions').style.display = 'grid';
-            document.getElementById('card-unflipped').style.display = 'block';
-            document.getElementById('card-flipped').style.display = 'none';
-            document.getElementById('card-unflipped').innerHTML = `<div class="card-chi">${currentWord.chi}</div>`;
-            let opts = [currentWord.eng];
-            while(opts.length < 4) {
-                let r = wordBank[Math.floor(Math.random()*wordBank.length)].eng;
-                if(!opts.includes(r)) opts.push(r);
-            }
-            opts.sort(() => Math.random() - 0.5);
-            const grid = document.getElementById('quizOptions');
-            grid.innerHTML = '';
-            opts.forEach(o => {
-                const b = document.createElement('button');
-                b.className = 'btn btn-outline';
-                b.innerText = o;
-                b.onclick = () => { if(o === currentWord.eng) { speak(o); nextStudyWord(); } };
-                grid.appendChild(b);
-            });
-        }
-
-        // Dungeon Logic
-        function startDungeon(diff) {
-            floor = 1; hp = 10; killedWords = []; missedWords = [];
-            maxFloor = diff === 'low' ? 10 : (diff === 'mid' ? 15 : 20);
-            document.getElementById('dungeonBg').style.display = 'block';
-            switchView('dungeon');
-            loadFloor(true); // 初次進入，刷新題目
-        }
-
-        function loadFloor(refreshContent) {
-            if(refreshContent) {
-                currentWord = wordBank[Math.floor(Math.random() * wordBank.length)];
-                const isBoss = (floor % 5 === 0);
-                document.getElementById('monsterImg').src = isBoss ? bossImages[Math.floor(Math.random()*2)] : monsterImages[Math.floor(Math.random()*4)];
-                document.getElementById('dungeonChi').innerText = currentWord.chi;
-                
-                if(isBoss) {
-                    document.getElementById('dungeonQuizGrid').style.display = 'none';
-                    document.getElementById('dungeonBossArea').style.display = 'block';
-                    document.getElementById('bossInput').value = '';
-                } else {
-                    document.getElementById('dungeonQuizGrid').style.display = 'grid';
-                    document.getElementById('dungeonBossArea').style.display = 'none';
-                    genDungeonOpts();
-                }
-            }
-            
-            document.getElementById('floorDisplay').innerText = `FLOOR: ${floor}/${maxFloor}`;
-            document.getElementById('hpDisplay').innerText = `❤️ HP: ${hp}`;
-            startTimer(floor % 5 === 0 ? 150 : 100);
-        }
-
-        function genDungeonOpts() {
-            let opts = [currentWord.eng];
-            while(opts.length < 4) {
-                let r = wordBank[Math.floor(Math.random()*wordBank.length)].eng;
-                if(!opts.includes(r)) opts.push(r);
-            }
-            opts.sort(() => Math.random() - 0.5);
-            const grid = document.getElementById('dungeonQuizGrid');
-            grid.innerHTML = '';
-            opts.forEach(o => {
-                const b = document.createElement('button');
-                b.className = 'btn btn-outline btn-small';
-                b.innerText = o;
-                b.onclick = () => checkDungeon(o);
-                grid.appendChild(b);
-            });
-        }
-
-        function startTimer(duration) {
-            clearInterval(timerInterval);
-            timeLeft = duration;
-            timerInterval = setInterval(() => {
-                timeLeft -= 1;
-                document.getElementById('timerLine').style.width = (timeLeft/duration*100) + "%";
-                if(timeLeft <= 0) { hurt(); }
-            }, 100);
-        }
-
-        function checkDungeon(ans) {
-            if(ans.toLowerCase() === currentWord.eng.toLowerCase()) {
-                killedWords.push(currentWord);
-                combo++;
-                if(floor % 5 === 0) {
-                    document.getElementById('chestModal').style.display = 'flex';
-                    clearInterval(timerInterval);
-                } else {
-                    floor++;
-                    if(floor > maxFloor) endGame('win'); else loadFloor(true);
-                }
-            } else {
-                hurt();
-            }
-        }
-
-        function hurt() {
-            hp--; combo = 0;
-            missedWords.push(currentWord);
-            document.getElementById('hurtFlash').classList.add('anim-flash');
-            setTimeout(() => document.getElementById('hurtFlash').classList.remove('anim-flash'), 500);
-            if(hp <= 0) endGame('lose'); 
-            else loadFloor(false); // 答錯不刷新內容，僅重新開始計時
-        }
-
-        function submitBossAnswer() {
-            checkDungeon(document.getElementById('bossInput').value.trim());
-        }
-
-        function openChest() {
-            document.getElementById('chestImg').src = "https://i.imgur.com/vH9f49j.png";
-            hp = Math.min(hp + 2, 10);
-            document.getElementById('chestTip').innerText = "獲得 ❤️ HP 回復！";
-            document.getElementById('chestNextBtn').style.display = 'inline-block';
-        }
-
-        function closeChestModal() {
-            document.getElementById('chestModal').style.display = 'none';
-            document.getElementById('chestImg').src = "https://i.imgur.com/sAsVc32.png";
-            document.getElementById('chestNextBtn').style.display = 'none';
-            floor++;
-            if(floor > maxFloor) endGame('win'); else loadFloor(true);
-        }
-
-        function endGame(res) {
-            clearInterval(timerInterval);
-            switchView('end');
-            document.getElementById('endEmoji').innerText = res === 'win' ? '🎉' : '💀';
-            document.getElementById('killedCount').innerText = killedWords.length;
-            document.getElementById('missedCount').innerText = missedWords.length;
-        }
-
-        function quitDungeon() { clearInterval(timerInterval); switchView('home'); }
-
-        function renderWordList() {
-            const container = document.getElementById('wordListContainer');
-            container.innerHTML = wordBank.map(w => `
-                <div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
-                    <b>${w.eng}</b><span>${w.chi}</span>
-                </div>
-            `).join('');
-        }
-
-        function exportCSV() {
-            let csv = "English,Chinese\n" + wordBank.map(w => `"${w.eng}","${w.chi}"`).join("\n");
-            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = "bank.csv";
-            link.click();
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
+            {eng:"concept", chi:"概念", example:"The teacher explained a difficult concept in class today.", id:1},
+            {eng:"focus", chi:"專注/焦點", example:"You need to focus on your studies to get good grades.", id:2},
+            {eng:"
