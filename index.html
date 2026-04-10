@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v24.0 - Full Features Assured</title>
+    <title>Vocab Dungeon v25.0 - Ultimate Edition</title>
     <style>
         :root { 
             --bg: #f4f7f6;
@@ -296,7 +296,7 @@
             <h2>新增單字</h2>
             <input type="text" id="newEng" placeholder="英文單字" />
             <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯</button>
-            <textarea id="newChi" placeholder="中文意思"></textarea>
+            <textarea id="newChi" placeholder="中文意思 (自動附詞性)"></textarea>
             <textarea id="newExample" placeholder="例句" rows="3"></textarea>
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
         </div>
@@ -402,38 +402,37 @@
     </div>
 
     <script>
-        // 完全保留原有字庫設定
         const initialWords = [
-            {eng:"concept", chi:"概念", example:"The teacher explained a difficult concept in class today."},
-            {eng:"curiosity", chi:"好奇心", example:"Children have a natural curiosity about the world."},
-            {eng:"focus", chi:"專注/焦點", example:"You need to focus on your studies to get good grades."},
-            {eng:"intelligence", chi:"智力/智慧", example:"Intelligence is not just about getting high scores."},
-            {eng:"memory", chi:"記憶", example:"The old photo brought back many happy memories."},
-            {eng:"opinion", chi:"意見", example:"Everyone is entitled to their own opinion."},
-            {eng:"perspective", chi:"觀點/看法", example:"Traveling helps us see things from a different perspective."},
-            {eng:"wisdom", chi:"智慧", example:"We can learn a lot from the wisdom of the elderly."},
-            {eng:"illusion", chi:"幻覺/錯覺", example:"The mirror creates an illusion of a larger space."},
-            {eng:"logic", chi:"邏輯", example:"There is no logic in your argument."},
-            {eng:"intuition", chi:"直覺", example:"My intuition told me that something was wrong."},
-            {eng:"philosophy", chi:"哲學/人生觀", example:"His philosophy of life is to be happy every day."},
-            {eng:"prejudice", chi:"偏見", example:"We should judge people by their actions, not by prejudice."},
-            {eng:"perception", chi:"感知/看法", example:"Our perception of beauty changes over time."},
-            {eng:"consciousness", chi:"意識", example:"The patient regained consciousness after the operation."},
-            {eng:"access", chi:"存取/接近的權利", example:"Students have free access to the school library."},
-            {eng:"application", chi:"應用/應用程式", example:"This new application can help you learn English faster."},
-            {eng:"device", chi:"裝置/設備", example:"Please turn off all electronic devices during the exam."},
-            {eng:"network", chi:"網路", example:"The computer network was down for two hours."},
-            {eng:"privacy", chi:"隱私", example:"We should respect other people's privacy."},
-            {eng:"security", chi:"安全/保安", example:"The bank has a very strict security system."},
-            {eng:"system", chi:"系統", example:"The school is testing a new grading system."},
-            {eng:"automatic", chi:"自動的", example:"The building has automatic sliding doors."},
-            {eng:"virtual", chi:"虛擬的", example:"Virtual reality games are becoming very popular."},
-            {eng:"digital", chi:"數位的", example:"We live in a digital age where everything is online."},
-            {eng:"browse", chi:"瀏覽", example:"I like to browse the internet before going to bed."},
-            {eng:"compatible", chi:"相容的", example:"This app is not compatible with my old phone."},
-            {eng:"algorithm", chi:"演算法", example:"Social media uses algorithms to show you posts you might like."},
-            {eng:"innovate", chi:"創新", example:"To succeed, a company must constantly innovate."},
-            {eng:"satellite", chi:"衛星", example:"The satellite sends weather information back to Earth."}
+            {eng:"concept", chi:"[n.] 概念", example:"The teacher explained a difficult concept in class today."},
+            {eng:"curiosity", chi:"[n.] 好奇心", example:"Children have a natural curiosity about the world."},
+            {eng:"focus", chi:"[v.] 專注/焦點", example:"You need to focus on your studies to get good grades."},
+            {eng:"intelligence", chi:"[n.] 智力/智慧", example:"Intelligence is not just about getting high scores."},
+            {eng:"memory", chi:"[n.] 記憶", example:"The old photo brought back many happy memories."},
+            {eng:"opinion", chi:"[n.] 意見", example:"Everyone is entitled to their own opinion."},
+            {eng:"perspective", chi:"[n.] 觀點/看法", example:"Traveling helps us see things from a different perspective."},
+            {eng:"wisdom", chi:"[n.] 智慧", example:"We can learn a lot from the wisdom of the elderly."},
+            {eng:"illusion", chi:"[n.] 幻覺/錯覺", example:"The mirror creates an illusion of a larger space."},
+            {eng:"logic", chi:"[n.] 邏輯", example:"There is no logic in your argument."},
+            {eng:"intuition", chi:"[n.] 直覺", example:"My intuition told me that something was wrong."},
+            {eng:"philosophy", chi:"[n.] 哲學/人生觀", example:"His philosophy of life is to be happy every day."},
+            {eng:"prejudice", chi:"[n.] 偏見", example:"We should judge people by their actions, not by prejudice."},
+            {eng:"perception", chi:"[n.] 感知/看法", example:"Our perception of beauty changes over time."},
+            {eng:"consciousness", chi:"[n.] 意識", example:"The patient regained consciousness after the operation."},
+            {eng:"access", chi:"[n.] 存取/接近的權利", example:"Students have free access to the school library."},
+            {eng:"application", chi:"[n.] 應用/應用程式", example:"This new application can help you learn English faster."},
+            {eng:"device", chi:"[n.] 裝置/設備", example:"Please turn off all electronic devices during the exam."},
+            {eng:"network", chi:"[n.] 網路", example:"The computer network was down for two hours."},
+            {eng:"privacy", chi:"[n.] 隱私", example:"We should respect other people's privacy."},
+            {eng:"security", chi:"[n.] 安全/保安", example:"The bank has a very strict security system."},
+            {eng:"system", chi:"[n.] 系統", example:"The school is testing a new grading system."},
+            {eng:"automatic", chi:"[adj.] 自動的", example:"The building has automatic sliding doors."},
+            {eng:"virtual", chi:"[adj.] 虛擬的", example:"Virtual reality games are becoming very popular."},
+            {eng:"digital", chi:"[adj.] 數位的", example:"We live in a digital age where everything is online."},
+            {eng:"browse", chi:"[v.] 瀏覽", example:"I like to browse the internet before going to bed."},
+            {eng:"compatible", chi:"[adj.] 相容的", example:"This app is not compatible with my old phone."},
+            {eng:"algorithm", chi:"[n.] 演算法", example:"Social media uses algorithms to show you posts you might like."},
+            {eng:"innovate", chi:"[v.] 創新", example:"To succeed, a company must constantly innovate."},
+            {eng:"satellite", chi:"[n.] 衛星", example:"The satellite sends weather information back to Earth."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
         const monsterImages = [
@@ -495,7 +494,6 @@
             document.getElementById('listCount').innerText = wordBank.length;
         }
 
-        // 新增功能：清空所有生字
         function clearAllWords() {
             if(confirm('⚠️ 警告：這將會移除所有生字，並且無法復原！\n確定要清空嗎？')) {
                 wordBank = [];
@@ -556,25 +554,58 @@
             alert("儲存成功");
         }
 
-        // 優化翻譯功能：即使找不到字典例句也會提供簡單常用例句
+        // 精準自動翻譯：加入詞性解析與備用例句
         async function autoFetch() {
             const eng = document.getElementById('newEng').value.trim();
             if(!eng) return;
+            const btn = document.querySelector('[onclick="autoFetch()"]');
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ 檢索中...";
+            
             try {
+                // 1. 抓取中文翻譯
                 const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
                 const tData = await tRes.json();
-                document.getElementById('newChi').value = tData.responseData.translatedText;
+                let chiTranslation = tData.responseData.translatedText;
                 
+                // 2. 抓取字典資料 (詞性與例句)
                 const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
                 const dData = await dRes.json();
-                if(Array.isArray(dData)) {
-                    const ex = dData[0].meanings[0].definitions.find(d => d.example)?.example;
-                    document.getElementById('newExample').value = ex || `I need to learn how to use the word ${eng}.`;
-                } else {
-                    document.getElementById('newExample').value = `This is a simple sentence for ${eng}.`;
+                
+                let pos = "";
+                let example = "";
+                
+                if(Array.isArray(dData) && dData.length > 0) {
+                    for(let meaning of dData[0].meanings) {
+                        if(!pos && meaning.partOfSpeech) {
+                            pos = meaning.partOfSpeech;
+                        }
+                        for(let def of meaning.definitions) {
+                            if(!example && def.example) {
+                                example = def.example;
+                            }
+                        }
+                    }
                 }
+                
+                // 詞性縮寫對照
+                const posMap = {
+                    'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.',
+                    'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.'
+                };
+                let posPrefix = pos ? `[${posMap[pos] || pos}] ` : "";
+                
+                document.getElementById('newChi').value = posPrefix + chiTranslation;
+                document.getElementById('newExample').value = example || `This is a simple sentence for ${eng}.`;
+                
             } catch(e) { 
-                document.getElementById('newExample').value = `Here is a simple example using ${eng}.`; 
+                // 若字典 API 失敗的備用處理
+                if(!document.getElementById('newChi').value) {
+                    document.getElementById('newChi').value = "翻譯失敗，請手動輸入";
+                }
+                document.getElementById('newExample').value = `I need to learn how to use the word ${eng}.`; 
+            } finally {
+                btn.innerText = originalText;
             }
         }
 
@@ -663,15 +694,17 @@
             setupStudyCard();
             switchView('study');
             
-            // 進入模式後自動發音第一個字
-            speak(currentWord.eng); 
+            // 只有生字卡模式才會自動發音
+            if(studyMode === 'card') {
+                speak(currentWord.eng); 
+            }
         }
 
         function setupStudyCard() {
             const unflipped = document.getElementById('card-unflipped');
             const flipped = document.getElementById('card-flipped');
             const quizOpts = document.getElementById('quizOptions');
-            const readAgainArea = document.getElementById('readAgainArea'); // 獲取按鍵區域
+            const readAgainArea = document.getElementById('readAgainArea');
 
             quizOpts.style.display = 'none';
             unflipped.style.display = 'block';
@@ -683,11 +716,11 @@
                     <div class="card-eng">${currentWord.eng}</div>
                     <p style="color:#999; font-size:0.85rem; margin-top:5px;">點擊卡片翻面</p>
                 `;
-                readAgainArea.style.display = 'block'; // 生字卡模式顯示「再讀一次」
+                readAgainArea.style.display = 'block';
             } else { 
                 unflipped.innerHTML = `<div class="card-chi">${currentWord.chi}</div>`;
                 quizOpts.style.display = 'grid';
-                readAgainArea.style.display = 'none'; // 測驗模式隱藏
+                readAgainArea.style.display = 'none';
                 
                 const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
                 currentOptions = shuffle([currentWord.eng, ...pool]);
@@ -725,8 +758,9 @@
             const unflipped = document.getElementById('card-unflipped');
             const flipped = document.getElementById('card-flipped');
             
-            speak(currentWord.eng);
             if (selected === currentWord.eng) {
+                // 只有在選擇題答對時才會發音
+                speak(currentWord.eng);
                 document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
             } else {
                 document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
@@ -743,11 +777,12 @@
             document.getElementById('studyFeedback').innerText = '';
             setupStudyCard();
             
-            // 自動發音
-            speak(currentWord.eng);
+            // 只有生字卡模式在切換新字時自動發音
+            if(studyMode === 'card') {
+                speak(currentWord.eng);
+            }
         }
 
-        // --- 地下城戰鬥完全保留原有邏輯 ---
         function startDungeon(diff) {
             if(wordBank.length < 4) return alert("單字不足 4 個！");
             dungeonMode = diff;
@@ -870,7 +905,6 @@
                     }
                 }, 600);
             } else {
-                // 原有邏輯：呼叫 triggerPlayerHurt，且不會呼叫 loadDungeonLevel 刷新題目
                 triggerPlayerHurt(false);
             }
         }
@@ -898,7 +932,6 @@
             if (hp <= 0) {
                 setTimeout(() => endGame('lose'), 600);
             } else {
-                // 保留原有邏輯：僅重啟計時器，絕不刷新原題目和圖片
                 setTimeout(() => {
                     startTimer(); 
                 }, 800);
