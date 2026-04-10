@@ -133,7 +133,8 @@
         .shop-item {
             background: white;
             border: 2px solid #eee; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
-            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: space-between;
         }
         .shop-item:hover { border-color: var(--primary);
         }
@@ -174,9 +175,11 @@
             top: 20px; right: 10%; text-align: center; z-index: 1; }
         .monster-img { width: 90px;
             height: auto; image-rendering: pixelated; transition: 0.3s; transform-origin: center bottom; }
-        .player-box { position: absolute; bottom: -5px;
+        .player-box { position: absolute;
+            bottom: -5px;
             left: 0; z-index: 2; width: 60%; }
-        .player-img { width: 100%; max-width: 250px; height: auto; transition: 0.3s;
+        .player-img { width: 100%;
+            max-width: 250px; height: auto; transition: 0.3s;
             object-fit: contain; }
         
         /* Floating Text & Slash FX 置中修正 */
@@ -187,8 +190,10 @@
             text-shadow: 1px 1px 2px #000;
         }
         @keyframes float-up {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+            0% { opacity: 1;
+                transform: translateY(0) scale(1); }
+            100% { opacity: 0;
+                transform: translateY(-50px) scale(1.2); }
         }
         .slash-fx {
             position: absolute;
@@ -198,37 +203,55 @@
             animation: slash-anim 0.3s forwards; pointer-events: none; opacity: 0; transform: rotate(45deg);
         }
         @keyframes slash-anim {
-            0% { opacity: 1; transform: scale(0.5) rotate(45deg) translateX(-30px); }
-            100% { opacity: 0; transform: scale(1.5) rotate(45deg) translateX(30px); }
+            0% { opacity: 1;
+                transform: scale(0.5) rotate(45deg) translateX(-30px); }
+            100% { opacity: 0;
+                transform: scale(1.5) rotate(45deg) translateX(30px); }
         }
 
         /* 全新自然受擊動畫 */
         @keyframes hit-shake { 
-            0% { transform: translateX(0) scale(1); filter: brightness(1); }
-            20% { transform: translateX(12px) rotate(3deg) scale(0.95); filter: brightness(1.5) drop-shadow(0 0 10px rgba(255,0,0,0.6)); }
-            50% { transform: translateX(-5px) rotate(-2deg) scale(1.02); filter: brightness(1.2); }
-            80% { transform: translateX(2px) rotate(1deg); filter: brightness(1); }
-            100% { transform: translateX(0) scale(1); filter: brightness(1); }
+            0% { transform: translateX(0) scale(1);
+                filter: brightness(1); }
+            20% { transform: translateX(12px) rotate(3deg) scale(0.95);
+                filter: brightness(1.5) drop-shadow(0 0 10px rgba(255,0,0,0.6)); }
+            50% { transform: translateX(-5px) rotate(-2deg) scale(1.02);
+                filter: brightness(1.2); }
+            80% { transform: translateX(2px) rotate(1deg);
+                filter: brightness(1); }
+            100% { transform: translateX(0) scale(1);
+                filter: brightness(1); }
         }
-        .anim-hit { animation: hit-shake 0.4s ease-out forwards; }
+        .anim-hit { animation: hit-shake 0.4s ease-out forwards;
+        }
         
-        @keyframes hurt-red-filter { 0% { filter: brightness(1); } 50% { filter: brightness(1.2) sepia(1) saturate(8); } 100% { filter: brightness(1); } }
+        @keyframes hurt-red-filter { 0% { filter: brightness(1);
+        } 50% { filter: brightness(1.2) sepia(1) saturate(8); } 100% { filter: brightness(1);
+        } }
         @keyframes hurt-vibrate { 
-            0% { transform: translate(0, 0); } 
-            20% { transform: translate(3px, 2px); } 
-            40% { transform: translate(3px, -1px); } 
-            60% { transform: translate(2px, 1px); } 
-            80% { transform: translate(3px, 2px); } 
-            100% { transform: translate(0, 0); } 
+            0% { transform: translate(0, 0);
+            } 
+            20% { transform: translate(3px, 2px);
+            } 
+            40% { transform: translate(3px, -1px);
+            } 
+            60% { transform: translate(2px, 1px);
+            } 
+            80% { transform: translate(3px, 2px);
+            } 
+            100% { transform: translate(0, 0);
+            } 
         }
-        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s; }
+        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s;
+        }
 
         .timer-line { 
             position: absolute;
             top: -10px; left: 0; height: 6px; 
             background: var(--danger); transition: width 0.1s linear, background-color 0.3s;
         }
-        .timer-fever { background: #f1c40f !important; box-shadow: 0 0 10px #f1c40f; }
+        .timer-fever { background: #f1c40f !important; box-shadow: 0 0 10px #f1c40f;
+        }
         
         .quiz-grid { display: grid;
             grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
@@ -237,7 +260,8 @@
             padding: 14px; border: 2px solid #eee; 
             border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
         }
-        .footer-img { width: 100%; height: auto; border-radius: 15px; }
+        .footer-img { width: 100%; height: auto; border-radius: 15px;
+        }
 
         .hurt-flash { 
             position: fixed;
@@ -245,8 +269,10 @@
             box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
             z-index: 999; opacity: 0; 
         }
-        .anim-flash { animation: flash-fade 0.5s ease; }
-        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1; } 100% { opacity: 0; } }
+        .anim-flash { animation: flash-fade 0.5s ease;
+        }
+        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1;
+        } 100% { opacity: 0; } }
 
         .combo-text { 
             position: absolute;
@@ -254,13 +280,15 @@
             font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
             animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); display: none;
         }
-        @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
+        @keyframes pop { 0% { transform: scale(0.5);
+        } 100% { transform: scale(1); } }
 
         .boss-hp-bar {
             width: 100%;
             height: 8px; background: #555; border-radius: 4px; margin-bottom: 10px; overflow: hidden; display: none;
         }
-        .boss-hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s; }
+        .boss-hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s;
+        }
 
         .modal-overlay { 
             position: fixed;
@@ -274,11 +302,15 @@
             text-align: center; width: 80%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         
-        .chest-img { width: 100px; height: auto; cursor: pointer; transition: 0.2s; object-fit: contain; }
-        .chest-img:hover { transform: scale(1.1); }
+        .chest-img { width: 100px;
+            height: auto; cursor: pointer; transition: 0.2s; object-fit: contain; }
+        .chest-img:hover { transform: scale(1.1);
+        }
 
-        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
-        .view-section.active { display: flex !important; }
+        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column;
+            justify-content: center; }
+        .view-section.active { display: flex !important;
+        }
     </style>
 </head>
 <body>
@@ -295,6 +327,7 @@
 
     <div class="container">
         <div id="view-home" class="view-section">
+        
             <h1 style="text-align:center; color:var(--primary); margin-top:0;">VOCAB DUNGEON</h1>
             
             <div class="hero-stats">
@@ -306,6 +339,7 @@
                     <div class="exp-bar" id="statExpBar"></div>
                 </div>
                 <div style="text-align:center">
+           
                     <div style="font-size: 0.8rem; color: var(--gray)">Gold</div>
                     <div id="statGold" style="font-size: 1.2rem; font-weight: bold; color: var(--gold)">0</div>
                 </div>
@@ -420,7 +454,9 @@
                     <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
                 </div>
                 <div class="player-box">
-                    <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
+                    <div id="playerImgWrapper" style="transition: transform 0.3s; transform-origin: bottom center;">
+                        <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
+                    </div>
                 </div>
             </div>
             <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
@@ -525,16 +561,15 @@
             "https://i.imgur.com/SwmBCNA.jpeg", // B6-B10 Cave
             "https://i.imgur.com/8MUpGMJ.jpeg", // B11+ Ice/Dark
         ];
-
+        
         // RPG Data (Added ownedSkins array)
         let playerState = { level: 1, exp: 0, gold: 0, skin: 'default', potion: 0, hourglass: 0, ownedSkins: ['default'] };
-
         const skins = [
             { id: 'default', name: '預設勇者', img: 'https://i.imgur.com/gsR29ty.png', price: 0 },
             { id: 'tofu', name: '🐱 天使貓', img: 'https://i.imgur.com/meZ4rN7.png', price: 300 }, 
             { id: 'goma', name: '🐱 惡魔貓', img: 'https://i.imgur.com/U4Il5Eo.png', price: 300 } 
         ];
-
+        
         let wordBank = [];
         let wrongWords = [];
         let studyList = [];
@@ -558,7 +593,7 @@
         let killedWords = [];
         let missedWords = [];
         let currentMImg = "";
-
+        
         // Multi-hit Boss Vars
         let bossWords = [];
         let bossMaxHp = 3;
@@ -569,13 +604,16 @@
             const savedWrongs = localStorage.getItem('vocab_wrongs');
             const savedPlayer = localStorage.getItem('vocab_player');
             
-            if (savedBank) { try { wordBank = JSON.parse(savedBank); } catch(e) { wordBank = initialWords; } } 
-            else { wordBank = initialWords; }
+            if (savedBank) { try { wordBank = JSON.parse(savedBank);
+            } catch(e) { wordBank = initialWords; } } 
+            else { wordBank = initialWords;
+            }
 
-            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs); } catch(e) { wrongWords = []; } }
+            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs);
+            } catch(e) { wrongWords = []; } }
             if (savedPlayer) { 
                 try { 
-                    playerState = {...playerState, ...JSON.parse(savedPlayer)}; 
+                    playerState = {...playerState, ...JSON.parse(savedPlayer)};
                     if (!playerState.ownedSkins) playerState.ownedSkins = ['default']; // Backward compatibility
                 } catch(e) {} 
             }
@@ -603,10 +641,18 @@
             const expReq = playerState.level * 100;
             const expPercent = Math.min(100, (playerState.exp / expReq) * 100);
             document.getElementById('statExpBar').style.width = expPercent + '%';
-
+            
             // Set Player Skin globally
             const skinObj = skins.find(s => s.id === playerState.skin) || skins[0];
             document.getElementById('playerImg').src = skinObj.img;
+            
+            // Apply 1.5x scale to specific cat skins using wrapper
+            const wrapper = document.getElementById('playerImgWrapper');
+            if (skinObj.id === 'tofu' || skinObj.id === 'goma') {
+                wrapper.style.transform = 'scale(1.5)';
+            } else {
+                wrapper.style.transform = 'scale(1)';
+            }
         }
 
         function renderShop() {
@@ -628,8 +674,11 @@
                     btnHtml = `<span style="color:var(--gold); font-weight:bold; margin-top:5px">🪙 ${skin.price}</span>`;
                 }
 
+                // Dynamic size for tofu and goma in shop
+                let imgSize = (skin.id === 'tofu' || skin.id === 'goma') ? '105px' : '70px';
+
                 btn.innerHTML = `
-                    <img src="${skin.img}" style="width:70px; height:70px; object-fit:contain"/>
+                    <img src="${skin.img}" style="width:${imgSize}; height:${imgSize}; object-fit:contain; transition: 0.3s;"/>
                     <div style="font-weight:bold; font-size:0.95rem; margin-top:10px; margin-bottom:5px;">${skin.name}</div>
                     ${btnHtml}
                 `;
@@ -746,7 +795,8 @@
                         }
                     }
                 }
-                const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.' };
+                const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.'
+                };
                 let posPrefix = pos ? `[${posMap[pos] || pos}] ` : "";
                 
                 document.getElementById('newChi').value = posPrefix + chiTranslation;
@@ -809,7 +859,8 @@
             reader.readAsText(file);
         }
 
-        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5);
+        }
 
         function speak(text) {
             if(!text || !window.speechSynthesis) return;
@@ -1046,7 +1097,7 @@
                 setTimeout(() => document.getElementById('monsterImg').classList.remove('anim-hit'), 400);
                 if (bossCurrentHp <= 0) {
                     checkDungeonAns(true);
-                // Boss defeated
+                    // Boss defeated
                 } else {
                     // Load next word for multi-hit
                     currentWord = bossWords[bossMaxHp - bossCurrentHp];
