@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v11.0 - Custom List</title>
+    <title>Vocab Dungeon v11.5 - Enter Key Fixed</title>
     <style>
         :root { 
             --bg: #f4f7f6;
@@ -114,7 +114,6 @@
             position: relative; border: 1px solid #eee;
         }
         .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
-        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444; }
         .example-box { 
             margin-top: 15px;
             padding: 12px; background: #f9f9f9; border-radius: 10px;
@@ -200,7 +199,7 @@
         <div id="view-add" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>新增單字</h2>
-            <input type="text" id="newEng" placeholder="英文單字" />
+            <input type="text" id="newEng" placeholder="英文單字" onkeydown="if(event.key==='Enter') autoFetch()" />
             <button class="btn btn-outline" onclick="autoFetch()">✨ 高精密自動翻譯 (含詞性/例句)</button>
             <textarea id="newChi" placeholder="中文意思 (詞性)"></textarea>
             <textarea id="newExample" placeholder="例句" rows="3"></textarea>
@@ -210,8 +209,8 @@
         <div id="view-list" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h3>我的字庫 (<span id="listCount">0</span>)</h3>
-            <div id="wordListContainer" style="max-height: 400px; overflow-y: auto;"></div>
-            <button class="btn" style="marginTop:20px; color:red" onclick="resetDefaultBank()">⚠️ 重置回預設單字</button>
+            <div id="wordListContainer" style="max-height: 400px; overflow-y: auto; background:white; border-radius:10px; padding:10px;"></div>
+            <button class="btn" style="margin-top:20px; color:red" onclick="resetDefaultBank()">⚠️ 重置回 CSV 預設單字</button>
         </div>
 
         <div id="view-study" class="view-section">
@@ -246,7 +245,14 @@
             <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
                 <div style="font-size:1.3rem; font-weight:bold" id="dungeonChi"></div>
             </div>
+            
             <div id="dungeonQuizGrid" class="quiz-grid"></div>
+            
+            <div id="bossArea" style="display:none; width:100%">
+                <input type="text" id="bossInput" placeholder="拼寫單字..." onkeydown="if(event.key==='Enter') submitBossAnswer()" />
+                <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+            </div>
+
             <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
         </div>
 
@@ -257,7 +263,7 @@
     </div>
 
     <script>
-        // 已替換為你上載的 CSV 單字列表
+        // 預設字庫 (由你的 CSV 提供)
         const initialWords = [
             {eng:"Ingredient", chi:"(n.) 成分/材料", example:"Flour is a main ingredient for bread."},
             {eng:"Carrot", chi:"(n.) 紅蘿蔔", example:"I like to eat raw carrots."},
@@ -285,3 +291,296 @@
             {eng:"Flush", chi:"(v.) 沖水", example:"Don't forget to flush the toilet."},
             {eng:"Razor", chi:"(n.) 剃刀", example:"He uses a sharp razor to shave."},
             {eng:"Tap", chi:"(n.) 水龍頭", example:"Turn off the tap to save water."},
+            {eng:"Towel", chi:"(n.) 毛巾", example:"Dry your hands with a towel."},
+            {eng:"Shower Curtain", chi:"(n.) 浴簾", example:"Please close the shower curtain."},
+            {eng:"Bathrobe", chi:"(n.) 浴袍", example:"Put on your bathrobe after a bath."},
+            {eng:"Sponge", chi:"(n.) 海綿", example:"I use a sponge to wash the car."},
+            {eng:"Shower Cap", chi:"(n.) 浴帽", example:"She wears a shower cap in the shower."},
+            {eng:"Kitten", chi:"(n.) 小貓", example:"The kitten is playing with a ball."},
+            {eng:"Foal", chi:"(n.) 小馬", example:"The foal is standing next to its mother."},
+            {eng:"Chick", chi:"(n.) 小雞", example:"A yellow chick is very cute."},
+            {eng:"Joey", chi:"(n.) 小袋鼠", example:"A joey lives in its mother's pouch."},
+            {eng:"Puppy", chi:"(n.) 小狗", example:"My puppy loves to bark."},
+            {eng:"Piglet", chi:"(n.) 小豬", example:"The piglet is eating corn."},
+            {eng:"Lamb", chi:"(n.) 小羊", example:"A lamb has white wool."},
+            {eng:"Calf", chi:"(n.) 小牛", example:"The calf is drinking milk."},
+            {eng:"Helicopter", chi:"(n.) 直升機", example:"The helicopter flew over the city."},
+            {eng:"Lorry", chi:"(n.) 貨車", example:"The lorry is carrying heavy boxes."},
+            {eng:"Shuttle", chi:"(n.) 接駁車", example:"Take the shuttle to the airport."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
+
+        let wordBank = [];
+        let studyList = [];
+        let currentWord = null;
+        let studyMode = 'card';
+        let isFlipped = false;
+        let hp = 10;
+        let floor = 1;
+        let maxFloor = 10;
+        let timerInterval = null;
+        let timeLeft = 100;
+        let isBoss = false;
+
+        function init() {
+            const savedBank = localStorage.getItem('vocab_v11_custom');
+            wordBank = savedBank ? JSON.parse(savedBank) : initialWords;
+            updateGlobalCounts();
+            renderList();
+            switchView('splash');
+        }
+
+        function saveState() {
+            localStorage.setItem('vocab_v11_custom', JSON.stringify(wordBank));
+            updateGlobalCounts();
+            renderList();
+        }
+
+        function updateGlobalCounts() {
+            document.getElementById('bankCount').innerText = wordBank.length;
+            document.getElementById('listCount').innerText = wordBank.length;
+        }
+
+        function renderList() {
+            const container = document.getElementById('wordListContainer');
+            container.innerHTML = wordBank.map(w => `
+                <div style="border-bottom:1px solid #eee; padding:8px; display:flex; justify-content:space-between">
+                    <span><strong>${w.eng}</strong> - ${w.chi}</span>
+                    <button style="color:red; border:none; background:none" onclick="deleteWord(${w.id})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteWord(id) {
+            wordBank = wordBank.filter(w => w.id !== id);
+            saveState();
+        }
+
+        function resetDefaultBank() {
+            if(confirm('確定要重置回 CSV 預設單字嗎？')) {
+                wordBank = initialWords;
+                saveState();
+                location.reload();
+            }
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('view-splash').style.display = (viewId === 'splash') ? 'flex' : 'none';
+            if(viewId !== 'splash') document.getElementById('view-' + viewId).classList.add('active');
+            
+            document.getElementById('dungeonBg').style.display = (viewId === 'dungeon') ? 'block' : 'none';
+            document.getElementById('globalBg').style.display = (viewId === 'dungeon') ? 'none' : 'block';
+        }
+
+        async function autoFetch() {
+            const engInput = document.getElementById('newEng');
+            const eng = engInput.value.trim();
+            if (!eng) return alert('請輸入單字');
+            
+            const btn = document.querySelector('button[onclick="autoFetch()"]');
+            btn.innerText = '翻譯中...';
+
+            try {
+                // 精準翻譯邏輯
+                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
+                const data = await response.json();
+                
+                // 抓取字典詞性與例句
+                const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${eng}`);
+                const dictData = await dictRes.json();
+                
+                let pos = "", ex = "";
+                if(dictData && dictData[0]) {
+                    pos = `(${dictData[0].meanings[0].partOfSpeech}.) `;
+                    const def = dictData[0].meanings[0].definitions.find(d => d.example);
+                    if(def) ex = def.example;
+                }
+                
+                document.getElementById('newChi').value = pos + data.responseData.translatedText;
+                document.getElementById('newExample').value = ex || `Learning the word "${eng}".`;
+            } catch (e) { 
+                alert('自動獲取失敗，請手動輸入'); 
+            } finally { 
+                btn.innerText = '✨ 高精密自動翻譯 (含詞性/例句)'; 
+            }
+        }
+
+        function addNewWord() {
+            const eng = document.getElementById('newEng').value.trim();
+            const chi = document.getElementById('newChi').value.trim();
+            const example = document.getElementById('newExample').value.trim();
+            if(!eng || !chi) return alert('請完整填寫');
+            
+            wordBank.unshift({ eng, chi, example, id: Date.now() });
+            saveState();
+            document.getElementById('newEng').value = '';
+            document.getElementById('newChi').value = '';
+            document.getElementById('newExample').value = '';
+            alert('儲存成功');
+        }
+
+        // --- 學習與戰鬥邏輯 ---
+
+        function startNormal(mode) {
+            studyMode = mode;
+            studyList = [...wordBank].sort(() => Math.random() - 0.5);
+            switchView('study');
+            nextStudyWord();
+        }
+
+        function nextStudyWord() {
+            if (studyList.length === 0) return switchView('home');
+            currentWord = studyList.pop();
+            isFlipped = false;
+            document.getElementById('card-unflipped').style.display = 'block';
+            document.getElementById('card-flipped').style.display = 'none';
+            document.getElementById('card-unflipped').innerHTML = `<h1 class="card-eng">${currentWord.eng}</h1><p>點擊翻開卡片</p>`;
+            document.getElementById('studyFeedback').innerText = '';
+            
+            speakCurrent(); // 要求 1: 自動讀音
+
+            if (studyMode === 'quiz') {
+                document.getElementById('quizOptions').style.display = 'grid';
+                generateQuizOptions();
+            } else {
+                document.getElementById('quizOptions').style.display = 'none';
+            }
+        }
+
+        function speakCurrent() {
+            const msg = new SpeechSynthesisUtterance(currentWord.eng);
+            msg.lang = 'en-US';
+            window.speechSynthesis.speak(msg);
+        }
+
+        function handleCardFlip() {
+            if (isFlipped) return;
+            isFlipped = true;
+            document.getElementById('card-unflipped').style.display = 'none';
+            document.getElementById('card-flipped').style.display = 'block';
+            document.getElementById('flipEng').innerText = currentWord.eng;
+            document.getElementById('flipChi').innerText = currentWord.chi;
+            document.getElementById('flipEx').innerText = currentWord.example || '無例句';
+        }
+
+        function generateQuizOptions() {
+            const options = [currentWord.chi];
+            const others = wordBank.filter(w => w.eng !== currentWord.eng).sort(() => Math.random() - 0.5);
+            for(let i=0; i<3; i++) if(others[i]) options.push(others[i].chi);
+            
+            const grid = document.getElementById('quizOptions');
+            grid.innerHTML = '';
+            options.sort(() => Math.random() - 0.5).forEach(opt => {
+                const b = document.createElement('button');
+                b.className = 'btn btn-outline btn-small';
+                b.innerText = opt;
+                b.onclick = (e) => { e.stopPropagation(); checkQuizAnswer(opt); };
+                grid.appendChild(b);
+            });
+        }
+
+        function checkQuizAnswer(ans) {
+            if (ans === currentWord.chi) {
+                document.getElementById('studyFeedback').innerText = '✅ 正確！';
+                handleCardFlip();
+            } else {
+                document.getElementById('studyFeedback').innerText = '❌ 再試一次';
+            }
+        }
+
+        function startDungeon(mode) {
+            floor = 1; hp = 10;
+            maxFloor = (mode === 'low') ? 10 : (mode === 'mid' ? 15 : 20);
+            switchView('dungeon');
+            loadDungeonLevel();
+        }
+
+        function loadDungeonLevel() {
+            timeLeft = 100;
+            isBoss = (floor % 5 === 0);
+            currentWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+            
+            document.getElementById('floorDisplay').innerText = `Floor: ${floor}/${maxFloor}`;
+            document.getElementById('hpDisplay').innerText = '❤️ ' + hp;
+            document.getElementById('dungeonChi').innerText = currentWord.chi;
+            
+            const monster = document.getElementById('monsterImg');
+            if(isBoss) {
+                monster.src = "https://i.imgur.com/LNZ46Uc.png";
+                monster.style.width = "120px";
+                document.getElementById('dungeonQuizGrid').style.display = 'none';
+                document.getElementById('bossArea').style.display = 'block';
+                document.getElementById('bossInput').value = '';
+                document.getElementById('bossInput').focus();
+            } else {
+                monster.src = "https://i.imgur.com/BbjA5GC.png";
+                monster.style.width = "90px";
+                document.getElementById('dungeonQuizGrid').style.display = 'grid';
+                document.getElementById('bossArea').style.display = 'none';
+                generateDungeonOptions();
+            }
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            let speed = (floor / 10) + 1; 
+            timerInterval = setInterval(() => {
+                timeLeft -= speed;
+                document.getElementById('timerLine').style.width = timeLeft + '%';
+                if(timeLeft <= 0) hurt();
+            }, 100);
+        }
+
+        function generateDungeonOptions() {
+            const grid = document.getElementById('dungeonQuizGrid');
+            grid.innerHTML = '';
+            const opts = [currentWord.eng];
+            const others = wordBank.filter(w => w.eng !== currentWord.eng).sort(() => Math.random() - 0.5);
+            for(let i=0; i<3; i++) if(others[i]) opts.push(others[i].eng);
+            
+            opts.sort(() => Math.random() - 0.5).forEach(o => {
+                const b = document.createElement('button');
+                b.className = 'btn btn-outline';
+                b.innerText = o;
+                b.onclick = () => (o === currentWord.eng) ? nextFloor() : hurt();
+                grid.appendChild(b);
+            });
+        }
+
+        function submitBossAnswer() {
+            const ans = document.getElementById('bossInput').value.trim().toLowerCase();
+            if(ans === currentWord.eng.toLowerCase()) nextFloor();
+            else hurt();
+        }
+
+        function nextFloor() {
+            clearInterval(timerInterval);
+            document.getElementById('monsterImg').classList.add('anim-hit');
+            setTimeout(() => {
+                document.getElementById('monsterImg').classList.remove('anim-hit');
+                floor++;
+                if(floor > maxFloor) endGame('win');
+                else loadDungeonLevel();
+            }, 500);
+        }
+
+        function hurt() {
+            clearInterval(timerInterval);
+            hp--;
+            document.getElementById('playerImg').classList.add('anim-hurt-combined');
+            setTimeout(() => {
+                document.getElementById('playerImg').classList.remove('anim-hurt-combined');
+                if(hp <= 0) endGame('lose');
+                else loadDungeonLevel();
+            }, 500);
+        }
+
+        function endGame(res) {
+            document.getElementById('endEmoji').innerText = res === 'win' ? '🎉' : '💀';
+            document.getElementById('endTitle').innerText = res === 'win' ? '挑戰成功' : '你倒下了';
+            switchView('end');
+        }
+    </script>
+</body>
+</html>
