@@ -3,33 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v14.0 - Full 86 Words</title>
+    <title>Vocab Dungeon v15.0 - Original Architecture with Full 86 Words</title>
     <style>
-        :root { --bg: #f4f7f6; --primary: #0984e3; --text: #2d3436; --danger: #d63031; }
-        body { background: var(--bg); font-family: -apple-system, sans-serif; margin: 0; color: var(--text); overflow-x: hidden; }
-        .container { width: 100%; max-width: 480px; min-height: 100vh; margin: 0 auto; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; position: relative; z-index: 1; }
-        .global-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); background-size: cover; background-position: center; z-index: 0; }
-        .dungeon-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); background-size: cover; background-position: center; z-index: 0; display: none; }
-        .splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; }
-        .splash-img { width: 100%; height: 100%; object-fit: contain; position: absolute; }
-        .enter-btn-container { position: absolute; bottom: 15%; width: 100%; display: flex; justify-content: center; }
-        .btn-rpg { background: #2d3436; color: #fff; border: 4px solid #fff; padding: 12px 40px; font-size: 1.5rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 0 4px #2d3436; }
-        .btn { background: #fff; border: 1px solid #ddd; padding: 14px; margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; width: 100%; font-weight: 600; box-sizing: border-box; }
-        .btn-primary { background: var(--primary); color: white; border: none; }
+        :root { 
+            --bg: #f4f7f6;
+            --primary: #0984e3; 
+            --text: #2d3436; 
+            --danger: #d63031; 
+            --success: #27ae60; 
+            --gray: #636e72;
+        }
+        body { 
+            background: var(--bg);
+            font-family: -apple-system, sans-serif; 
+            margin: 0; 
+            color: var(--text);
+            overflow-x: hidden; 
+        }
+        .container { 
+            width: 100%;
+            max-width: 480px; 
+            min-height: 100vh;
+            margin: 0 auto; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            z-index: 1;
+        }
+        
+        .global-bg { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 0;
+        }
+        .dungeon-bg { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 0; 
+            display: none;
+        }
+
+        /* Splash Screen */
+        .splash-screen { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; 
+            z-index: 1000; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
+        .splash-img { 
+            width: 100%;
+            height: 100%; object-fit: contain; 
+            position: absolute; top: 0; left: 0;
+        }
+        .enter-btn-container { 
+            position: absolute;
+            bottom: 15%; width: 100%; 
+            display: flex; justify-content: center; 
+        }
+        .btn-rpg { 
+            background: #2d3436;
+            color: #fff; border: 4px solid #fff;
+            padding: 12px 40px; font-size: 1.5rem; font-weight: bold; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 0 4px #2d3436;
+            transition: 0.1s; 
+        }
+        .btn-rpg:active { transform: scale(0.9); background: #636e72; }
+
+        /* UI Elements */
+        .btn { 
+            background: #fff;
+            border: 1px solid #ddd; padding: 14px;
+            margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; 
+            width: 100%; font-weight: 600;
+            box-sizing: border-box; transition: 0.2s; 
+        }
+        .btn-primary { background: var(--primary); color: white; border: none; box-shadow: 0 4px 12px rgba(9,132,227,0.2); }
         .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: rgba(255,255,255,0.8); }
-        .card { background: rgba(255,255,255,0.95); border-radius: 24px; padding: 25px; margin: 10px 0; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; border: 1px solid #eee; }
-        .battle-scene { position: relative; width: 100%; height: 240px; margin: 10px 0; background: rgba(255, 255, 255, 0.5); border-radius: 15px; }
-        .monster-box { position: absolute; top: 10px; right: 40px; }
+        
+        .card { 
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px; padding: 25px; margin: 10px 0;
+            min-height: 260px; display: flex; flex-direction: column; justify-content: center; 
+            align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
+            position: relative; border: 1px solid #eee;
+        }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
+        
+        /* Battle Area */
+        .battle-scene { 
+            position: relative;
+            width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
+            background: rgba(255, 255, 255, 0.5); border-radius: 15px;
+        }
+        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; }
         .monster-img { width: 90px; transition: 0.3s; }
         .player-box { position: absolute; bottom: -10px; left: -20px; }
         .player-img { width: 270px; }
+        
         .timer-line { position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        
         input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
         .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
         .view-section.active { display: flex !important; }
-        @keyframes hit { 0% { transform: translateX(0); } 20% { transform: translateX(-20px); filter: brightness(2); } 100% { transform: scale(0); opacity: 0; } }
-        .anim-hit { animation: hit 0.5s forwards; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; display:none; align-items:center; justify-content:center; }
+        .modal-content { background:white; padding:30px; border-radius:20px; width:85%; max-width:400px; text-align:center; }
     </style>
 </head>
 <body onload="init()">
@@ -39,7 +131,7 @@
     <div class="splash-screen" id="view-splash" style="display: flex;">
         <img src="https://i.imgur.com/8MUpGMJ.jpeg" class="splash-img" />
         <div class="enter-btn-container">
-            <button class="btn-rpg" onclick="switchView('home')">Enter</button>
+            <button class="btn-rpg" id="mainEnterBtn" onclick="switchView('home')">Enter</button>
         </div>
     </div>
 
@@ -53,55 +145,76 @@
 
         <div id="view-menu" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
-            <h2>地下城難度</h2>
+            <h2>選擇難度</h2>
             <button class="btn btn-outline" onclick="startDungeon(10)">初級 (10層)</button>
             <button class="btn btn-outline" onclick="startDungeon(30)">中級 (30層)</button>
-            <button class="btn btn-outline" onclick="startDungeon(86)">大滿貫 (86層)</button>
+            <button class="btn btn-outline" onclick="startDungeon(86)">大滿貫 (86層 - 全字庫)</button>
         </div>
 
         <div id="view-add" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
-            <input type="text" id="newEng" placeholder="輸入英文..." onkeydown="if(event.key==='Enter') autoFetch()" />
-            <button class="btn btn-outline" onclick="autoFetch()">自動翻譯 (Enter)</button>
+            <h2>新增單字</h2>
+            <input type="text" id="newEng" placeholder="輸入英文單字..." onkeydown="if(event.key==='Enter') autoFetch()" />
+            <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯 (Enter 可觸發)</button>
             <textarea id="newChi" placeholder="中文意思..."></textarea>
             <textarea id="newExample" placeholder="例句..."></textarea>
-            <button class="btn btn-primary" id="saveBtn" onclick="addNewWord()">儲存 (Enter)</button>
+            <button class="btn btn-primary" id="saveBtn" onclick="addNewWord()">💾 儲存 (Enter 可觸發)</button>
         </div>
 
         <div id="view-list" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
-            <h3>全字庫 (<span id="listCount">0</span>)</h3>
+            <h3>全字庫資料 (<span id="listCount">0</span>)</h3>
             <div id="wordListContainer" style="max-height: 400px; overflow-y: auto; background:white; padding:10px; border-radius:12px;"></div>
             <button class="btn" style="color:red" onclick="resetDefaultBank()">⚠️ 重置回 86 個原始單字</button>
         </div>
 
         <div id="view-dungeon" class="view-section">
-            <div style="background: #2d3436; color: white; padding: 10px; border-radius: 10px; display:flex; justify-content:space-between">
-                <span id="hpDisplay"></span><span id="floorDisplay"></span>
+            <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between">
+                <span id="hpDisplay"></span>
+                <span id="floorDisplay"></span>
             </div>
             <div class="battle-scene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
                 <div class="monster-box"><img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" /></div>
                 <div class="player-box"><img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" /></div>
             </div>
-            <div class="card"><div id="dungeonChi" style="font-size:1.4rem; font-weight:bold"></div></div>
+            <div class="card" style="min-height:60px; padding: 15px;">
+                <div id="dungeonChi" style="font-size:1.3rem; font-weight:bold"></div>
+            </div>
             <div id="dungeonQuizGrid" class="quiz-grid"></div>
             <div id="bossArea" style="display:none; width:100%">
-                <input type="text" id="bossInput" placeholder="輸入英文攻擊..." onkeydown="if(event.key==='Enter') submitBossAnswer()" />
-                <button class="btn btn-primary" onclick="submitBossAnswer()">攻擊 BOSS (Enter)</button>
+                <input type="text" id="bossInput" placeholder="拼寫單字攻擊... 按 Enter" onkeydown="if(event.key==='Enter') submitBossAnswer()" />
+                <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 發動攻擊 (Enter)</button>
             </div>
-            <button class="btn" onclick="clearInterval(timerInterval); switchView('home')">撤退</button>
+            <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
         </div>
 
         <div id="view-end" class="view-section">
             <div style="text-align:center"><h1 id="endEmoji"></h1><h2 id="endTitle"></h2></div>
-            <button class="btn btn-primary" onclick="switchView('home')">返回</button>
+            <div style="background:white; padding:15px; border-radius:15px; margin-top:10px">
+                <p>擊敗單字：<span id="killedCount">0</span></p>
+                <p style="font-size:0.8rem; color:var(--gray)" id="killedList"></p>
+                <hr/>
+                <p>錯過單字：<span id="missedCount">0</span></p>
+                <p style="font-size:0.8rem; color:var(--danger)" id="missedList"></p>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 20px" onclick="switchView('home')">返回主頁</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="chestModal">
+        <div class="modal-content">
+            <h2 style="color:#f39c12">🎁 發現寶箱！</h2>
+            <img src="https://i.imgur.com/LNZ46Uc.png" style="width:100px" />
+            <p id="chestTip">這層樓是安全的，你要打開它嗎？</p>
+            <button class="btn btn-primary" id="chestOpenBtn" onclick="openChest()">打開寶箱</button>
+            <button class="btn" id="chestNextBtn" style="display:none" onclick="closeChestModal()">前往下一層</button>
         </div>
     </div>
 
     <script>
-        // 完整錄入 CSV 中的 86 個單字
-        const full86Words = [
+        // 完整錄入 86 個 CSV 生字
+        const initialWords86 = [
             {eng:"Ingredient", chi:"(n.) 成分/材料", example:"Flour is a main ingredient for bread."},
             {eng:"Carrot", chi:"(n.) 紅蘿蔔", example:"I like to eat raw carrots."},
             {eng:"Peas", chi:"(n.) 豌豆", example:"We had chicken and peas for dinner."},
@@ -190,14 +303,19 @@
             {eng:"Allergic", chi:"(adj.) 過敏的", example:"I am allergic to seafood."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
-        let wordBank = [], hp = 10, floor = 1, maxFloor = 10, currentWord = null, timerInterval = null, timeLeft = 100, isBoss = false;
+        let wordBank = [], currentWord = null, hp = 10, floor = 1, maxFloor = 10, timerInterval = null, timeLeft = 100, isBoss = false;
+        let killedWords = [], missedWords = [];
 
         function init() {
-            const saved = localStorage.getItem('dungeon_86_v14');
-            wordBank = saved ? JSON.parse(saved) : full86Words;
+            const saved = localStorage.getItem('vocab_dungeon_v15_86');
+            wordBank = saved ? JSON.parse(saved) : initialWords86;
             updateUI();
+            
+            // 全局 Enter 鍵監聽
             window.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && document.getElementById('view-splash').style.display === 'flex') switchView('home');
+                if (e.key === 'Enter') {
+                    if (document.getElementById('view-splash').style.display === 'flex') switchView('home');
+                }
             });
         }
 
@@ -205,69 +323,76 @@
             document.getElementById('bankCount').innerText = wordBank.length;
             document.getElementById('listCount').innerText = wordBank.length;
             document.getElementById('wordListContainer').innerHTML = wordBank.map(w => `
-                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:5px">
-                    <span><b>${w.eng}</b> ${w.chi}</span>
-                    <button onclick="deleteWord(${w.id})" style="color:red; border:none; background:none">🗑️</button>
+                <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee">
+                    <span><b>${w.eng}</b> - ${w.chi}</span>
+                    <button onclick="deleteWord(${w.id})" style="border:none; color:red; background:none">🗑️</button>
                 </div>
             `).join('');
         }
 
-        function save() { localStorage.setItem('dungeon_86_v14', JSON.stringify(wordBank)); updateUI(); }
-        function deleteWord(id) { wordBank = wordBank.filter(w => w.id !== id); save(); }
-        function resetDefaultBank() { if(confirm('重置回 86 個原始單字？')) { wordBank = full86Words; save(); location.reload(); } }
+        function deleteWord(id) { wordBank = wordBank.filter(w => w.id !== id); saveState(); }
+        function saveState() { localStorage.setItem('vocab_dungeon_v15_86', JSON.stringify(wordBank)); updateUI(); }
+        function resetDefaultBank() { if(confirm('重置回 86 個原始單字？')) { wordBank = initialWords86; saveState(); location.reload(); } }
 
         function switchView(id) {
             document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
             document.getElementById('view-splash').style.display = 'none';
             document.getElementById('view-' + id).classList.add('active');
-            document.getElementById('dungeonBg').style.display = (id === 'dungeon' ? 'block' : 'none');
-            document.getElementById('globalBg').style.display = (id === 'dungeon' ? 'none' : 'block');
+            document.getElementById('dungeonBg').style.display = (id === 'dungeon') ? 'block' : 'none';
+            document.getElementById('globalBg').style.display = (id === 'dungeon') ? 'none' : 'block';
         }
 
         async function autoFetch() {
             const eng = document.getElementById('newEng').value.trim();
-            if(!eng) return;
+            if (!eng) return;
             try {
                 const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
                 const data = await res.json();
                 document.getElementById('newChi').value = data.responseData.translatedText;
                 document.getElementById('saveBtn').focus();
-            } catch(e) { alert('翻譯出錯'); }
+            } catch (e) { alert('翻譯失敗'); }
         }
 
         function addNewWord() {
             const eng = document.getElementById('newEng').value.trim(), chi = document.getElementById('newChi').value.trim();
-            if(!eng || !chi) return;
+            if (!eng || !chi) return;
             wordBank.unshift({ eng, chi, example: document.getElementById('newExample').value, id: Date.now() });
-            save();
-            document.getElementById('newEng').value = ''; document.getElementById('newChi').value = '';
-            alert('已儲存');
+            saveState();
+            document.getElementById('newEng').value = ""; document.getElementById('newChi').value = "";
+            alert('儲存成功');
+            document.getElementById('newEng').focus();
         }
 
+        // Dungeon Battle Logic
         function startDungeon(layers) {
             floor = 1; hp = 10; maxFloor = layers;
+            killedWords = []; missedWords = [];
             switchView('dungeon');
             loadLevel();
         }
 
         function loadLevel() {
+            if (floor > 1 && floor % 5 === 0 && !isBoss) {
+                showChest(); return;
+            }
             timeLeft = 100;
-            isBoss = (floor % 5 === 0);
+            isBoss = (floor % 10 === 0); // 每 10 層一個 Boss
             currentWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+            
             document.getElementById('floorDisplay').innerText = `Floor: ${floor}/${maxFloor}`;
             document.getElementById('hpDisplay').innerText = '❤️ ' + hp;
             document.getElementById('dungeonChi').innerText = currentWord.chi;
             
-            // 自動讀音
+            // 自動朗讀
             const utter = new SpeechSynthesisUtterance(currentWord.eng);
             utter.lang = 'en-US';
             window.speechSynthesis.speak(utter);
 
-            if(isBoss) {
+            if (isBoss) {
                 document.getElementById('monsterImg').src = "https://i.imgur.com/LNZ46Uc.png";
                 document.getElementById('dungeonQuizGrid').style.display = 'none';
                 document.getElementById('bossArea').style.display = 'block';
-                document.getElementById('bossInput').value = '';
+                document.getElementById('bossInput').value = "";
                 setTimeout(() => document.getElementById('bossInput').focus(), 100);
             } else {
                 document.getElementById('monsterImg').src = "https://i.imgur.com/BbjA5GC.png";
@@ -280,11 +405,14 @@
 
         function startTimer() {
             clearInterval(timerInterval);
-            let speed = 1 + (floor / 10);
+            let speed = 0.8 + (floor / 15); // 隨樓層增加速度
             timerInterval = setInterval(() => {
                 timeLeft -= speed;
                 document.getElementById('timerLine').style.width = timeLeft + '%';
-                if(timeLeft <= 0) hurt();
+                if (timeLeft <= 0) {
+                    missedWords.push(currentWord);
+                    hurt();
+                }
             }, 100);
         }
 
@@ -297,31 +425,71 @@
             `).join('');
         }
 
-        function checkAns(o) { (o === currentWord.eng) ? nextFloor() : hurt(); }
-        function submitBossAnswer() {
-            const val = document.getElementById('bossInput').value.trim().toLowerCase();
-            (val === currentWord.eng.toLowerCase()) ? nextFloor() : hurt();
+        function checkAns(o) {
+            if (o === currentWord.eng) {
+                killedWords.push(currentWord);
+                winFloor();
+            } else {
+                missedWords.push(currentWord);
+                hurt();
+            }
         }
 
-        function nextFloor() {
+        function submitBossAnswer() {
+            const val = document.getElementById('bossInput').value.trim().toLowerCase();
+            if (val === currentWord.eng.toLowerCase()) {
+                killedWords.push(currentWord);
+                winFloor();
+            } else hurt();
+        }
+
+        function winFloor() {
             clearInterval(timerInterval);
-            document.getElementById('monsterImg').classList.add('anim-hit');
+            document.getElementById('monsterImg').style.transform = "scale(1.2)";
             setTimeout(() => {
-                document.getElementById('monsterImg').classList.remove('anim-hit');
+                document.getElementById('monsterImg').style.transform = "scale(1)";
                 floor++;
-                if(floor > maxFloor) endGame('win'); else loadLevel();
-            }, 500);
+                if (floor > maxFloor) endGame('win'); else loadLevel();
+            }, 300);
         }
 
         function hurt() {
             clearInterval(timerInterval);
             hp--;
-            if(hp <= 0) endGame('lose'); else loadLevel();
+            if (hp <= 0) endGame('lose'); else loadLevel();
+        }
+
+        // Chest System
+        function showChest() {
+            document.getElementById('chestModal').style.display = 'flex';
+            document.getElementById('chestOpenBtn').style.display = 'inline-block';
+            document.getElementById('chestNextBtn').style.display = 'none';
+            document.getElementById('chestTip').innerText = '這層樓是安全的，發現了一個寶箱！';
+        }
+
+        function openChest() {
+            hp += 2;
+            document.getElementById('chestTip').innerText = '你獲得了：❤️ 回復 2 點生命！';
+            document.getElementById('chestOpenBtn').style.display = 'none';
+            document.getElementById('chestNextBtn').style.display = 'inline-block';
+        }
+
+        function closeChestModal() {
+            document.getElementById('chestModal').style.display = 'none';
+            floor++;
+            loadLevel();
         }
 
         function endGame(res) {
-            document.getElementById('endEmoji').innerText = (res === 'win' ? '🎉' : '💀');
-            document.getElementById('endTitle').innerText = (res === 'win' ? '通關成功！' : '體力耗盡...');
+            clearInterval(timerInterval);
+            document.getElementById('endEmoji').innerText = (res === 'win') ? '🎉' : '💀';
+            document.getElementById('endTitle').innerText = (res === 'win') ? '挑戰成功！' : '你倒下了...';
+            
+            document.getElementById('killedCount').innerText = killedWords.length;
+            document.getElementById('killedList').innerText = Array.from(new Set(killedWords.map(w => w.eng))).join(', ') || '無';
+            document.getElementById('missedCount').innerText = missedWords.length;
+            document.getElementById('missedList').innerText = Array.from(new Set(missedWords.map(w => w.eng))).join(', ') || '無';
+            
             switchView('end');
         }
     </script>
