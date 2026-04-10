@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v12.0 - Full Word Bank</title>
+    <title>Vocab Dungeon v13.0 - Perfect Integration</title>
     <style>
         :root { 
             --bg: #f4f7f6;
@@ -78,7 +78,6 @@
             box-shadow: 0 0 0 4px #2d3436;
             transition: 0.1s; 
         }
-        .btn-rpg:active { transform: scale(0.9); background: #636e72; }
 
         .btn { 
             background: #fff;
@@ -86,25 +85,10 @@
             margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; 
             width: 100%; font-weight: 600;
             box-sizing: border-box; transition: 0.2s; 
-            -webkit-tap-highlight-color: transparent;
         }
-        .btn:active { transform: scale(0.96); background: #f0f0f0; }
-        .btn-primary { 
-            background: var(--primary);
-            color: white; border: none;
-            box-shadow: 0 4px 12px rgba(9,132,227,0.2); 
-        }
-        .btn-outline { 
-            color: var(--primary);
-            border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
-        }
-        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
-        .speaker-btn { 
-            background: #e1f0ff;
-            border: none;
-            border-radius: 50%; width: 44px; height: 44px; cursor: pointer; 
-            display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
-        }
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-outline { color: var(--primary); border: 2px solid var(--primary); background: rgba(255,255,255,0.8); }
+        
         .card { 
             background: rgba(255,255,255,0.95);
             border-radius: 24px; padding: 25px; margin: 10px 0;
@@ -114,53 +98,20 @@
             position: relative; border: 1px solid #eee;
         }
         .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
-        .example-box { 
-            margin-top: 15px;
-            padding: 12px; background: #f9f9f9; border-radius: 10px;
-            border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
-            font-size: 0.95rem; width: 100%; box-sizing: border-box;
-        }
+        .example-box { margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px; border-left: 4px solid var(--primary); text-align: left; font-size: 0.95rem; }
         
-        /* 戰鬥畫面與動畫 */
-        .battle-scene { 
-            position: relative;
-            width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
-            background: rgba(255, 255, 255, 0.5); border-radius: 15px;
-        }
-        .monster-box { position: absolute; top: 10px; right: 40px; text-align: center; z-index: 1; }
-        .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; }
-        .player-box { position: absolute; bottom: -10px; left: -20px; z-index: 2; }
-        .player-img { width: 270px; height: auto; transition: 0.3s; object-fit: contain; }
+        .battle-scene { position: relative; width: 100%; height: 240px; margin: 10px 0; background: rgba(255, 255, 255, 0.5); border-radius: 15px; }
+        .monster-box { position: absolute; top: 10px; right: 40px; }
+        .monster-img { width: 90px; transition: 0.3s; }
+        .player-box { position: absolute; bottom: -10px; left: -20px; }
+        .player-img { width: 270px; }
         
-        @keyframes hit-shake { 
-            0% { transform: translateX(0); } 
-            20% { transform: translateX(-15px) scale(1.1); filter: brightness(1.2) sepia(1) saturate(8); } 
-            40% { transform: translateX(10px) scale(1.05); filter: brightness(1.2) sepia(1) saturate(8); }
-            60% { transform: translateX(-10px) scale(1); filter: brightness(1.1) sepia(0.5); }
-            100% { transform: scale(0) translateX(-50px); opacity: 0; filter: brightness(1); } 
-        }
-        .anim-hit { animation: hit-shake 0.6s forwards; }
-        
-        @keyframes hurt-vibrate { 
-            0% { transform: translate(0, 0); } 
-            10% { transform: translate(-4px, -2px); } 
-            100% { transform: translate(0, 0); } 
-        }
-        .anim-hurt-combined { animation: hurt-vibrate 0.4s; }
-
-        .timer-line { 
-            position: absolute;
-            top: -10px; left: 0; height: 6px; 
-            background: var(--danger); transition: width 0.1s linear;
-        }
+        @keyframes hit-shake { 0% { transform: translateX(0); } 20% { transform: translateX(-15px); filter: brightness(2) saturate(5); } 100% { transform: scale(0); opacity: 0; } }
+        .anim-hit { animation: hit-shake 0.5s forwards; }
+        .timer-line { position: absolute; top: -10px; left: 0; height: 6px; background: var(--danger); transition: width 0.1s linear; }
         .quiz-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        input, textarea { 
-            width: 100%;
-            padding: 14px; border: 2px solid #eee; 
-            border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
-        }
-        .footer-img { width: 100%; height: auto; margin-top: 20px; border-radius: 15px; }
-
+        
+        input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem; }
         .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column; justify-content: center; }
         .view-section.active { display: flex !important; }
     </style>
@@ -170,9 +121,9 @@
     <div class="dungeon-bg" id="dungeonBg"></div>
 
     <div class="splash-screen" id="view-splash" style="display: flex;">
-        <img src="https://i.imgur.com/8MUpGMJ.jpeg" class="splash-img" alt="splash" />
+        <img src="https://i.imgur.com/8MUpGMJ.jpeg" class="splash-img" />
         <div class="enter-btn-container">
-            <button class="btn-rpg" id="mainEnterBtn" onclick="switchView('home')">Enter</button>
+            <button class="btn-rpg" onclick="switchView('home')">Enter</button>
         </div>
     </div>
 
@@ -182,59 +133,27 @@
             <button class="btn btn-primary" onclick="switchView('menu')">開始挑戰</button>
             <button class="btn" onclick="switchView('add')">新增單字</button>
             <button class="btn" onclick="switchView('list')">字庫管理 (<span id="bankCount">0</span>)</button>
-            <img src="https://i.imgur.com/6UDmnhC.png" class="footer-img" />
-        </div>
-
-        <div id="view-menu" class="view-section">
-            <button class="btn" onclick="switchView('home')">← 返回</button>
-            <h2>選擇模式</h2>
-            <button class="btn btn-outline" onclick="startNormal('card')">生字卡 (自動讀音/例句)</button>
-            <button class="btn btn-outline" onclick="startNormal('quiz')">選擇題模式 (看中選英)</button>
-            <hr style="width:100%; border:none; border-top:1px solid #ddd; margin:20px 0"/>
-            <h3 style="color:var(--danger)">🏰 地下城戰鬥</h3>
-            <button class="btn" onclick="startDungeon('low')">初級 (10層)</button>
-            <button class="btn" onclick="startDungeon('mid')">中級 (15層)</button>
-            <button class="btn" onclick="startDungeon('high')">高級 (20層)</button>
         </div>
 
         <div id="view-add" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>新增單字</h2>
-            <input type="text" id="newEng" placeholder="輸入英文單字" />
-            <button class="btn btn-outline" onclick="autoFetch()">✨ 高精密自動翻譯 (含詞性/例句)</button>
-            <textarea id="newChi" placeholder="中文意思 (詞性)"></textarea>
-            <textarea id="newExample" placeholder="例句" rows="3"></textarea>
-            <button class="btn btn-primary" onclick="addNewWord()">💾 儲存 (Enter 可觸發)</button>
+            <input type="text" id="newEng" placeholder="輸入英文單字..." onkeydown="if(event.key==='Enter') autoFetch()" />
+            <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯 (Enter 可觸發)</button>
+            <textarea id="newChi" placeholder="中文意思..."></textarea>
+            <textarea id="newExample" placeholder="例句..."></textarea>
+            <button class="btn btn-primary" id="saveBtn" onclick="addNewWord()">💾 儲存</button>
         </div>
 
         <div id="view-list" class="view-section">
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h3>我的字庫 (<span id="listCount">0</span>)</h3>
-            <div id="wordListContainer" style="max-height: 400px; overflow-y: auto; background:rgba(255,255,255,0.8); border-radius:12px; padding:10px;"></div>
-            <button class="btn" style="margin-top:20px; color:red" onclick="resetDefaultBank()">⚠️ 重置回 CSV 預設單字</button>
-        </div>
-
-        <div id="view-study" class="view-section">
-            <div class="card" id="studyCard" onclick="handleCardFlip()">
-                <div id="card-unflipped" style="width:100%"></div>
-                <div id="card-flipped" style="display:none; text-align:left; width:100%">
-                    <div style="display:flex; justify-content:space-between; align-items:center">
-                        <strong style="font-size:1.4rem; color:var(--primary)" id="flipEng"></strong>
-                        <button class="speaker-btn" id="flipSpeakBtn" onclick="event.stopPropagation(); speakCurrent();">🔊</button>
-                    </div>
-                    <hr/>
-                    <strong>【意思/詞性】</strong><p id="flipChi"></p>
-                    <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
-                </div>
-            </div>
-            <div id="quizOptions" class="quiz-grid" style="display:none"></div>
-            <div id="studyFeedback" style="text-align:center; font-weight:bold; margin:10px"></div>
-            <button class="btn btn-primary" onclick="nextStudyWord()">下一個</button>
-            <button class="btn" onclick="switchView('home')">返回</button>
+            <div id="wordListContainer" style="max-height: 400px; overflow-y: auto; background:white; padding:10px; border-radius:12px;"></div>
+            <button class="btn" style="color:red" onclick="resetDefaultBank()">⚠️ 重置字庫</button>
         </div>
 
         <div id="view-dungeon" class="view-section">
-            <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between; margin-bottom: 15px">
+            <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between">
                 <span id="hpDisplay"></span>
                 <span id="floorDisplay"></span>
             </div>
@@ -243,28 +162,25 @@
                 <div class="monster-box"><img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" /></div>
                 <div class="player-box"><img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" /></div>
             </div>
-            <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
-                <div style="font-size:1.3rem; font-weight:bold" id="dungeonChi"></div>
+            <div class="card" style="min-height:60px; padding: 15px;">
+                <div id="dungeonChi" style="font-size:1.3rem; font-weight:bold"></div>
             </div>
-            
             <div id="dungeonQuizGrid" class="quiz-grid"></div>
-            
             <div id="bossArea" style="display:none; width:100%">
-                <input type="text" id="bossInput" placeholder="拼寫單字... 按 Enter 攻擊" />
-                <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+                <input type="text" id="bossInput" placeholder="拼寫單字攻擊 BOSS..." onkeydown="if(event.key==='Enter') submitBossAnswer()" />
+                <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 發動攻擊 (Enter)</button>
             </div>
-
-            <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
+            <button class="btn" onclick="clearInterval(timerInterval); switchView('home')">🏳️ 撤退</button>
         </div>
 
         <div id="view-end" class="view-section">
             <div style="text-align:center"><h1 id="endEmoji"></h1><h2 id="endTitle"></h2></div>
-            <button class="btn btn-primary" style="margin-top: 20px" onclick="switchView('home')">返回主頁</button>
+            <button class="btn btn-primary" onclick="switchView('home')">返回主頁</button>
         </div>
     </div>
 
     <script>
-        // 全部生字庫整合 (CSV 資料 + 預設資料)
+        // 確保所有 CSV 單字都在這裡 (40+ 個)
         const initialWords = [
             {eng:"Ingredient", chi:"(n.) 成分/材料", example:"Flour is a main ingredient for bread."},
             {eng:"Carrot", chi:"(n.) 紅蘿蔔", example:"I like to eat raw carrots."},
@@ -310,47 +226,158 @@
             {eng:"Shuttle", chi:"(n.) 接駁車", example:"Take the shuttle to the airport."}
         ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
-        let wordBank = [];
-        let studyList = [];
-        let currentWord = null;
-        let studyMode = 'card';
-        let isFlipped = false;
-        let hp = 10;
-        let floor = 1;
-        let maxFloor = 10;
-        let timerInterval = null;
-        let timeLeft = 100;
-        let isBoss = false;
+        let wordBank = [], currentWord = null, hp = 10, floor = 1, maxFloor = 10, timerInterval = null, timeLeft = 100, isBoss = false;
 
         function init() {
-            const savedBank = localStorage.getItem('vocab_v12_full');
-            wordBank = savedBank ? JSON.parse(savedBank) : initialWords;
-            updateGlobalCounts();
-            renderList();
+            const saved = localStorage.getItem('vocab_dungeon_final');
+            wordBank = saved ? JSON.parse(saved) : initialWords;
+            updateUIState();
             
-            // 監聽全局 Enter 鍵
-            document.addEventListener('keydown', (e) => {
+            // 全局 Enter 鍵監聽：補足所有點擊不到的角落
+            window.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    handleGlobalEnter();
+                    if (document.getElementById('view-splash').style.display === 'flex') switchView('home');
                 }
             });
         }
 
-        function handleGlobalEnter() {
-            const currentView = document.querySelector('.view-section.active')?.id;
-            const splashView = document.getElementById('view-splash');
-            
-            if (splashView.style.display === 'flex') {
-                switchView('home');
-            } else if (currentView === 'view-add') {
-                const engVal = document.getElementById('newEng').value;
-                const chiVal = document.getElementById('newChi').value;
-                if(engVal && !chiVal) autoFetch();
-                else if(engVal && chiVal) addNewWord();
-            } else if (currentView === 'view-dungeon' && isBoss) {
-                submitBossAnswer();
-            }
+        function updateUIState() {
+            document.getElementById('bankCount').innerText = wordBank.length;
+            document.getElementById('listCount').innerText = wordBank.length;
+            renderWordList();
         }
 
-        function saveState() {
-            localStorage.
+        function renderWordList() {
+            document.getElementById('wordListContainer').innerHTML = wordBank.map(w => `
+                <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee">
+                    <span><b>${w.eng}</b> - ${w.chi}</span>
+                    <button onclick="deleteWord(${w.id})" style="border:none; color:red; background:none">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteWord(id) { wordBank = wordBank.filter(w => w.id !== id); save(); }
+        function save() { localStorage.setItem('vocab_dungeon_final', JSON.stringify(wordBank)); updateUIState(); }
+        function resetDefaultBank() { if(confirm('重置回所有 CSV 單字？')) { wordBank = initialWords; save(); location.reload(); } }
+
+        function switchView(id) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-splash').style.display = 'none';
+            document.getElementById('view-' + id).classList.add('active');
+            document.getElementById('dungeonBg').style.display = (id === 'dungeon') ? 'block' : 'none';
+            document.getElementById('globalBg').style.display = (id === 'dungeon') ? 'none' : 'block';
+        }
+
+        async function autoFetch() {
+            const eng = document.getElementById('newEng').value.trim();
+            if (!eng) return;
+            try {
+                const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
+                const data = await res.json();
+                const dictRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${eng}`);
+                const dictData = await dictRes.json();
+                let pos = dictData[0] ? `(${dictData[0].meanings[0].partOfSpeech}.) ` : "";
+                let ex = (dictData[0] && dictData[0].meanings[0].definitions[0].example) ? dictData[0].meanings[0].definitions[0].example : "";
+                document.getElementById('newChi').value = pos + data.responseData.translatedText;
+                document.getElementById('newExample').value = ex;
+                // 自動翻譯完後，焦點移至儲存按鈕，方便再次按 Enter
+                document.getElementById('saveBtn').focus();
+            } catch (e) { alert('翻譯失敗'); }
+        }
+
+        function addNewWord() {
+            const eng = document.getElementById('newEng').value.trim(), chi = document.getElementById('newChi').value.trim(), ex = document.getElementById('newExample').value.trim();
+            if (!eng || !chi) return;
+            wordBank.unshift({ eng, chi, example: ex, id: Date.now() });
+            save();
+            document.getElementById('newEng').value = ""; document.getElementById('newChi').value = ""; document.getElementById('newExample').value = "";
+            alert('儲存成功');
+            document.getElementById('newEng').focus();
+        }
+
+        // --- Dungeon Logic ---
+        function startDungeon(mode) {
+            floor = 1; hp = 10;
+            maxFloor = (mode === 'low') ? 10 : (mode === 'mid' ? 15 : 20);
+            switchView('dungeon');
+            loadLevel();
+        }
+
+        function loadLevel() {
+            timeLeft = 100;
+            isBoss = (floor % 5 === 0);
+            currentWord = wordBank[Math.floor(Math.random() * wordBank.length)];
+            document.getElementById('floorDisplay').innerText = `Floor: ${floor}/${maxFloor}`;
+            document.getElementById('hpDisplay').innerText = '❤️ ' + hp;
+            document.getElementById('dungeonChi').innerText = currentWord.chi;
+            
+            // 自動發音 (要求項目)
+            const synth = window.speechSynthesis;
+            const utter = new SpeechSynthesisUtterance(currentWord.eng);
+            utter.lang = 'en-US';
+            synth.speak(utter);
+
+            if (isBoss) {
+                document.getElementById('monsterImg').src = "https://i.imgur.com/LNZ46Uc.png";
+                document.getElementById('dungeonQuizGrid').style.display = 'none';
+                document.getElementById('bossArea').style.display = 'block';
+                document.getElementById('bossInput').value = "";
+                setTimeout(() => document.getElementById('bossInput').focus(), 100);
+            } else {
+                document.getElementById('monsterImg').src = "https://i.imgur.com/BbjA5GC.png";
+                document.getElementById('dungeonQuizGrid').style.display = 'grid';
+                document.getElementById('bossArea').style.display = 'none';
+                renderQuiz();
+            }
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            let speed = (floor / 10) + 1.2;
+            timerInterval = setInterval(() => {
+                timeLeft -= speed;
+                document.getElementById('timerLine').style.width = timeLeft + '%';
+                if (timeLeft <= 0) hurt();
+            }, 100);
+        }
+
+        function renderQuiz() {
+            const opts = [currentWord.eng];
+            const others = wordBank.filter(w => w.eng !== currentWord.eng).sort(() => 0.5 - Math.random());
+            for(let i=0; i<3; i++) if(others[i]) opts.push(others[i].eng);
+            document.getElementById('dungeonQuizGrid').innerHTML = opts.sort(() => 0.5 - Math.random()).map(o => `
+                <button class="btn btn-outline" onclick="checkAns('${o}')">${o}</button>
+            `).join('');
+        }
+
+        function checkAns(o) { (o === currentWord.eng) ? winFloor() : hurt(); }
+        function submitBossAnswer() {
+            const val = document.getElementById('bossInput').value.trim().toLowerCase();
+            (val === currentWord.eng.toLowerCase()) ? winFloor() : hurt();
+        }
+
+        function winFloor() {
+            clearInterval(timerInterval);
+            document.getElementById('monsterImg').classList.add('anim-hit');
+            setTimeout(() => {
+                document.getElementById('monsterImg').classList.remove('anim-hit');
+                floor++;
+                if (floor > maxFloor) endGame('win'); else loadLevel();
+            }, 500);
+        }
+
+        function hurt() {
+            clearInterval(timerInterval);
+            hp--;
+            if (hp <= 0) endGame('lose'); else loadLevel();
+        }
+
+        function endGame(res) {
+            document.getElementById('endEmoji').innerText = (res === 'win') ? '🎉' : '💀';
+            document.getElementById('endTitle').innerText = (res === 'win') ? '挑戰成功！' : '你倒下了...';
+            switchView('end');
+        }
+    </script>
+</body>
+</html>
