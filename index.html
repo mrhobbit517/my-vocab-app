@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v26.0 - Ultimate RPG Edition</title>
+    <title>Vocab Dungeon v31.0 - Ultimate RPG Edition</title>
     <style>
         :root { 
             --bg: #f4f7f6;
@@ -151,7 +151,8 @@
         }
         .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary);
         }
-        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444;
+        /* V31 UI Update: 支援多行顯示中文字義 */
+        .card-chi { font-size: 1.6rem; font-weight: bold; color: #444; white-space: pre-wrap; line-height: 1.4;
         }
         .example-box { 
             margin-top: 15px;
@@ -159,6 +160,8 @@
             border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
             font-size: 0.95rem; width: 100%; box-sizing: border-box;
         }
+        /* V31 UI Update: 支援多行顯示例句 */
+        .example-box p { white-space: pre-wrap; margin: 5px 0 0 0; line-height: 1.4; }
         
         .battle-scene { 
             position: relative;
@@ -191,9 +194,9 @@
         }
         @keyframes float-up {
             0% { opacity: 1;
-                transform: translateY(0) scale(1); }
+            transform: translateY(0) scale(1); }
             100% { opacity: 0;
-                transform: translateY(-50px) scale(1.2); }
+            transform: translateY(-50px) scale(1.2); }
         }
         .slash-fx {
             position: absolute;
@@ -204,23 +207,23 @@
         }
         @keyframes slash-anim {
             0% { opacity: 1;
-                transform: scale(0.5) rotate(45deg) translateX(-30px); }
+            transform: scale(0.5) rotate(45deg) translateX(-30px); }
             100% { opacity: 0;
-                transform: scale(1.5) rotate(45deg) translateX(30px); }
+            transform: scale(1.5) rotate(45deg) translateX(30px); }
         }
 
         /* 全新自然受擊動畫 */
         @keyframes hit-shake { 
             0% { transform: translateX(0) scale(1);
-                filter: brightness(1); }
+            filter: brightness(1); }
             20% { transform: translateX(12px) rotate(3deg) scale(0.95);
-                filter: brightness(1.5) drop-shadow(0 0 10px rgba(255,0,0,0.6)); }
+            filter: brightness(1.5) drop-shadow(0 0 10px rgba(255,0,0,0.6)); }
             50% { transform: translateX(-5px) rotate(-2deg) scale(1.02);
-                filter: brightness(1.2); }
+            filter: brightness(1.2); }
             80% { transform: translateX(2px) rotate(1deg);
-                filter: brightness(1); }
+            filter: brightness(1); }
             100% { transform: translateX(0) scale(1);
-                filter: brightness(1); }
+            filter: brightness(1); }
         }
         .anim-hit { animation: hit-shake 0.4s ease-out forwards;
         }
@@ -327,7 +330,6 @@
 
     <div class="container">
         <div id="view-home" class="view-section">
-        
             <h1 style="text-align:center; color:var(--primary); margin-top:0;">VOCAB DUNGEON</h1>
             
             <div class="hero-stats">
@@ -339,7 +341,6 @@
                     <div class="exp-bar" id="statExpBar"></div>
                 </div>
                 <div style="text-align:center">
-           
                     <div style="font-size: 0.8rem; color: var(--gray)">Gold</div>
                     <div id="statGold" style="font-size: 1.2rem; font-weight: bold; color: var(--gold)">0</div>
                 </div>
@@ -397,9 +398,9 @@
             <button class="btn" onclick="switchView('home')">← 返回</button>
             <h2>新增單字</h2>
             <input type="text" id="newEng" placeholder="英文單字" />
-            <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯</button>
-            <textarea id="newChi" placeholder="中文意思 (自動附詞性)"></textarea>
-            <textarea id="newExample" placeholder="例句" rows="3"></textarea>
+            <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯 (多義詞模式)</button>
+            <textarea id="newChi" placeholder="中文意思 (自動獲取多個解釋)"></textarea>
+            <textarea id="newExample" placeholder="例句 (自動獲取精簡例句)" rows="3"></textarea>
             <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
         </div>
 
@@ -427,7 +428,7 @@
                         <button class="speaker-btn" style="width:36px; height:36px" id="flipSpeakBtn">🔊</button>
                     </div>
                     <hr/>
-                    <strong>【中文】</strong><p id="flipChi"></p>
+                    <strong>【中文】</strong><p id="flipChi" class="card-chi" style="font-size: 1.1rem; margin-top: 5px;"></p>
                     <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
                 </div>
             </div>
@@ -460,7 +461,7 @@
                 </div>
             </div>
             <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
-                <div style="font-size:1.3rem; font-weight:bold" id="dungeonChi"></div>
+                <div style="font-size:1.3rem; font-weight:bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="dungeonChi"></div>
                 <div id="bossEngHint" style="display:none; color:var(--primary); font-size:1.1rem; margin-top:5px; letter-spacing:2px;"></div>
             </div>
             
@@ -508,7 +509,7 @@
         const initialWords = [
             {eng:"Ingredient", chi:"[n.] 成分/材料", example:"Flour is a main ingredient for bread."},
             {eng:"Carrot", chi:"[n.] 紅蘿蔔", example:"I like to eat raw carrots."},
-            {eng:"Peas", chi:"[n.] 處理", example:"We had chicken and peas for dinner."},
+            {eng:"Peas", chi:"[n.] 青豆", example:"We had chicken and peas for dinner."},
             {eng:"Sweet potato", chi:"[n.] 番薯", example:"Roasted sweet potato is very delicious."},
             {eng:"Onion", chi:"[n.] 洋蔥", example:"Cutting an onion makes me cry."},
             {eng:"Pepper", chi:"[n.] 甜椒/胡椒", example:"Add some pepper to the soup."},
@@ -562,7 +563,6 @@
             "https://i.imgur.com/8MUpGMJ.jpeg", // B11+ Ice/Dark
         ];
         
-        // RPG Data (Added ownedSkins array)
         let playerState = { level: 1, exp: 0, gold: 0, skin: 'default', potion: 0, hourglass: 0, ownedSkins: ['default'] };
         const skins = [
             { id: 'default', name: '預設勇者', img: 'https://i.imgur.com/gsR29ty.png', price: 0 },
@@ -604,13 +604,10 @@
             const savedWrongs = localStorage.getItem('vocab_wrongs');
             const savedPlayer = localStorage.getItem('vocab_player');
             
-            if (savedBank) { try { wordBank = JSON.parse(savedBank);
-            } catch(e) { wordBank = initialWords; } } 
-            else { wordBank = initialWords;
-            }
+            if (savedBank) { try { wordBank = JSON.parse(savedBank); } catch(e) { wordBank = initialWords; } } 
+            else { wordBank = initialWords; }
 
-            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs);
-            } catch(e) { wrongWords = []; } }
+            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs); } catch(e) { wrongWords = []; } }
             if (savedPlayer) { 
                 try { 
                     playerState = {...playerState, ...JSON.parse(savedPlayer)};
@@ -674,7 +671,6 @@
                     btnHtml = `<span style="color:var(--gold); font-weight:bold; margin-top:5px">🪙 ${skin.price}</span>`;
                 }
 
-                // Dynamic size for tofu and goma in shop
                 let imgSize = (skin.id === 'tofu' || skin.id === 'goma') ? '105px' : '70px';
 
                 btn.innerHTML = `
@@ -699,9 +695,8 @@
         }
 
         function buySkin(id, price) {
-            if (playerState.skin === id) return; // Already equipped
+            if (playerState.skin === id) return;
             
-            // Equip owned skin
             if (price === 0 || playerState.ownedSkins.includes(id)) {
                 playerState.skin = id;
                 saveState(); renderShop(); updateGlobalCounts(); 
@@ -709,7 +704,6 @@
                 return;
             }
             
-            // Buy and equip new skin
             if (playerState.gold >= price) {
                 playerState.gold -= price;
                 playerState.skin = id;
@@ -773,37 +767,73 @@
             alert("儲存成功");
         }
 
+        /* --- V31.0: 升級版自動翻譯 (支援一字多義 & 簡單例句) --- */
         async function autoFetch() {
             const eng = document.getElementById('newEng').value.trim();
             if(!eng) return;
             const btn = document.querySelector('[onclick="autoFetch()"]');
             const originalText = btn.innerText;
-            btn.innerText = "⏳ 檢索中...";
+            btn.innerText = "⏳ 深度檢索中...";
+            
             try {
-                const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
-                const tData = await tRes.json();
-                let chiTranslation = tData.responseData.translatedText;
-                
+                // 1. 從 Dictionary API 提取詞性與篩選「簡單」例句
                 const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
                 const dData = await dRes.json();
-                let pos = "", example = "";
-                if(Array.isArray(dData) && dData.length > 0) {
-                    for(let meaning of dData[0].meanings) {
-                        if(!pos && meaning.partOfSpeech) pos = meaning.partOfSpeech;
-                        for(let def of meaning.definitions) {
-                            if(!example && def.example) example = def.example;
-                        }
-                    }
-                }
-                const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.'
-                };
-                let posPrefix = pos ? `[${posMap[pos] || pos}] ` : "";
                 
-                document.getElementById('newChi').value = posPrefix + chiTranslation;
-                document.getElementById('newExample').value = example || `This is a simple sentence for ${eng}.`;
+                let posSet = new Set();
+                let bestExample = "";
+                let shortestLen = 999;
+                
+                if(Array.isArray(dData) && dData.length > 0) {
+                    const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.' };
+                    
+                    dData[0].meanings.forEach(meaning => {
+                        if (meaning.partOfSpeech) posSet.add(posMap[meaning.partOfSpeech] || meaning.partOfSpeech);
+                        
+                        meaning.definitions.forEach(def => {
+                            if (def.example) {
+                                let cleanEx = def.example.replace(/(<([^>]+)>)/gi, "");
+                                // 篩選條件：大於10個字元，但短於已知最短例句，保證簡單易讀
+                                if (cleanEx.length > 10 && cleanEx.length < 80 && cleanEx.length < shortestLen) {
+                                    shortestLen = cleanEx.length;
+                                    bestExample = cleanEx;
+                                }
+                            }
+                        });
+                    });
+                }
+
+                // 2. 從 MyMemory API 提取「一字多義」
+                const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
+                const tData = await tRes.json();
+                
+                let translationSet = new Set();
+                
+                // 加入主要翻譯
+                if (tData.responseData && tData.responseData.translatedText) {
+                    translationSet.add(tData.responseData.translatedText);
+                }
+                
+                // 遍歷所有備用匹配結果，收集不同的意思
+                if (tData.matches && Array.isArray(tData.matches)) {
+                    tData.matches.forEach(match => {
+                        // 過濾掉帶有英文字母的無效翻譯，且長度合理
+                        if (match.translation && match.translation.length < 15 && !match.translation.match(/[a-zA-Z]/)) {
+                            translationSet.add(match.translation);
+                        }
+                    });
+                }
+                
+                // 格式化輸出
+                let posPrefix = posSet.size > 0 ? `[${Array.from(posSet).join(', ')}] ` : "";
+                let finalChiTranslations = Array.from(translationSet).slice(0, 4).join(" / "); // 最多提取 4 個意思
+                
+                document.getElementById('newChi').value = `${posPrefix}\n${finalChiTranslations}`;
+                document.getElementById('newExample').value = bestExample || `This is a simple sentence for ${eng}.`;
+
             } catch(e) { 
-                if(!document.getElementById('newChi').value) document.getElementById('newChi').value = "翻譯失敗，請手動輸入";
-                document.getElementById('newExample').value = `I need to learn how to use the word ${eng}.`;
+                if(!document.getElementById('newChi').value) document.getElementById('newChi').value = "翻譯失敗，請手動嘗試";
+                if(!document.getElementById('newExample').value) document.getElementById('newExample').value = `I need to learn how to use the word ${eng}.`;
             } finally {
                 btn.innerText = originalText;
             }
@@ -815,8 +845,10 @@
             wordBank.forEach(w => {
                 const div = document.createElement('div');
                 div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
+                // V31 列表顯示修飾，避免過長字義破壞排版
+                const shortChi = w.chi.replace(/\n/g, ' ').substring(0, 20) + (w.chi.length > 20 ? '...' : '');
                 div.innerHTML = `
-                    <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
+                    <div style="flex:1"><strong>${w.eng}</strong> <br><span style="font-size:0.85rem;color:#555">${shortChi}</span></div>
                     <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
                     <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
                 `;
@@ -830,12 +862,18 @@
         }
 
         function exportCSV() {
-            let csvContent = "\ufeff英文,中文,例句\n" + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
+            // V31: Replace inner quotes and handle line breaks for robust CSV export
+            let csvContent = "\ufeff英文,中文,例句\n" + wordBank.map(w => {
+                const safeChi = w.chi.replace(/"/g, '""');
+                const safeEx = (w.example || '').replace(/"/g, '""');
+                return `"${w.eng}","${safeChi}","${safeEx}"`;
+            }).join("\n");
+            
             const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", "my_vocab_list.csv");
+            link.setAttribute("download", "my_vocab_list_v31.csv");
             document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); 
         }
 
@@ -859,8 +897,7 @@
             reader.readAsText(file);
         }
 
-        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5);
-        }
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
 
         function speak(text) {
             if(!text || !window.speechSynthesis) return;
@@ -898,7 +935,9 @@
                 unflipped.innerHTML = `<div class="card-eng">${currentWord.eng}</div><p style="color:#999; font-size:0.85rem; margin-top:5px;">點擊卡片翻面</p>`;
                 readAgainArea.style.display = 'block';
             } else { 
-                unflipped.innerHTML = `<div class="card-chi">${currentWord.chi}</div>`;
+                // V31: Format the Chinese display on the quiz card for better visibility
+                const simpleChi = currentWord.chi.split('\n')[0]; 
+                unflipped.innerHTML = `<div class="card-chi" style="font-size:1.3rem;">${simpleChi}</div>`;
                 quizOpts.style.display = 'grid'; readAgainArea.style.display = 'none';
                 
                 const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
@@ -910,7 +949,8 @@
                 });
             }
 
-            document.getElementById('flipEng').innerText = currentWord.eng; document.getElementById('flipChi').innerText = currentWord.chi;
+            document.getElementById('flipEng').innerText = currentWord.eng; 
+            document.getElementById('flipChi').innerText = currentWord.chi;
             document.getElementById('flipEx').innerText = currentWord.example || '無例句';
             document.getElementById('flipSpeakBtn').onclick = (e) => { e.stopPropagation(); speak(currentWord.eng); };
         }
@@ -950,12 +990,14 @@
             if(wordBank.length < 4) return alert("單字不足 4 個！");
             dungeonMode = diff;
             maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
+            
             // Apply Potion buffs
             maxHp = 10 + (playerState.level > 5 ? 2 : 0);
             // Base HP
             if (playerState.potion > 0) { maxHp += playerState.potion;
             playerState.potion = 0; }
             hp = maxHp;
+            
             // Apply Hourglass buffs
             extraTime = playerState.hourglass * 2;
             playerState.hourglass = 0;
@@ -982,36 +1024,38 @@
             currentWord = studyList[floor - 1];
             timeLeft = 100;
             
-            // Dynamic Background based on floor
             const bgIndex = Math.floor((floor - 1) / 5);
             document.getElementById('dungeonBg').style.backgroundImage = `url("${bgImages[Math.min(bgIndex, bgImages.length-1)]}")`;
             
             document.getElementById('timerLine').style.width = '100%';
             document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
             document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
+            
             isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
-            (dungeonMode === 'high' && (floor % 5 === 0));
+                            (dungeonMode === 'high' && (floor % 5 === 0));
             const mImgElement = document.getElementById('monsterImg');
             mImgElement.className = 'monster-img';
+            
+            // V31 Update: Show primary meaning in Dungeon to avoid UI clutter
+            const primaryDungeonChi = currentWord.chi.split('\n').join(' | ').substring(0, 30);
+            
             if (isBossCurrent) {
                 currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
                 document.getElementById('dungeonQuizGrid').style.display = 'none';
                 document.getElementById('dungeonBossArea').style.display = 'block';
                 document.getElementById('bossHpBar').style.display = 'block';
                 
-                // Multi-hit setup
                 bossMaxHp = 3;
                 bossCurrentHp = 3;
                 document.getElementById('bossHpFill').style.width = '100%';
                 
                 bossWords = shuffle(wordBank).slice(0, bossMaxHp);
                 if(!bossWords.some(w => w.eng === currentWord.eng)) bossWords[0] = currentWord;
-                // Ensure current word is in
                 currentWord = bossWords[bossMaxHp - bossCurrentHp];
-                // Target 1
                 
-                document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + currentWord.chi;
-                document.getElementById('bossEngHint').innerText = currentWord.eng.substring(0,2) + "..."; // Hint for boss
+                const bossChi = currentWord.chi.split('\n').join(' | ').substring(0, 30);
+                document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + bossChi;
+                document.getElementById('bossEngHint').innerText = currentWord.eng.substring(0,2) + "..."; 
                 document.getElementById('bossEngHint').style.display = 'block';
                 const bossInput = document.getElementById('bossInput');
                 bossInput.value = ''; bossInput.focus();
@@ -1021,7 +1065,8 @@
                 document.getElementById('dungeonBossArea').style.display = 'none';
                 document.getElementById('bossHpBar').style.display = 'none';
                 document.getElementById('bossEngHint').style.display = 'none';
-                document.getElementById('dungeonChi').innerText = currentWord.chi;
+                document.getElementById('dungeonChi').innerText = primaryDungeonChi;
+                
                 const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
                 currentOptions = shuffle([currentWord.eng, ...pool]);
                 
@@ -1043,13 +1088,11 @@
             document.getElementById('timerLine').style.width = '100%';
 
             let totalSeconds = isBossCurrent ? 12 : 6;
-            // Boss gets more base time
             totalSeconds += extraTime;
             const isFever = combo >= 5;
             
             if(isFever) {
                 totalSeconds *= 2;
-                // Time flows 2x slower in Fever
                 document.getElementById('battleScene').classList.add('fever-active');
                 document.getElementById('timerLine').classList.add('timer-fever');
             } else {
@@ -1064,7 +1107,6 @@
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval); triggerPlayerHurt(true);
                 }
- 
             }, 100);
         }
 
@@ -1077,7 +1119,7 @@
 
         function showSlashFx() {
             const fx = document.getElementById('slashFx');
-            fx.style.animation = 'none'; fx.offsetHeight; // trigger reflow
+            fx.style.animation = 'none'; fx.offsetHeight; 
             fx.style.animation = 'slash-anim 0.3s forwards';
         }
 
@@ -1097,17 +1139,16 @@
                 setTimeout(() => document.getElementById('monsterImg').classList.remove('anim-hit'), 400);
                 if (bossCurrentHp <= 0) {
                     checkDungeonAns(true);
-                    // Boss defeated
                 } else {
-                    // Load next word for multi-hit
                     currentWord = bossWords[bossMaxHp - bossCurrentHp];
-                    document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + currentWord.chi;
+                    const bossChi = currentWord.chi.split('\n').join(' | ').substring(0, 30);
+                    document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + bossChi;
                     document.getElementById('bossEngHint').innerText = currentWord.eng.substring(0,2) + "...";
                     inputEl.focus();
                 }
             } else {
                 inputEl.value = '';
-                // clear wrong input
+                // Iron rule: stay on the same word, just deduct HP
                 triggerPlayerHurt(false);
             }
         }
@@ -1136,9 +1177,9 @@
                     if (floor >= maxFloor) endGame('win');
                     else if (isBossCurrent) showChest();
                     else { floor++; loadDungeonLevel(); }
- 
                 }, 600);
             } else {
+                // Iron rule: stay on the same word, just deduct HP
                 triggerPlayerHurt(false);
             }
         }
@@ -1161,8 +1202,9 @@
             setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
 
             if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+            
             if (hp <= 0) setTimeout(() => endGame('lose'), 600);
-            else setTimeout(() => startTimer(), 800);
+            else setTimeout(() => startTimer(), 800); // Reloads timer, stays on the SAME question
         }
 
         function showChest() {
@@ -1178,7 +1220,6 @@
             chestStatus = 'open';
             document.getElementById('chestImg').src = "https://i.imgur.com/JNPgpc7.png";
             
-            // Boss drops gold
             const goldDrop = Math.floor(Math.random() * 20) + 10;
             playerState.gold += goldDrop;
 
@@ -1199,7 +1240,6 @@
 
         function endGame(result) {
             clearInterval(timerInterval);
-            // Calculate RPG Rewards
             const expGain = killedWords.length * 15 + (result === 'win' ? 100 : 0);
             const goldGain = killedWords.length * 2 + (result === 'win' ? 30 : 0);
             
@@ -1220,16 +1260,17 @@
             
             document.getElementById('killedCount').innerText = killedWords.length;
             document.getElementById('missedCount').innerText = missedWords.length;
-            // Enhanced Missed List with Audio
+            
             const missedContainer = document.getElementById('missedListContainer');
             missedContainer.innerHTML = '';
             if (missedWords.length === 0) {
                 missedContainer.innerText = '太棒了，無漏網之魚！';
             } else {
                 missedWords.forEach(w => {
+                    const shortChi = w.chi.replace(/\n/g, ' ').substring(0, 15);
                     const d = document.createElement('div');
                     d.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#fff; padding:5px; border-radius:5px; margin-top:5px; border:1px solid #ddd;";
-                    d.innerHTML = `<span><strong>${w.eng}</strong> <span style="font-size:0.8rem;color:#666">${w.chi}</span></span>
+                    d.innerHTML = `<span><strong>${w.eng}</strong> <span style="font-size:0.8rem;color:#666">${shortChi}...</span></span>
                                    <button class="speaker-btn" style="width:28px; height:28px; font-size:0.8rem;" onclick="speak('${w.eng}')">🔊</button>`;
                     missedContainer.appendChild(d);
                 });
@@ -1241,6 +1282,7 @@
         document.getElementById('bossInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') submitBossAnswer();
         });
+        
         init();
     </script>
 </body>
