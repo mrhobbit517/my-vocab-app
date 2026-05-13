@@ -1,835 +1,1247 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" class="light">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>旅結 開支助手</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: { extend: { colors: { navy: '#0369a1', gold: '#fbbf24' } } }
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocab Dungeon v26.0 - Ultimate RPG Edition</title>
     <style>
-        html, body { 
-            overscroll-behavior: none; margin: 0; padding: 0; 
-            font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; 
+        :root { 
+            --bg: #f4f7f6;
+            --primary: #0984e3; 
+            --text: #2d3436; 
+            --danger: #d63031; 
+            --success: #27ae60; 
+            --gray: #636e72;
+            --gold: #f1c40f;
         }
-        body { background-color: #111827; display: flex; justify-content: center; height: 100vh; height: 100dvh; overflow: hidden; }
-        
-        #app-wrapper {
-            width: 100%; max-width: 480px; height: 100vh; height: 100dvh; position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column;
+        body { 
+            background: var(--bg);
+            font-family: -apple-system, sans-serif; 
+            margin: 0; 
+            color: var(--text);
+            overflow-x: hidden; 
+        }
+        .container { 
+            width: 100%;
+            max-width: 480px; 
+            min-height: 100vh;
+            margin: 0 auto; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            z-index: 1;
         }
         
-        .app-bg-fixed { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
-        .app-bg-fixed img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: opacity 0.3s; }
-        .dark .app-bg-fixed img { opacity: 0.15; }
+        .global-bg { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); 
+            background-size: cover; 
+            background-position: center; 
+            z-index: 0;
+        }
+        .dungeon-bg { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); 
+            background-size: cover; 
+            background-position: center; 
+            transition: background-image 0.5s ease;
+            z-index: 0;
+            display: none;
+        }
 
-        #launch-screen { 
-            position: absolute; inset: 0; background-image: url('https://i.imgur.com/cNRBKIW.jpeg'); 
-            background-size: cover; background-position: center; z-index: 100; transition: opacity 0.6s ease-out;
+        .splash-screen { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; 
+            z-index: 1000; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
         }
-        
-        .glass { 
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-            border: 1px solid rgba(255, 255, 255, 0.5); width: 100%; box-sizing: border-box; overflow: hidden;
+        .splash-img { 
+            width: 100%;
+            height: 100%; object-fit: contain; 
+            position: absolute; top: 0; left: 0;
         }
-        .dark .glass { 
-            background: rgba(31, 41, 55, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); 
+        .enter-btn-container { 
+            position: absolute;
+            bottom: 15%; width: 100%; 
+            display: flex; justify-content: center; 
         }
-        
-        input, select { box-sizing: border-box !important; font-size: 16px !important; max-width: 100%; }
-        select option { color: inherit; background-color: inherit; }
-        
-        .tab-active { color: #0369a1; border-bottom: 3px solid #0369a1; font-weight: 700; }
-        .dark .tab-active { color: #38bdf8; border-bottom: 3px solid #38bdf8; }
-        .safe-pb { padding-bottom: env(safe-area-inset-bottom, 30px); }
-        .modal-bg { background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
-        #i_splitList { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        
-        .swipe-wrap { position: relative; overflow: hidden; border-radius: 1rem; margin-bottom: 0.75rem; }
-        .swipe-delete-btn { position: absolute; top: 0; right: 0; bottom: 0; width: 80px; background: #ef4444; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 1rem; }
-        .swipe-content { position: relative; z-index: 10; transition: transform 0.2s ease; background: inherit; }
+        .btn-rpg { 
+            background: #2d3436;
+            color: #fff; border: 4px solid #fff;
+            padding: 12px 40px; font-size: 1.5rem; font-weight: bold; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 0 4px #2d3436;
+            transition: 0.1s; 
+        }
+        .btn-rpg:active { transform: scale(0.9);
+            background: #636e72; }
 
-        .fade-in-up {
-            animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .btn { 
+            background: #fff;
+            border: 1px solid #ddd; padding: 14px;
+            margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; 
+            width: 100%; font-weight: 600;
+            box-sizing: border-box; transition: 0.2s; 
+            -webkit-tap-highlight-color: transparent;
         }
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .btn:active { transform: scale(0.96); background: #f0f0f0;
+        }
+        .btn-primary { 
+            background: var(--primary);
+            color: white; border: none;
+            box-shadow: 0 4px 12px rgba(9,132,227,0.2); 
+        }
+        .btn-outline { 
+            color: var(--primary);
+            border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
+        }
+        .btn-small { padding: 8px; font-size: 0.85rem;
+            margin: 5px 2px; flex: 1; }
+        .speaker-btn { 
+            background: #e1f0ff;
+            border: none;
+            border-radius: 50%; width: 44px; height: 44px; cursor: pointer; 
+            display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        
+        /* RPG Stats Panel */
+        .hero-stats {
+            background: rgba(255,255,255,0.9);
+            border-radius: 15px; padding: 15px; margin-bottom: 15px;
+            border: 2px solid #e1b12c;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .exp-bar-container {
+            flex-grow: 1;
+            height: 10px; background: #eee; border-radius: 5px; margin: 0 15px; overflow: hidden;
+        }
+        .exp-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.3s;
+        }
+
+        /* Shop Grid */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        .shop-item {
+            background: white;
+            border: 2px solid #eee; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: space-between;
+        }
+        .shop-item:hover { border-color: var(--primary);
+        }
+        .shop-item.owned { border-color: var(--success); background: #f0fff4;
+        }
+
+        .card { 
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px; padding: 25px; margin: 10px 0;
+            min-height: 260px; display: flex; flex-direction: column; justify-content: center; 
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
+            position: relative; border: 1px solid #eee;
+        }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary);
+        }
+        .card-chi { font-size: 1.8rem; font-weight: bold; color: #444;
+        }
+        .example-box { 
+            margin-top: 15px;
+            padding: 12px; background: #f9f9f9; border-radius: 10px;
+            border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
+            font-size: 0.95rem; width: 100%; box-sizing: border-box;
+        }
+        
+        .battle-scene { 
+            position: relative;
+            width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
+            background: rgba(255, 255, 255, 0.5); border-radius: 15px; transition: 0.3s;
+        }
+        .fever-active {
+            box-shadow: 0 0 20px 5px rgba(243, 156, 18, 0.8) inset;
+            border: 2px solid #f39c12;
+        }
+        
+        /* 置中與佈局修正 */
+        .monster-box { position: absolute;
+            top: 20px; right: 10%; text-align: center; z-index: 1; }
+        .monster-img { width: 90px;
+            height: auto; image-rendering: pixelated; transition: 0.3s; transform-origin: center bottom; }
+        .player-box { position: absolute;
+            bottom: -5px;
+            left: 0; z-index: 2; width: 60%; }
+        .player-img { width: 100%;
+            max-width: 250px; height: auto; transition: 0.3s;
+            object-fit: contain; }
+        
+        /* Floating Text & Slash FX 置中修正 */
+        .floating-text {
+            position: absolute;
+            right: 15%; top: 40px; font-weight: bold; font-size: 1.5rem; z-index: 10;
+            animation: float-up 0.8s ease-out forwards; pointer-events: none;
+            text-shadow: 1px 1px 2px #000;
+        }
+        @keyframes float-up {
+            0% { opacity: 1;
+                transform: translateY(0) scale(1); }
+            100% { opacity: 0;
+                transform: translateY(-50px) scale(1.2); }
+        }
+        .slash-fx {
+            position: absolute;
+            right: 5%; top: 10px; width: 120px; height: 120px; z-index: 5;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            clip-path: polygon(0 40%, 100% 45%, 100% 55%, 0 60%);
+            animation: slash-anim 0.3s forwards; pointer-events: none; opacity: 0; transform: rotate(45deg);
+        }
+        @keyframes slash-anim {
+            0% { opacity: 1;
+                transform: scale(0.5) rotate(45deg) translateX(-30px); }
+            100% { opacity: 0;
+                transform: scale(1.5) rotate(45deg) translateX(30px); }
+        }
+
+        /* 全新自然受擊動畫 */
+        @keyframes hit-shake { 
+            0% { transform: translateX(0) scale(1);
+                filter: brightness(1); }
+            20% { transform: translateX(12px) rotate(3deg) scale(0.95);
+                filter: brightness(1.5) drop-shadow(0 0 10px rgba(255,0,0,0.6)); }
+            50% { transform: translateX(-5px) rotate(-2deg) scale(1.02);
+                filter: brightness(1.2); }
+            80% { transform: translateX(2px) rotate(1deg);
+                filter: brightness(1); }
+            100% { transform: translateX(0) scale(1);
+                filter: brightness(1); }
+        }
+        .anim-hit { animation: hit-shake 0.4s ease-out forwards;
+        }
+        
+        @keyframes hurt-red-filter { 0% { filter: brightness(1);
+        } 50% { filter: brightness(1.2) sepia(1) saturate(8); } 100% { filter: brightness(1);
+        } }
+        @keyframes hurt-vibrate { 
+            0% { transform: translate(0, 0);
+            } 
+            20% { transform: translate(3px, 2px);
+            } 
+            40% { transform: translate(3px, -1px);
+            } 
+            60% { transform: translate(2px, 1px);
+            } 
+            80% { transform: translate(3px, 2px);
+            } 
+            100% { transform: translate(0, 0);
+            } 
+        }
+        .anim-hurt-combined { animation: hurt-vibrate 0.4s, hurt-red-filter 0.4s;
+        }
+
+        .timer-line { 
+            position: absolute;
+            top: -10px; left: 0; height: 6px; 
+            background: var(--danger); transition: width 0.1s linear, background-color 0.3s;
+        }
+        .timer-fever { background: #f1c40f !important; box-shadow: 0 0 10px #f1c40f;
+        }
+        
+        .quiz-grid { display: grid;
+            grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        input, textarea { 
+            width: 100%;
+            padding: 14px; border: 2px solid #eee; 
+            border-radius: 12px; margin-bottom: 10px; box-sizing: border-box; font-size: 1rem;
+        }
+        .footer-img { width: 100%; height: auto; border-radius: 15px;
+        }
+
+        .hurt-flash { 
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh; 
+            box-shadow: inset 0 0 50px rgba(214, 48, 49, 0.8); pointer-events: none;
+            z-index: 999; opacity: 0; 
+        }
+        .anim-flash { animation: flash-fade 0.5s ease;
+        }
+        @keyframes flash-fade { 0% { opacity: 0; } 20% { opacity: 1;
+        } 100% { opacity: 0; } }
+
+        .combo-text { 
+            position: absolute;
+            left: 20px; top: 30px; font-size: 1.8rem; 
+            font-weight: bold; color: #ff7675; text-shadow: 2px 2px #2d3436; z-index: 10;
+            animation: pop 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); display: none;
+        }
+        @keyframes pop { 0% { transform: scale(0.5);
+        } 100% { transform: scale(1); } }
+
+        .boss-hp-bar {
+            width: 100%;
+            height: 8px; background: #555; border-radius: 4px; margin-bottom: 10px; overflow: hidden; display: none;
+        }
+        .boss-hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s;
+        }
+
+        .modal-overlay { 
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); display: none; justify-content: center; 
+            align-items: center; z-index: 1000;
+        }
+        .modal-content { 
+            background: white;
+            padding: 30px; border-radius: 20px; 
+            text-align: center; width: 80%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .chest-img { width: 100px;
+            height: auto; cursor: pointer; transition: 0.2s; object-fit: contain; }
+        .chest-img:hover { transform: scale(1.1);
+        }
+
+        .view-section { display: none !important; width: 100%; flex: 1; flex-direction: column;
+            justify-content: center; }
+        .view-section.active { display: flex !important;
         }
     </style>
 </head>
-<body class="text-gray-900 dark:text-gray-100 transition-colors duration-300">
-    
-    <div id="app-wrapper" class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-        <div class="app-bg-fixed"><img src="https://i.imgur.com/DRcZvHV.png" alt="bg"></div>
+<body>
+    <div class="global-bg" id="globalBg"></div>
+    <div class="dungeon-bg" id="dungeonBg"></div>
+    <div class="hurt-flash" id="hurtFlash"></div>
 
-        <div id="launch-screen" class="flex flex-col items-center">
-            <div class="absolute top-[20%] w-full text-center px-8 -translate-y-1/2">
-                <h1 class="text-5xl font-extrabold text-white tracking-tighter mb-4 [text-shadow:_0_4px_12px_rgba(0,0,0,0.5)]">
-                    旅結 <span class="text-3xl text-orange-400 italic">開支助手</span>
-                </h1>
-                <p class="text-white text-base opacity-80 uppercase tracking-[0.5em] [text-shadow:_0_2px_6px_rgba(0,0,0,0.3)]">Expense Manager</p>
-            </div>
-            <button onclick="enterApp()" class="absolute bottom-32 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-xl text-white border border-white/30 px-14 py-4 rounded-full font-bold text-xl tracking-[0.3em] shadow-2xl active:scale-90 transition-transform">
-                ENTER
-            </button>
-        </div>
-
-        <div id="app-content" class="hidden opacity-0 transition-opacity duration-500 relative z-10 flex flex-col h-full overflow-hidden">
-            
-            <div id="view-home" class="relative px-5 pt-12 pb-20 flex-1 overflow-y-auto">
-                <button onclick="toggleDarkMode()" class="absolute top-6 right-6 p-2 rounded-full bg-white/50 dark:bg-gray-800/50 shadow-sm backdrop-blur-md text-xl z-20">
-                    <span id="icon-theme">🌙</span>
-                </button>
-                <header class="mb-10 text-center relative mt-6">
-                    <h1 class="text-3xl font-extrabold text-sky-950 dark:text-white tracking-tighter transition-colors">旅結 <span class="text-amber-500 italic">開支助手</span></h1>
-                    <div class="mt-4 flex justify-center gap-2">
-                        <button onclick="exportData()" class="text-[9px] bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full shadow-sm border dark:border-gray-600">匯出備份</button>
-                        <button onclick="document.getElementById('importFile').click()" class="text-[9px] bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-full shadow-sm border dark:border-gray-600">匯入還原</button>
-                        <input type="file" id="importFile" class="hidden" onchange="importData(event)">
-                    </div>
-                </header>
-            
-                <div class="glass p-6 rounded-[2.5rem] shadow-xl mb-10 transition-colors">
-                    <h3 class="text-xs font-bold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-                        <span class="w-1 h-3.5 bg-amber-400 rounded-full"></span> 建立新項目
-                    </h3>
-                    <input type="text" id="newTripInput" placeholder="項目名稱 (如：日本之旅)" class="w-full bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 px-5 py-4 rounded-2xl focus:outline-none mb-4 shadow-sm">
-                    <button onclick="h_createTrip()" class="w-full bg-sky-950 dark:bg-sky-700 text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-transform">開始使用</button>
-                </div>
-                
-                <div class="flex gap-4 mb-4 border-b border-gray-200 dark:border-gray-700 transition-colors">
-                    <button id="home-tab-active" onclick="renderHomeList('active')" class="pb-2 border-b-2 border-sky-900 dark:border-sky-400 font-bold text-sm">進行中</button>
-                    <button id="home-tab-archive" onclick="renderHomeList('archive')" class="pb-2 text-gray-400 text-sm">已封存</button>
-                </div>
-                <div id="h_tripList" class="space-y-4"></div>
-            </div>
-
-            <div id="view-detail" class="hidden relative px-5 pt-6 pb-20 safe-pb flex-1 overflow-y-auto">
-                <div class="flex items-center justify-between mb-5">
-                    <button onclick="h_goHome()" class="text-sky-900 dark:text-sky-300 text-sm flex items-center gap-1 font-bold shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path d="M15 19l-7-7 7-7" /></svg> 返回
-                    </button>
-                    <h2 id="d_tripTitle" class="text-base font-extrabold text-sky-950 dark:text-white break-all mx-2 text-center"></h2>
-                    <div class="flex gap-1">
-                        <button onclick="h_archiveTrip()" id="archiveBtn" class="text-gray-500 text-[10px] bg-white dark:bg-gray-800 shadow-sm px-3 py-2 rounded-full font-bold">封存</button>
-                    </div>
-                </div>
-
-                <div id="capture-area" class="glass rounded-[2.5rem] p-6 shadow-xl mb-5">
-                    <p class="text-[10px] text-gray-400 text-center mb-1 font-bold">點擊圖表可過濾紀錄</p>
-                    <div class="h-40 w-full mb-3"><canvas id="d_chart"></canvas></div>
-                    <div class="text-center">
-                        <p class="text-[9px] text-gray-400 dark:text-gray-300 uppercase tracking-widest mb-0.5">Total Amount (HKD)</p>
-                        <h3 id="d_totalAmt" class="text-3xl font-black text-sky-950 dark:text-white transition-colors">$ 0.00</h3>
-                    </div>
-                </div>
-
-                <div class="flex mb-6 border-b border-gray-100 dark:border-gray-800 text-sm bg-white/40 dark:bg-gray-800/40 backdrop-blur-md rounded-xl p-1 sticky top-0 z-20">
-                    <button onclick="h_switchTab('add'); resetForm();" id="tab-add" class="flex-1 py-3 rounded-lg tab-active">記帳</button>
-                    <button onclick="h_switchTab('list')" id="tab-list" class="flex-1 py-3 rounded-lg text-gray-400">紀錄</button>
-                    <button onclick="h_switchTab('settle')" id="tab-settle" class="flex-1 py-3 rounded-lg text-gray-400">結算</button>
-                    <button onclick="h_switchTab('mem')" id="tab-mem" class="flex-1 py-3 rounded-lg text-gray-400">成員</button>
-                </div>
-
-                <div id="p-add" class="space-y-4 fade-in-up">
-                    <div class="flex gap-2">
-                        <div class="relative w-[70px] flex-none">
-                            <select id="i_cat" onchange="handleCatChange()" class="w-full h-full bg-white dark:bg-gray-700 dark:text-white px-1 py-4 rounded-2xl shadow-sm text-center font-bold outline-none appearance-none cursor-pointer"></select>
-                            <button id="btn_del_cat" onclick="h_deleteCustomCat()" class="hidden absolute -top-1.5 -left-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[12px] font-bold shadow-md z-10">×</button>
-                        </div>
-                        <input type="text" id="i_name" placeholder="項目名稱 (如：拉麵)" class="flex-1 min-w-0 bg-white dark:bg-gray-700 px-5 py-4 rounded-2xl shadow-sm dark:text-white outline-none">
-                    </div>
-
-                    <div class="glass p-4 rounded-2xl shadow-sm space-y-3">
-                        <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase">
-                            <span>結算幣值 (必定轉為HKD)</span>
-                            <span id="fx_hint" class="text-emerald-500"></span>
-                        </div>
-                        <div class="flex gap-2 items-center">
-                            <select id="i_currency" onchange="checkCurrency()" class="w-1/3 bg-gray-50 dark:bg-gray-600 px-2 py-3 rounded-xl text-xs font-bold dark:text-white outline-none">
-                                <option value="HKD">HKD</option><option value="JPY">JPY</option><option value="TWD">TWD</option>
-                                <option value="CNY">CNY</option><option value="KRW">KRW</option><option value="THB">THB</option>
-                                <option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AUD">AUD</option>
-                                <option value="CAD">CAD</option><option value="SGD">SGD</option>
-                            </select>
-                            <div class="flex flex-1 gap-1 items-center bg-white dark:bg-gray-700 rounded-xl pr-1 overflow-hidden shadow-sm">
-                                <input type="number" id="i_amt" inputmode="decimal" placeholder="單人/總金額" class="w-full px-3 py-3 font-bold bg-transparent dark:text-white outline-none">
-                                <button onclick="multiplyByMembers()" class="shrink-0 bg-amber-400 hover:bg-amber-500 text-amber-950 px-3 py-2 rounded-lg text-[11px] font-black active:scale-95 transition-transform shadow-sm">× 人數</button>
-                            </div>
-                        </div>
-                        
-                        <div id="fx_rate_box" class="hidden flex flex-wrap gap-2 items-center mt-2 border-t dark:border-gray-600 pt-3">
-                            <span class="text-xs text-gray-500 shrink-0">匯率: 1外幣 = </span>
-                            <input type="number" id="i_rate" step="0.0001" placeholder="輸入/載入" oninput="calcHkd()" class="w-24 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg text-xs shadow-inner dark:text-white outline-none border border-transparent focus:border-sky-500">
-                            <span class="text-xs font-bold text-sky-800 dark:text-sky-300 ml-auto shrink-0">約 <span id="fx_hkd_result">0.00</span> HKD</span>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <input type="date" id="i_date" class="w-1/3 bg-white dark:bg-gray-700 px-3 py-4 rounded-2xl shadow-sm text-xs dark:text-white outline-none">
-                        <div class="w-2/3 relative">
-                            <input type="file" id="i_receipt" accept="image/*" class="hidden" onchange="previewReceipt(event)">
-                            <button onclick="document.getElementById('i_receipt').click()" class="w-full h-full bg-white dark:bg-gray-700 px-4 py-4 rounded-2xl shadow-sm text-xs flex items-center justify-center gap-2 text-gray-500 hover:text-sky-600 outline-none">
-                                📸 <span id="receipt_label">附加收據相片</span>
-                            </button>
-                            <button id="receipt_del" onclick="clearReceipt()" class="hidden absolute right-2 top-1/2 -translate-y-1/2 bg-red-100 text-red-600 rounded-full w-6 h-6 text-xs font-bold">×</button>
-                        </div>
-                    </div>
-
-                    <div class="glass p-5 rounded-3xl shadow-sm space-y-4">
-                        <div class="flex justify-between items-center text-sm font-bold">
-                            <span class="text-gray-500 dark:text-gray-300 text-xs">誰付款？</span>
-                            <select id="i_payer" class="w-auto min-w-[100px] bg-sky-50 dark:bg-sky-900 px-3 py-2 rounded-xl text-sky-950 dark:text-white outline-none"></select>
-                        </div>
-                        <hr class="border-gray-200 dark:border-gray-600">
-                        <div class="flex justify-between items-center">
-                             <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">分擔模式</p>
-                            <select id="i_splitType" onchange="toggleSplitMode()" class="text-[10px] bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg dark:text-white outline-none">
-                                <option value="equal">均分</option>
-                                <option value="custom">自定義金額(HKD)</option>
-                             </select>
-                         </div>
-                        <div id="i_splitList"></div>
-                    </div>
-                    <button id="btn-save-exp" onclick="h_saveExpense()" class="w-full bg-sky-950 dark:bg-sky-700 text-white py-5 rounded-3xl font-bold shadow-lg active:scale-95 transition-all">記錄開支</button>
-                </div>
-
-                <div id="p-list" class="hidden space-y-3">
-                    <div class="flex justify-between items-center gap-2 mb-2">
-                        <div class="flex-1 bg-white/50 dark:bg-gray-800 px-3 py-2 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center">
-                            <select id="i_listFilter" onchange="applyListFilter()" class="text-xs bg-transparent dark:text-white dark:bg-gray-800 outline-none font-bold flex-1 cursor-pointer appearance-none">
-                                <option value="">📊 顯示所有類別</option>
-                            </select>
-                        </div>
-                        <button onclick="clearFilter()" id="btn-clear-filter" class="hidden shrink-0 text-[10px] text-gray-500 bg-gray-200 dark:bg-gray-700 px-3 py-2.5 rounded-xl font-bold active:scale-95 transition-transform">清除過濾</button>
-                        <button onclick="h_clearAll()" class="shrink-0 py-2.5 px-3 text-[10px] text-red-500 border border-red-200 dark:border-red-900 rounded-xl font-bold bg-white/50 dark:bg-gray-800">清空紀錄</button>
-                    </div>
-
-                    <div id="d_expList" class="mt-2"></div>
-                </div>
-
-                <div id="p-settle" class="hidden space-y-4">
-                    <div class="bg-white/95 dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <p class="text-[11px] font-bold text-gray-500 dark:text-gray-300 mb-3 uppercase tracking-widest border-b pb-2 dark:border-gray-600">成員總覽 (HKD)</p>
-                        <div id="d_overview" class="space-y-2 mb-4"></div>
-                    </div>
-                    
-                    <div class="bg-white/95 dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-                        <div id="d_settleList" class="space-y-3"></div>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button onclick="generateImage()" class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-1">📸 下載結算圖</button>
-                        <button onclick="h_copyMsg()" class="flex-1 py-4 bg-sky-600 text-white rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-1">📋 複製文字</button>
-                    </div>
-                </div>
-
-                <div id="p-mem" class="hidden space-y-4">
-                    <div class="glass p-6 rounded-3xl shadow-sm">
-                        <p class="text-sm font-bold mb-4 dark:text-white">管理成員</p>
-                        <div class="flex flex-col gap-2 mb-6">
-                            <input type="text" id="i_newMem" placeholder="旅伴名字" class="w-full bg-white dark:bg-gray-700 px-4 py-3 rounded-xl shadow-sm dark:text-white outline-none">
-                            <div class="flex justify-between items-center mt-2">
-                                <label class="text-xs text-gray-500 dark:text-gray-300 flex items-center gap-2">代表色：<input type="color" id="i_memColor" value="#0369a1" class="w-8 h-8 rounded-full border-none cursor-pointer"></label>
-                                <button onclick="h_addMember()" class="bg-sky-800 dark:bg-sky-600 text-white px-8 py-3 rounded-xl text-xs font-bold shadow-md active:scale-95 outline-none">加入</button>
-                             </div>
-                        </div>
-                        <div class="flex items-center gap-2 mb-4">
-                            <span class="text-xs font-bold dark:text-gray-300">預設付款人：</span>
-                            <select id="i_defaultPayer" onchange="h_setDefaultPayer()" class="text-xs bg-gray-100 dark:bg-gray-700 p-2 rounded dark:text-white outline-none"></select>
-                        </div>
-                        <div id="d_memList" class="flex flex-wrap gap-2 mt-4 pt-4 border-t dark:border-gray-600"></div>
-                    </div>
-                 </div>
-            </div>
+    <div class="splash-screen" id="view-splash" style="display: flex;">
+        <img src="https://i.imgur.com/8MUpGMJ.jpeg" class="splash-img" alt="splash" />
+        <div class="enter-btn-container">
+            <button class="btn-rpg" onclick="switchView('home')">Enter</button>
         </div>
     </div>
 
-    <div id="img-modal" class="hidden fixed inset-0 z-[200] modal-bg flex items-center justify-center p-4" onclick="this.classList.add('hidden')">
-        <img id="img-modal-src" src="" class="max-w-full max-h-[80vh] rounded-xl shadow-2xl object-contain">
+    <div class="container">
+        <div id="view-home" class="view-section">
+        
+            <h1 style="text-align:center; color:var(--primary); margin-top:0;">VOCAB DUNGEON</h1>
+            
+            <div class="hero-stats">
+                <div style="text-align:center">
+                    <div style="font-size: 0.8rem; color: var(--gray)">Lv.</div>
+                    <div id="statLevel" style="font-size: 1.5rem; font-weight: bold; color: var(--primary)">1</div>
+                </div>
+                <div class="exp-bar-container">
+                    <div class="exp-bar" id="statExpBar"></div>
+                </div>
+                <div style="text-align:center">
+           
+                    <div style="font-size: 0.8rem; color: var(--gray)">Gold</div>
+                    <div id="statGold" style="font-size: 1.2rem; font-weight: bold; color: var(--gold)">0</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="switchView('menu')">⚔️ 進入地下城</button>
+            <button class="btn" style="border-color: #f1c40f; color: #d35400;" onclick="switchView('shop')">🛒 冒險者商店</button>
+            <button class="btn" onclick="switchView('add')">➕ 新增單字</button>
+            <button class="btn" onclick="switchView('list')">📚 字庫管理 (<span id="bankCount">0</span>)</button>
+            
+            <div style="flex-grow: 1;"></div>
+            <div style="margin-top: auto; padding-top: 10px; text-align: center;">
+                <img src="https://i.imgur.com/6UDmnhC.png" class="footer-img" />
+            </div>
+        </div>
+
+        <div id="view-shop" class="view-section">
+            <button class="btn" onclick="switchView('home')">← 返回</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
+                <h2 style="margin:0;">冒險者商店</h2>
+                <strong style="color:var(--gold); font-size:1.2rem;">🪙 <span id="shopGold">0</span></strong>
+            </div>
+            
+            <h4 style="margin: 0 0 10px 0;">消耗品 (自動裝備)</h4>
+            <div class="shop-grid">
+                <div class="shop-item" onclick="buyItem('potion', 50)">
+                    <div style="font-size:2rem;">❤️</div>
+                    <strong>生命藥水</strong><br><small>戰鬥初始 HP+1</small><br><span style="color:var(--gold)">🪙 50</span>
+                </div>
+                <div class="shop-item" onclick="buyItem('hourglass', 50)">
+                    <div style="font-size:2rem;">⏳</div>
+                    <strong>時間沙漏</strong><br><small>單題作答時間+2秒</small><br><span style="color:var(--gold)">🪙 50</span>
+                </div>
+            </div>
+
+            <h4 style="margin: 20px 0 10px 0;">專屬外觀 (Skin)</h4>
+            <div class="shop-grid" id="skinGrid">
+            </div>
+        </div>
+
+        <div id="view-menu" class="view-section">
+            <button class="btn" onclick="switchView('home')">← 返回</button>
+            <h2>選擇模式</h2>
+            <button class="btn btn-outline" onclick="startNormal('card')">📖 生字卡 (讀音/例句)</button>
+            <button class="btn btn-outline" onclick="startNormal('quiz')">📝 選擇題模式 (看中選英)</button>
+            <button class="btn" style="background:#e84393; color:white; border:none;" onclick="startRevenge()">🔥 復仇模式 (專練錯題)</button>
+            <hr style="width:100%; border:none; border-top:1px solid #ddd; margin:20px 0"/>
+            <h3 style="color:var(--danger)">🏰 地下城戰鬥</h3>
+            <button class="btn" onclick="startDungeon('low')">初級地牢 (10層)</button>
+            <button class="btn" onclick="startDungeon('mid')">熔岩洞窟 (15層)</button>
+            <button class="btn" onclick="startDungeon('high')">冰晶神殿 (20層)</button>
+        </div>
+
+        <div id="view-add" class="view-section">
+            <button class="btn" onclick="switchView('home')">← 返回</button>
+            <h2>新增單字</h2>
+            <input type="text" id="newEng" placeholder="英文單字" />
+            <button class="btn btn-outline" onclick="autoFetch()">✨ 自動翻譯</button>
+            <textarea id="newChi" placeholder="中文意思 (自動附詞性)"></textarea>
+            <textarea id="newExample" placeholder="例句" rows="3"></textarea>
+            <button class="btn btn-primary" onclick="addNewWord()">💾 儲存</button>
+        </div>
+
+        <div id="view-list" class="view-section">
+            <button class="btn" onclick="switchView('home')">← 返回</button>
+            <h3>我的字庫 (<span id="listCount">0</span>)</h3>
+            <div style="display:flex; gap:5px; margin-bottom:15px">
+                <button class="btn btn-outline btn-small" onclick="exportCSV()">📤 匯出</button>
+                <button class="btn btn-outline btn-small" onclick="document.getElementById('csvInput').click()">📥 匯入</button>
+                <input type="file" id="csvInput" style="display:none" accept=".csv" onchange="importCSV(event)" />
+            </div>
+            <div style="display:flex; gap:5px; margin-bottom:15px">
+                <button class="btn btn-small" style="background:var(--danger); color:white; border:none;" onclick="clearAllWords()">🗑️ 清空</button>
+                <button class="btn btn-small" style="background:var(--primary); color:white; border:none;" onclick="resetDefaultBank()">🔄 還原</button>
+            </div>
+            <div id="wordListContainer" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+
+        <div id="view-study" class="view-section">
+            <div class="card" id="studyCard" onclick="handleCardFlip()">
+                <div id="card-unflipped" style="width:100%"></div>
+                <div id="card-flipped" style="display:none; text-align:left; width:100%">
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <strong style="font-size:1.4rem; color:var(--primary)" id="flipEng"></strong>
+                        <button class="speaker-btn" style="width:36px; height:36px" id="flipSpeakBtn">🔊</button>
+                    </div>
+                    <hr/>
+                    <strong>【中文】</strong><p id="flipChi"></p>
+                    <div class="example-box"><strong>【例句】</strong><p id="flipEx"></p></div>
+                </div>
+            </div>
+            <div id="readAgainArea" style="text-align:center; display:none; margin-bottom: 15px;">
+                <button class="speaker-btn" style="width:auto; padding: 0 20px; border-radius: 20px; font-weight: bold; gap: 8px; font-size: 1rem;" onclick="speak(currentWord.eng)">🔊 再讀一次</button>
+            </div>
+            <div id="quizOptions" class="quiz-grid" style="display:none"></div>
+            <div id="studyFeedback" style="text-align:center; font-weight:bold; margin:10px"></div>
+            <button class="btn btn-primary" onclick="nextStudyWord()">下一個</button>
+            <button class="btn" onclick="switchView('home')">返回</button>
+        </div>
+
+        <div id="view-dungeon" class="view-section">
+            <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                <span id="hpDisplay"></span>
+                <span id="floorDisplay"></span>
+            </div>
+            <div class="battle-scene" id="battleScene">
+                <div class="timer-line" id="timerLine" style="width:100%"></div>
+                <div class="combo-text" id="comboDisplay">🔥 2 Combo!</div>
+                <div class="slash-fx" id="slashFx"></div>
+                <div class="monster-box">
+                    <div class="boss-hp-bar" id="bossHpBar"><div class="boss-hp-fill" id="bossHpFill"></div></div>
+                    <img src="https://i.imgur.com/BbjA5GC.png" id="monsterImg" class="monster-img" />
+                </div>
+                <div class="player-box">
+                    <div id="playerImgWrapper" style="transition: transform 0.3s; transform-origin: bottom center;">
+                        <img src="https://i.imgur.com/gsR29ty.png" id="playerImg" class="player-img" alt="主角" />
+                    </div>
+                </div>
+            </div>
+            <div class="card" style="min-height:60px; padding: 15px; margin-bottom: 10px">
+                <div style="font-size:1.3rem; font-weight:bold" id="dungeonChi"></div>
+                <div id="bossEngHint" style="display:none; color:var(--primary); font-size:1.1rem; margin-top:5px; letter-spacing:2px;"></div>
+            </div>
+            
+            <div id="dungeonQuizGrid" class="quiz-grid"></div>
+            <div id="dungeonBossArea" style="display:none">
+                <input type="text" id="bossInput" placeholder="拼寫單字..." autocomplete="off"/>
+                <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
+            </div>
+
+            <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
+        </div>
+
+        <div id="view-end" class="view-section">
+            <div style="text-align:center">
+                <h1 id="endEmoji"></h1>
+                <h2 id="endTitle"></h2>
+                <div id="endRewards" style="color:var(--gold); font-weight:bold; font-size:1.2rem; margin-bottom: 10px;"></div>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.95); padding: 15px; border-radius: 15px; margin-top: 10px; max-height: 250px; overflow-y: auto">
+                <h4 style="margin: 0 0 10px 0">📊 本次戰果</h4>
+                <div style="color: var(--success); margin-bottom: 5px">
+                    <strong>擊敗 (<span id="killedCount">0</span>)</strong> 
+                </div>
+                <div style="color: var(--danger)">
+                    <strong>漏掉/錯過 (<span id="missedCount">0</span>)</strong> 
+                    <div id="missedListContainer" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" style="margin-top: 20px" onclick="switchView('home')">返回基地</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="chestModal">
+        <div class="modal-content">
+            <h3>🎉 擊敗 Boss！獲得寶箱</h3>
+            <img src="https://i.imgur.com/sAsVc32.png" id="chestImg" class="chest-img" onclick="openChest()" alt="寶箱" />
+            <p style="color: #636e72" id="chestTip">點擊寶箱開啟獎勵！</p>
+            <button class="btn btn-primary" style="margin-top: 10px; display:none" id="chestNextBtn" onclick="closeChestModal()">前往下一關</button>
+        </div>
     </div>
 
     <script>
-        // --- 數據初始化 ---
-        let allTrips = [];
-        try {
-            const stored = localStorage.getItem('exp_v8_final');
-            if (stored) {
-                allTrips = JSON.parse(stored);
-                if (!Array.isArray(allTrips)) allTrips = [];
-            }
-        } catch(e) { allTrips = []; }
+        const initialWords = [
+            {eng:"Ingredient", chi:"[n.] 成分/材料", example:"Flour is a main ingredient for bread."},
+            {eng:"Carrot", chi:"[n.] 紅蘿蔔", example:"I like to eat raw carrots."},
+            {eng:"Peas", chi:"[n.] 處理", example:"We had chicken and peas for dinner."},
+            {eng:"Sweet potato", chi:"[n.] 番薯", example:"Roasted sweet potato is very delicious."},
+            {eng:"Onion", chi:"[n.] 洋蔥", example:"Cutting an onion makes me cry."},
+            {eng:"Pepper", chi:"[n.] 甜椒/胡椒", example:"Add some pepper to the soup."},
+            {eng:"Aubergine", chi:"[n.] 茄子", example:"Aubergine is also called eggplant."},
+            {eng:"Sweetcorn", chi:"[n.] 粟米", example:"I love eating sweetcorn with butter."},
+            {eng:"Peel", chi:"[v.] 削皮/剝皮", example:"Please peel the apple for me."},
+            {eng:"Fry", chi:"[v.] 煎/炸", example:"You can fry an egg in the pan."},
+            {eng:"Roast", chi:"[v.] 烤/烘", example:"We roast a chicken every Sunday."},
+            {eng:"Toaster", chi:"[n.] 多士爐", example:"Put the bread in the toaster."},
+            {eng:"Kettle", chi:"[n.] 水煲", example:"The kettle is boiling."},
+            {eng:"Coffee Machine", chi:"[n.] 咖啡機", example:"This coffee machine is easy to use."},
+            {eng:"Blender", chi:"[n.] 攪拌機", example:"I use a blender to make smoothies."},
+            {eng:"Rice Cooker", chi:"[n.] 電飯煲", example:"Put the rice into the rice cooker."},
+            {eng:"Hand Mixer", chi:"[n.] 手提攪拌器", example:"Use a hand mixer to whip the cream."},
+            {eng:"Dishwasher", chi:"[n.] 洗碗機", example:"Put the dirty plates in the dishwasher."},
+            {eng:"Oven", chi:"[n.] 焗爐", example:"The cake is baking in the oven."},
+            {eng:"Airfryer", chi:"[n.] 氣炸鍋", example:"An airfryer uses less oil."},
+            {eng:"Scarf", chi:"[n.] 圍巾", example:"I wear a scarf in winter."},
+            {eng:"Toothbrush", chi:"[n.] 牙刷", example:"Change your toothbrush regularly."},
+            {eng:"Shower", chi:"[n./v.] 淋浴", example:"I take a shower every morning."},
+            {eng:"Flush", chi:"[v.] 沖水", example:"Don't forget to flush the toilet."},
+            {eng:"Razor", chi:"[n.] 剃刀", example:"He uses a sharp razor to shave."},
+            {eng:"Tap", chi:"[n.] 水龍頭", example:"Turn off the tap to save water."},
+            {eng:"Towel", chi:"[n.] 毛巾", example:"Dry your hands with a towel."},
+            {eng:"Shower Curtain", chi:"[n.] 浴簾", example:"Please close the shower curtain."},
+            {eng:"Bathrobe", chi:"[n.] 浴袍", example:"Put on your bathrobe after a bath."},
+            {eng:"Sponge", chi:"[n.] 海綿", example:"I use a sponge to wash the car."},
+            {eng:"Shower Cap", chi:"[n.] 浴帽", example:"She wears a shower cap in the shower."},
+            {eng:"Kitten", chi:"[n.] 小貓", example:"The kitten is playing with a ball."},
+            {eng:"Foal", chi:"[n.] 小馬", example:"The foal is standing next to its mother."},
+            {eng:"Chick", chi:"[n.] 小雞", example:"A yellow chick is very cute."},
+            {eng:"Joey", chi:"[n.] 小袋鼠", example:"A joey lives in its mother's pouch."},
+            {eng:"Puppy", chi:"[n.] 小狗", example:"My puppy loves to bark."},
+            {eng:"Piglet", chi:"[n.] 小豬", example:"The piglet is eating corn."},
+            {eng:"Lamb", chi:"[n.] 小羊", example:"A lamb has white wool."},
+            {eng:"Calf", chi:"[n.] 小牛", example:"The calf is drinking milk."},
+            {eng:"Helicopter", chi:"[n.] 直升機", example:"The helicopter flew over the city."},
+            {eng:"Lorry", chi:"[n.] 貨車", example:"The lorry is carrying heavy boxes."},
+            {eng:"Shuttle", chi:"[n.] 接駁車", example:"The shuttle picks up passengers at the airport."}
+        ].map((w, i) => ({ ...w, id: Date.now() + i }));
 
-        let sysCats = [
-            {v:'食', e:'🍴'}, {v:'住', e:'🏨'}, {v:'行', e:'🚗'},
-            {v:'玩', e:'🎟️'}, {v:'購', e:'🛍️'}, {v:'機', e:'✈️'}, {v:'雜', e:'📦'}
+        const monsterImages = [
+            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
+            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
+            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
         ];
-        let customCats = JSON.parse(localStorage.getItem('customCats') || '[]');
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
+        const bgImages = [
+            "https://i.imgur.com/6FeeRyP.jpeg", // B1-B5 Dungeon
+            "https://i.imgur.com/SwmBCNA.jpeg", // B6-B10 Cave
+            "https://i.imgur.com/8MUpGMJ.jpeg", // B11+ Ice/Dark
+        ];
+        
+        // RPG Data (Added ownedSkins array)
+        let playerState = { level: 1, exp: 0, gold: 0, skin: 'default', potion: 0, hourglass: 0, ownedSkins: ['default'] };
+        const skins = [
+            { id: 'default', name: '預設勇者', img: 'https://i.imgur.com/gsR29ty.png', price: 0 },
+            { id: 'tofu', name: '🐱 天使貓', img: 'https://i.imgur.com/meZ4rN7.png', price: 300 }, 
+            { id: 'goma', name: '🐱 惡魔貓', img: 'https://i.imgur.com/U4Il5Eo.png', price: 300 } 
+        ];
+        
+        let wordBank = [];
+        let wrongWords = [];
+        let studyList = [];
+        let currentWord = null;
+        let studyMode = 'card';
+        let isFlipped = false;
+        let currentOptions = [];
 
-        let activeIdx = -1;
-        let myChart = null;
-        let currentHomeTab = 'active';
-        let editExpIdx = -1; 
-        let tempReceiptBase64 = null;
-        let chartActiveFilter = null;
+        // Dungeon Vars
+        let hp = 10;
+        let maxHp = 10;
+        let floor = 1;
+        let maxFloor = 10;
+        let dungeonMode = 'low';
+        let timeLeft = 100;
+        let timerInterval = null;
+        let combo = 0;
+        let extraTime = 0;
+        let isBossCurrent = false;
+        let chestStatus = 'closed';
+        let killedWords = [];
+        let missedWords = [];
+        let currentMImg = "";
+        
+        // Multi-hit Boss Vars
+        let bossWords = [];
+        let bossMaxHp = 3;
+        let bossCurrentHp = 3;
 
-        function getCatEmoji(val) {
-            const found = [...sysCats, ...customCats].find(c => c.v === val);
-            return found ? found.e : '📌';
+        function init() {
+            const savedBank = localStorage.getItem('vocab_v10_final_v2');
+            const savedWrongs = localStorage.getItem('vocab_wrongs');
+            const savedPlayer = localStorage.getItem('vocab_player');
+            
+            if (savedBank) { try { wordBank = JSON.parse(savedBank);
+            } catch(e) { wordBank = initialWords; } } 
+            else { wordBank = initialWords;
+            }
+
+            if (savedWrongs) { try { wrongWords = JSON.parse(savedWrongs);
+            } catch(e) { wrongWords = []; } }
+            if (savedPlayer) { 
+                try { 
+                    playerState = {...playerState, ...JSON.parse(savedPlayer)};
+                    if (!playerState.ownedSkins) playerState.ownedSkins = ['default']; // Backward compatibility
+                } catch(e) {} 
+            }
+
+            updateGlobalCounts();
+            renderShop();
+            switchView('splash');
         }
 
-        function renderCatOptions() {
-            const all = [...sysCats, ...customCats];
-            const el = document.getElementById('i_cat');
-            el.innerHTML = all.map(c => `<option value="${c.v}">${c.e}</option>`).join('') + `<option value="ADD_NEW" class="text-sky-600">➕ 新增</option>`;
+        function saveState() {
+            localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+            localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
+            localStorage.setItem('vocab_player', JSON.stringify(playerState));
+            updateGlobalCounts();
+        }
+
+        function updateGlobalCounts() {
+            document.getElementById('bankCount').innerText = wordBank.length;
+            document.getElementById('listCount').innerText = wordBank.length;
             
-            const listFilter = document.getElementById('i_listFilter');
-            if(listFilter) {
-                listFilter.innerHTML = `<option value="">📊 顯示所有類別</option>` + all.map(c => `<option value="${c.v}">${c.e} ${c.v}</option>`).join('');
-                if(chartActiveFilter) listFilter.value = chartActiveFilter;
+            // Update RPG Home UI
+            document.getElementById('statLevel').innerText = playerState.level;
+            document.getElementById('statGold').innerText = playerState.gold;
+            document.getElementById('shopGold').innerText = playerState.gold;
+            const expReq = playerState.level * 100;
+            const expPercent = Math.min(100, (playerState.exp / expReq) * 100);
+            document.getElementById('statExpBar').style.width = expPercent + '%';
+            
+            // Set Player Skin globally
+            const skinObj = skins.find(s => s.id === playerState.skin) || skins[0];
+            document.getElementById('playerImg').src = skinObj.img;
+            
+            // Apply 1.5x scale to specific cat skins using wrapper
+            const wrapper = document.getElementById('playerImgWrapper');
+            if (skinObj.id === 'tofu' || skinObj.id === 'goma') {
+                wrapper.style.transform = 'scale(1.5)';
+            } else {
+                wrapper.style.transform = 'scale(1)';
             }
         }
 
-        function handleCatChange() {
-            const el = document.getElementById('i_cat');
-            if(el.value === 'ADD_NEW') {
-                const input = prompt('新增自訂類別\n格式：[Emoji] [名稱]\n例子：☕ 咖啡');
-                if(input && input.trim() !== '') {
-                    const parts = input.trim().split(' ');
-                    const e = parts[0] || '📌';
-                    const v = parts.slice(1).join(' ') || e;
-                    if(!sysCats.find(c=>c.v===v) && !customCats.find(c=>c.v===v)) {
-                        customCats.push({v, e});
-                        localStorage.setItem('customCats', JSON.stringify(customCats));
-                        renderCatOptions();
-                    }
-                    el.value = v;
+        function renderShop() {
+            const grid = document.getElementById('skinGrid');
+            grid.innerHTML = '';
+            skins.forEach(skin => {
+                const isEquipped = playerState.skin === skin.id;
+                const isOwned = playerState.ownedSkins.includes(skin.id) || (skin.price === 0);
+                const btn = document.createElement('div');
+                
+                btn.className = `shop-item ${isOwned ? 'owned' : ''}`;
+                
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = '<div style="color:var(--primary); font-weight:bold; font-size:0.9rem; margin-top:5px">✅ 裝備中</div>';
+                } else if (isOwned) {
+                    btnHtml = '<button style="background:var(--success); color:white; border:none; padding:5px 15px; border-radius:15px; cursor:pointer; font-weight:bold; margin-top:5px; width:100%">🔄 更換</button>';
                 } else {
-                    el.value = sysCats[0].v;
+                    btnHtml = `<span style="color:var(--gold); font-weight:bold; margin-top:5px">🪙 ${skin.price}</span>`;
                 }
-            }
-            const isCustom = customCats.some(c => c.v === el.value);
-            const delBtn = document.getElementById('btn_del_cat');
-            if(delBtn) {
-                if(isCustom) delBtn.classList.remove('hidden');
-                else delBtn.classList.add('hidden');
-            }
+
+                // Dynamic size for tofu and goma in shop
+                let imgSize = (skin.id === 'tofu' || skin.id === 'goma') ? '105px' : '70px';
+
+                btn.innerHTML = `
+                    <img src="${skin.img}" style="width:${imgSize}; height:${imgSize}; object-fit:contain; transition: 0.3s;"/>
+                    <div style="font-weight:bold; font-size:0.95rem; margin-top:10px; margin-bottom:5px;">${skin.name}</div>
+                    ${btnHtml}
+                `;
+                btn.onclick = () => buySkin(skin.id, skin.price);
+                grid.appendChild(btn);
+            });
         }
 
-        function h_deleteCustomCat() {
-            const el = document.getElementById('i_cat');
-            const val = el.value;
-            if(confirm(`確定要從列表移除自訂類別「${val}」嗎？\n(注意：已使用此類別的歷史紀錄不會受影響)`)) {
-                customCats = customCats.filter(c => c.v !== val);
-                localStorage.setItem('customCats', JSON.stringify(customCats));
-                renderCatOptions();
-                el.value = sysCats[0].v;
-                handleCatChange();
-            }
-        }
-        
-        renderCatOptions();
-
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            document.getElementById('icon-theme').innerText = isDark ? '☀️' : '🌙';
-            if(myChart) h_updateChart();
-        }
-        
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            document.getElementById('icon-theme').innerText = '☀️';
-        }
-
-        function h_saveData() { 
-            try {
-                localStorage.setItem('exp_v8_final', JSON.stringify(allTrips));
-            } catch(e) {
-                alert("儲存空間已滿！請清除部分舊紀錄或收據相片。");
-            }
-            renderHomeList(currentHomeTab);
-            if(activeIdx !== -1) h_refreshDetail();
-        }
-
-        function enterApp() {
-            const launch = document.getElementById('launch-screen');
-            const content = document.getElementById('app-content');
-            launch.style.opacity = '0';
-            setTimeout(() => { 
-                launch.style.display = 'none'; 
-                content.classList.remove('hidden'); 
-                setTimeout(() => content.style.opacity = '1', 50); 
-            }, 600);
-            try {
-                const today = new Date();
-                const offset = today.getTimezoneOffset() * 60000;
-                document.getElementById('i_date').value = (new Date(today - offset)).toISOString().slice(0, 10);
-            } catch(e) {}
-        }
-
-        async function checkCurrency() {
-            const curr = document.getElementById('i_currency').value;
-            const rateBox = document.getElementById('fx_rate_box');
-            const rateInput = document.getElementById('i_rate');
-            
-            if(curr === 'HKD') {
-                rateBox.classList.add('hidden');
-                document.getElementById('fx_hint').innerText = "";
+        function buyItem(type, price) {
+            if (playerState.gold >= price) {
+                playerState.gold -= price;
+                playerState[type] = (playerState[type] || 0) + 1;
+                saveState();
+                alert(`購買成功！目前持有 ${playerState[type]} 個。進入戰鬥時將自動生效！`);
             } else {
-                rateBox.classList.remove('hidden');
-                document.getElementById('fx_hint').innerText = "載入中...";
-                try {
-                    const res = await fetch(`https://open.er-api.com/v6/latest/${curr}`);
-                    const data = await res.json();
-                    if(data?.rates?.HKD) {
-                        rateInput.value = data.rates.HKD.toFixed(4);
-                        document.getElementById('fx_hint').innerText = "✓ 已更新";
-                        calcHkd();
-                    }
-                } catch(e) { 
-                    document.getElementById('fx_hint').innerText = "請手動輸入";
-                }
+                alert("金幣不足！");
             }
         }
 
-        function calcHkd() {
-            const amt = parseFloat(document.getElementById('i_amt').value) || 0;
-            const rate = parseFloat(document.getElementById('i_rate').value) || 0;
-            document.getElementById('fx_hkd_result').innerText = (amt * rate).toFixed(2);
-        }
-
-        document.getElementById('i_amt').addEventListener('input', () => {
-            if(document.getElementById('i_currency').value !== 'HKD') calcHkd();
-        });
-
-        function multiplyByMembers() {
-            const amt = parseFloat(document.getElementById('i_amt').value) || 0;
-            const count = allTrips[activeIdx].members.length;
-            if (count > 0 && amt > 0) {
-                document.getElementById('i_amt').value = (amt * count).toFixed(2);
-                calcHkd();
-            }
-        }
-
-        function previewReceipt(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function buySkin(id, price) {
+            if (playerState.skin === id) return; // Already equipped
             
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    let width = img.width, height = img.height;
-                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    tempReceiptBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    document.getElementById('receipt_label').innerText = "已附加 1 張相片";
-                    document.getElementById('receipt_label').classList.add('text-sky-600', 'font-bold');
-                    document.getElementById('receipt_del').classList.remove('hidden');
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function clearReceipt() {
-            tempReceiptBase64 = null;
-            document.getElementById('i_receipt').value = "";
-            document.getElementById('receipt_label').innerText = "附加收據相片";
-            document.getElementById('receipt_label').classList.remove('text-sky-600', 'font-bold');
-            document.getElementById('receipt_del').classList.add('hidden');
-        }
-
-        function h_createTrip() {
-            const name = document.getElementById('newTripInput').value.trim();
-            if(!name) return;
-            allTrips.push({ name, members: [{n:"我", c:"#0369a1"}], expenses: [], isArchived: false, defaultPayer: "我" });
-            h_saveData();
-            document.getElementById('newTripInput').value = '';
-            h_openTrip(allTrips.length - 1);
-        }
-
-        function h_openTrip(idx) {
-            activeIdx = idx;
-            document.getElementById('view-home').classList.add('hidden');
-            document.getElementById('view-detail').classList.remove('hidden');
-            const trip = allTrips[idx];
-            document.getElementById('archiveBtn').innerText = trip.isArchived ? "取消封存" : "封存";
-            h_refreshDetail();
-            resetForm();
-            h_switchTab('add');
-        }
-
-        function h_goHome() {
-            activeIdx = -1;
-            document.getElementById('view-home').classList.remove('hidden');
-            document.getElementById('view-detail').classList.add('hidden');
-            renderHomeList(currentHomeTab);
-        }
-
-        function h_refreshDetail() {
-            const trip = allTrips[activeIdx];
-            if(!trip) return;
-            document.getElementById('d_tripTitle').innerText = trip.name;
-            const total = trip.expenses.reduce((s, e) => s + e.amt, 0);
-            document.getElementById('d_totalAmt').innerText = `$ ${total.toFixed(2)}`;
-            document.getElementById('i_payer').innerHTML = trip.members.map(m => `<option value="${m.n}" ${m.n === trip.defaultPayer ? 'selected':''}>${m.n}</option>`).join('');
-            document.getElementById('i_defaultPayer').innerHTML = trip.members.map(m => `<option value="${m.n}" ${m.n === trip.defaultPayer ? 'selected':''}>${m.n}</option>`).join('');
-            if (editExpIdx === -1) toggleSplitMode();
-            renderCatOptions(); 
-            renderExpenseList();
-            renderMemberList();
-            h_updateChart();
-        }
-
-        function toggleSplitMode() {
-            const mode = document.getElementById('i_splitType').value;
-            const trip = allTrips[activeIdx];
-            document.getElementById('i_splitList').innerHTML = trip.members.map(m => `
-                <div class="flex items-center gap-2 p-3 bg-white/80 dark:bg-gray-700 rounded-xl text-[11px] font-bold shadow-sm">
-                    <input type="checkbox" value="${m.n}" checked class="w-4 h-4 accent-sky-600" ${mode === 'custom' ? 'style="display:none"' : ''}>
-                    <span class="w-3 h-3 rounded-full" style="background:${m.c}"></span>
-                    <span class="truncate flex-1 dark:text-white">${m.n}</span>
-                    ${mode === 'custom' ? `<input type="number" step="0.1" placeholder="$" class="w-16 p-1 text-right bg-transparent border-b border-gray-300 dark:border-gray-500 dark:text-white i-split-amt outline-none">` : ''}
-                </div>
-            `).join('');
-        }
-
-        function h_saveExpense() {
-            const name = document.getElementById('i_name').value.trim() || "未命名";
-            const inputAmt = parseFloat(document.getElementById('i_amt').value);
-            const currency = document.getElementById('i_currency').value;
-            const rate = parseFloat(document.getElementById('i_rate').value) || 1;
-            if(!inputAmt) return alert("請輸入金額");
-            const amt = currency === 'HKD' ? inputAmt : parseFloat((inputAmt * rate).toFixed(2));
-            const date = document.getElementById('i_date').value;
-            const cat = document.getElementById('i_cat').value;
-            const payer = document.getElementById('i_payer').value;
-            const mode = document.getElementById('i_splitType').value;
-            let split = {};
-            if(mode === 'equal') {
-                const checked = Array.from(document.querySelectorAll('#i_splitList input:checked')).map(c => c.value);
-                if(!checked.length) return alert("請選擇分擔對象");
-                checked.forEach(n => split[n] = amt / checked.length);
-            } else {
-                let totalSet = 0;
-                document.querySelectorAll('.i-split-amt').forEach((input, i) => {
-                    const val = parseFloat(input.value) || 0;
-                    if(val > 0) { split[allTrips[activeIdx].members[i].n] = val; totalSet += val; }
-                });
-                if(Math.abs(totalSet - amt) > 0.1) return alert(`自定義金額總和 (${totalSet.toFixed(1)}) 與總金額 (${amt}) 不符！`);
-            }
-            const expData = { name, amt, currency, originalAmt: inputAmt, rate, date, cat, payer, split, splitType: mode, receipt: tempReceiptBase64 };
-            if (editExpIdx !== -1) allTrips[activeIdx].expenses[editExpIdx] = expData;
-            else allTrips[activeIdx].expenses.push(expData);
-            resetForm(); h_saveData(); h_switchTab('list');
-        }
-
-        let swipeStartX = 0;
-        function swipeStart(e, el) { swipeStartX = e.touches[0].clientX; el.style.transition = 'none'; }
-        function swipeMove(e, el) {
-            let dx = e.touches[0].clientX - swipeStartX;
-            if(dx < -10) { el.style.transform = `translateX(${Math.max(dx, -80)}px)`; }
-            else { el.style.transform = `translateX(0)`; }
-        }
-        function swipeEnd(e, el) {
-            el.style.transition = 'transform 0.3s ease';
-            let dx = e.changedTouches[0].clientX - swipeStartX;
-            if(dx < -40) el.style.transform = `translateX(-80px)`;
-            else el.style.transform = `translateX(0)`;
-        }
-
-        function renderExpenseList() {
-            const trip = allTrips[activeIdx];
-            if(!trip.expenses.length) {
-                document.getElementById('d_expList').innerHTML = `<div class="text-center py-20 opacity-60"><img src="https://i.imgur.com/bKq0Gsr.png" class="w-24 h-24 mx-auto mb-4 object-contain"><p class="text-xs font-bold text-gray-500">仲未有任何開支紀錄喵～</p></div>`;
+            // Equip owned skin
+            if (price === 0 || playerState.ownedSkins.includes(id)) {
+                playerState.skin = id;
+                saveState(); renderShop(); updateGlobalCounts(); 
+                alert("裝備已更換！");
                 return;
             }
-            let displayList = trip.expenses.map((e, idx) => ({...e, originalIdx: idx}));
-            const clearBtn = document.getElementById('btn-clear-filter');
-            if(chartActiveFilter) {
-                displayList = displayList.filter(e => e.cat === chartActiveFilter);
-                clearBtn.classList.remove('hidden');
-            } else { clearBtn.classList.add('hidden'); }
             
-            const groups = {};
-            displayList.forEach(e => {
-                const d = e.date || "未指定";
-                if(!groups[d]) groups[d] = [];
-                groups[d].push(e);
-            });
-            const sorted = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
-            document.getElementById('d_expList').innerHTML = sorted.map(d => `
-                <div class="mb-6 relative pl-5 border-l-2 border-sky-100 dark:border-gray-700 ml-2">
-                    <div class="absolute w-3 h-3 bg-sky-400 rounded-full -left-[7.5px] top-0 border-2 border-white dark:border-gray-900 shadow-sm"></div>
-                    <p class="text-[10px] font-bold text-sky-800 dark:text-sky-300 uppercase mb-3">${d}</p>
-                    <div class="space-y-2">
-                        ${groups[d].map(e => `
-                            <div class="swipe-wrap">
-                                <div class="swipe-delete-btn" onclick="h_deleteExp(${e.originalIdx})">刪除</div>
-                                <div class="swipe-content bg-white/95 dark:bg-gray-800 p-4 flex justify-between items-center shadow-sm border dark:border-gray-700 rounded-2xl" ontouchstart="swipeStart(event, this)" ontouchmove="swipeMove(event, this)" ontouchend="swipeEnd(event, this)">
-                                    <div class="min-w-0 flex-1" onclick="h_editExp(${e.originalIdx})">
-                                        <p class="text-xs font-bold text-sky-950 dark:text-white truncate">
-                                            <span>${getCatEmoji(e.cat)}</span> | <span>${e.name}</span>
-                                        </p>
-                                        <p class="text-[9px] text-gray-500 mt-1">付: ${e.payer} · 分: ${Object.keys(e.split).length}人</p>
-                                    </div>
-                                    <div class="flex items-center gap-2 shrink-0">
-                                        ${e.receipt ? `<button onclick="h_viewReceipt('${e.receipt}')" class="bg-gray-100 dark:bg-gray-700 p-2 rounded-full text-xs">📸</button>` : ''}
-                                        <span class="font-bold text-sm text-sky-900 dark:text-sky-300">$${e.amt.toFixed(1)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // 查看收據圖片
-        function h_viewReceipt(base64) {
-            const modal = document.getElementById('img-modal');
-            const img = document.getElementById('img-modal-src');
-            img.src = base64;
-            modal.classList.remove('hidden');
-        }
-
-        function h_editExp(idx) {
-            editExpIdx = idx;
-            const exp = allTrips[activeIdx].expenses[idx];
-            document.getElementById('i_name').value = exp.name;
-            document.getElementById('i_amt').value = exp.originalAmt || exp.amt;
-            document.getElementById('i_currency').value = exp.currency || 'HKD';
-            document.getElementById('i_rate').value = exp.rate || 1;
-            document.getElementById('i_date').value = exp.date || '';
-            document.getElementById('i_cat').value = exp.cat;
-            document.getElementById('i_payer').value = exp.payer;
-            document.getElementById('i_splitType').value = exp.splitType || 'equal';
-            tempReceiptBase64 = exp.receipt || null;
-            
-            if (tempReceiptBase64) {
-                document.getElementById('receipt_label').innerText = "已附加 1 張相片";
-                document.getElementById('receipt_label').classList.add('text-sky-600', 'font-bold');
-                document.getElementById('receipt_del').classList.remove('hidden');
-            } else { clearReceipt(); }
-
-            toggleSplitMode();
-            if(exp.splitType === 'custom') {
-                const inputs = document.querySelectorAll('.i-split-amt');
-                allTrips[activeIdx].members.forEach((m, i) => { if(exp.split[m.n]) inputs[i].value = exp.split[m.n]; });
+            // Buy and equip new skin
+            if (playerState.gold >= price) {
+                playerState.gold -= price;
+                playerState.skin = id;
+                playerState.ownedSkins.push(id);
+                saveState(); renderShop(); updateGlobalCounts();
+                alert("外觀解鎖並裝備成功！");
             } else {
-                const checks = document.querySelectorAll('#i_splitList input[type="checkbox"]');
-                checks.forEach(c => { c.checked = !!exp.split[c.value]; });
-            }
-
-            checkCurrency();
-            document.getElementById('btn-save-exp').innerText = "更新開支";
-            h_switchTab('add');
-        }
-
-        function resetForm() {
-            editExpIdx = -1;
-            document.getElementById('i_name').value = '';
-            document.getElementById('i_amt').value = '';
-            document.getElementById('i_currency').value = 'HKD';
-            document.getElementById('i_rate').value = 1;
-            document.getElementById('fx_rate_box').classList.add('hidden');
-            document.getElementById('i_cat').value = sysCats[0].v;
-            document.getElementById('btn-save-exp').innerText = "記錄開支";
-            clearReceipt();
-            if(activeIdx !== -1) {
-                const trip = allTrips[activeIdx];
-                document.getElementById('i_payer').value = trip.defaultPayer || trip.members[0].n;
-                toggleSplitMode();
+                alert("金幣不足！");
             }
         }
 
-        function h_switchTab(tab) {
-            ['add', 'list', 'settle', 'mem'].forEach(t => {
-                document.getElementById(`p-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('tab-active');
-                document.getElementById(`tab-${t}`).classList.add('text-gray-400');
-            });
-            document.getElementById(`p-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('tab-active');
-            if(tab === 'settle') h_settleUI();
-            if(tab === 'list') renderExpenseList();
+        function clearAllWords() {
+            if(confirm('⚠️ 警告：這將會移除所有生字，並且無法復原！\n確定要清空嗎？')) {
+                wordBank = [];
+                wrongWords = []; saveState(); renderWordList(); alert('已成功清空所有生字！');
+            }
+        }
+        function resetDefaultBank() {
+            if(confirm('確定要還原回預設的生字庫嗎？此動作會覆蓋您目前的單字。')) {
+                wordBank = initialWords;
+                wrongWords = []; saveState(); renderWordList();
+            }
         }
 
-        function h_settleUI() {
-            const trip = allTrips[activeIdx];
-            let bal = {}, paidInfo = {}, shareInfo = {};
-            trip.members.forEach(m => { bal[m.n] = 0; paidInfo[m.n] = 0; shareInfo[m.n] = 0; });
-            trip.expenses.forEach(e => {
-                if (bal[e.payer] !== undefined) { bal[e.payer] += e.amt; paidInfo[e.payer] += e.amt; }
-                for(let p in e.split) { if (bal[p] !== undefined) { bal[p] -= e.split[p]; shareInfo[p] += e.split[p]; } }
-            });
-            document.getElementById('d_overview').innerHTML = trip.members.map(m => `
-                <div class="flex justify-between text-[11px] py-2 border-b dark:border-gray-700 last:border-0 items-center">
-                    <span class="font-bold w-[30%] truncate dark:text-white">${m.n}</span>
-                    <span class="w-[20%] text-center text-gray-400">付 $${paidInfo[m.n].toFixed(0)}</span>
-                    <span class="w-[20%] text-center text-gray-400">夾 $${shareInfo[m.n].toFixed(0)}</span>
-                    <span class="w-[30%] text-right font-bold ${bal[m.n] > 0 ? 'text-emerald-500' : bal[m.n] < 0 ? 'text-red-400' : 'text-gray-400'}">
-                        ${bal[m.n] > 0 ? '收' : bal[m.n] < 0 ? '補' : ''} $${Math.abs(bal[m.n]).toFixed(1)}
-                    </span>
-                </div>
-            `).join('');
-            
-            const res = document.getElementById('d_settleList');
-            let g = [], r = [];
-            for(let p in bal) { if(bal[p] < -0.1) g.push({n:p, a:Math.abs(bal[p])}); else if(bal[p] > 0.1) r.push({n:p, a:bal[p]}); }
-            if(!g.length) {
-                res.innerHTML = `<div class="text-center py-8 text-emerald-600 font-bold">帳目已平！喵～🐾</div>`;
+        function switchView(viewId) {
+            const sections = document.querySelectorAll('.view-section');
+            for(let i=0; i<sections.length; i++) sections[i].classList.remove('active');
+
+            const splash = document.getElementById('view-splash');
+            if (viewId === 'splash') {
+                splash.style.setProperty('display', 'flex', 'important');
             } else {
-                res.innerHTML = `<p class="text-[11px] font-bold text-gray-400 text-center mb-4 uppercase">最佳轉帳方案</p>`;
-                g.forEach(gv => {
-                    r.forEach(rv => {
-                        if(gv.a > 0.01 && rv.a > 0.01) {
-                            let v = Math.min(gv.a, rv.a);
-                            res.innerHTML += `<div class="flex justify-between items-center bg-sky-50 dark:bg-sky-900/30 p-3 rounded-xl mb-2 text-xs"><span><b>${gv.n}</b> ➔ <b>${rv.n}</b></span><span class="font-black text-sky-900 dark:text-sky-300">$${v.toFixed(1)}</span></div>`;
-                            gv.a -= v; rv.a -= v;
-                        }
-                    });
-                });
+                splash.style.setProperty('display', 'none', 'important');
+                const target = document.getElementById('view-' + viewId);
+                if (target) target.classList.add('active');
             }
-        }
 
-        function h_addMember() {
-            const n = document.getElementById('i_newMem').value.trim();
-            const c = document.getElementById('i_memColor').value;
-            if(n && !allTrips[activeIdx].members.find(m => m.n === n)) {
-                allTrips[activeIdx].members.push({n, c});
-                h_saveData();
-                document.getElementById('i_newMem').value = '';
+            if (viewId === 'dungeon') {
+                document.getElementById('dungeonBg').style.display = 'block';
+                document.getElementById('globalBg').style.display = 'none';
+            } else {
+                document.getElementById('dungeonBg').style.display = 'none';
+                document.getElementById('globalBg').style.display = 'block';
             }
+
+            if (viewId === 'list') renderWordList();
+            if (viewId === 'shop') renderShop();
+            if (viewId === 'home') updateGlobalCounts();
         }
 
-        function h_setDefaultPayer() {
-            allTrips[activeIdx].defaultPayer = document.getElementById('i_defaultPayer').value;
-            h_saveData();
+        function addNewWord() {
+            const eng = document.getElementById('newEng').value.trim();
+            const chi = document.getElementById('newChi').value.trim();
+            const ex = document.getElementById('newExample').value.trim();
+            if (!eng || !chi) return alert("內容不全！");
+            wordBank.unshift({ eng, chi, example: ex, id: Date.now() });
+            saveState();
+            document.getElementById('newEng').value = '';
+            document.getElementById('newChi').value = '';
+            document.getElementById('newExample').value = '';
+            alert("儲存成功");
         }
 
-        function renderMemberList() {
-            document.getElementById('d_memList').innerHTML = allTrips[activeIdx].members.map((m, i) => `
-                <div class="flex items-center gap-2 bg-white dark:bg-gray-800 px-3 py-2 rounded-full text-xs font-bold shadow-sm border dark:border-gray-600">
-                    <span class="w-2 h-2 rounded-full" style="background:${m.c}"></span>
-                    <span>${m.n}</span>
-                    <button onclick="h_removeMember(${i})" class="ml-1 text-gray-300">×</button>
-                </div>
-            `).join('');
-        }
-
-        function renderHomeList(type) {
-            currentHomeTab = type;
-            const container = document.getElementById('h_tripList');
-            const filtered = allTrips.map((t, i) => ({...t, originalIdx: i})).filter(t => t && (type === 'active' ? !t.isArchived : t.isArchived));
-            container.innerHTML = filtered.map(t => `
-                <div onclick="h_openTrip(${t.originalIdx})" class="glass p-5 rounded-[2rem] flex justify-between items-center active:scale-95 transition-transform cursor-pointer">
-                    <div class="min-w-0 flex-1">
-                        <h4 class="font-bold text-sky-950 dark:text-white text-sm truncate">${t.name}</h4>
-                        <p class="text-[10px] text-gray-500 mt-1">${t.members.length} 人 · ${t.expenses.length} 筆</p>
-                    </div>
-                    <button onclick="h_deleteTrip(${t.originalIdx}, event)" class="text-gray-300 text-xs px-2 hover:text-red-400">刪除</button>
-                </div>
-            `).join('');
-            document.getElementById('home-tab-active').className = type === 'active' ? 'pb-2 border-b-2 border-sky-900 dark:border-sky-400 font-bold text-sm' : 'pb-2 text-gray-400 text-sm';
-            document.getElementById('home-tab-archive').className = type === 'archive' ? 'pb-2 border-b-2 border-sky-900 dark:border-sky-400 font-bold text-sm' : 'pb-2 text-gray-400 text-sm';
-        }
-
-        function h_updateChart() {
-            const trip = allTrips[activeIdx];
-            const cats = {}; [...sysCats, ...customCats].forEach(c => cats[c.v] = 0);
-            trip.expenses.forEach(e => { cats[e.cat] = (cats[e.cat] || 0) + e.amt; });
-            const ctx = document.getElementById('d_chart').getContext('2d');
-            const isDark = document.documentElement.classList.contains('dark');
-            Chart.defaults.color = isDark ? '#9ca3af' : '#6b7280';
-            if(myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(cats).filter(k => cats[k] > 0),
-                    datasets: [{
-                        data: Object.values(cats).filter(v => v > 0),
-                        backgroundColor: ['#fbbf24', '#38bdf8', '#818cf8', '#f87171', '#34d399', '#f472b6', '#94a3b8'],
-                        borderWidth: 0,
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    onClick: (evt, elements) => {
-                        if(elements.length > 0) {
-                            const idx = elements[0].index;
-                            chartActiveFilter = myChart.data.labels[idx];
-                            h_switchTab('list');
+        async function autoFetch() {
+            const eng = document.getElementById('newEng').value.trim();
+            if(!eng) return;
+            const btn = document.querySelector('[onclick="autoFetch()"]');
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ 檢索中...";
+            try {
+                const tRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(eng)}&langpair=en|zh-TW`);
+                const tData = await tRes.json();
+                let chiTranslation = tData.responseData.translatedText;
+                
+                const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
+                const dData = await dRes.json();
+                let pos = "", example = "";
+                if(Array.isArray(dData) && dData.length > 0) {
+                    for(let meaning of dData[0].meanings) {
+                        if(!pos && meaning.partOfSpeech) pos = meaning.partOfSpeech;
+                        for(let def of meaning.definitions) {
+                            if(!example && def.example) example = def.example;
                         }
                     }
                 }
+                const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.'
+                };
+                let posPrefix = pos ? `[${posMap[pos] || pos}] ` : "";
+                
+                document.getElementById('newChi').value = posPrefix + chiTranslation;
+                document.getElementById('newExample').value = example || `This is a simple sentence for ${eng}.`;
+            } catch(e) { 
+                if(!document.getElementById('newChi').value) document.getElementById('newChi').value = "翻譯失敗，請手動輸入";
+                document.getElementById('newExample').value = `I need to learn how to use the word ${eng}.`;
+            } finally {
+                btn.innerText = originalText;
+            }
+        }
+
+        function renderWordList() {
+            const container = document.getElementById('wordListContainer');
+            container.innerHTML = '';
+            wordBank.forEach(w => {
+                const div = document.createElement('div');
+                div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
+                div.innerHTML = `
+                    <div style="flex:1"><strong>${w.eng}</strong> - ${w.chi}</div>
+                    <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng}')">🔊</button>
+                    <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
+                `;
+                container.appendChild(div);
             });
         }
 
-        function applyListFilter() {
-            chartActiveFilter = document.getElementById('i_listFilter').value;
-            renderExpenseList();
+        function deleteWord(id) {
+            wordBank = wordBank.filter(x => x.id !== id);
+            saveState(); renderWordList();
         }
-        function clearFilter() { chartActiveFilter = null; document.getElementById('i_listFilter').value = ""; renderExpenseList(); }
-        function h_deleteExp(idx) { if(confirm("確定刪除？")) { allTrips[activeIdx].expenses.splice(idx, 1); h_saveData(); } }
-        function h_archiveTrip() { allTrips[activeIdx].isArchived = !allTrips[activeIdx].isArchived; h_saveData(); h_goHome(); }
-        function h_deleteTrip(idx, e) { e.stopPropagation(); if(confirm("確定刪除整個項目？")) { allTrips.splice(idx, 1); h_saveData(); } }
-        function exportData() {
-            const blob = new Blob([JSON.stringify(allTrips)], {type: "application/json"});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `TripBackup.json`; a.click();
+
+        function exportCSV() {
+            let csvContent = "\ufeff英文,中文,例句\n" + wordBank.map(w => `"${w.eng}","${w.chi}","${w.example || ''}"`).join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "my_vocab_list.csv");
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); 
         }
-        function importData(e) {
+
+        function importCSV(e) {
+            const file = e.target.files[0];
+            if (!file) return;
             const reader = new FileReader();
-            reader.onload = (ev) => { allTrips = JSON.parse(ev.target.result); h_saveData(); alert("還原成功"); };
-            reader.readAsText(e.target.files[0]);
+            reader.onload = (evt) => {
+                const text = evt.target.result;
+                const lines = text.split("\n").slice(1);
+                const newWords = lines.map((line, i) => {
+                    const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    if (parts.length < 2) return null;
+                    return { eng: parts[0].replace(/"/g, '').trim(), chi: parts[1].replace(/"/g, '').trim(), example: parts[2] ? parts[2].replace(/"/g, '').trim() : "", id: Date.now() + i };
+                }).filter(x => x && x.eng);
+                if (newWords.length > 0) {
+                    wordBank = [...newWords, ...wordBank];
+                    saveState(); alert(`成功匯入 ${newWords.length} 個單字！`);
+                }
+            };
+            reader.readAsText(file);
         }
 
-        async function generateImage() {
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute'; tempDiv.style.left = '-9999px'; tempDiv.style.width = '400px';
-            tempDiv.style.padding = '30px'; tempDiv.style.background = '#f9fafb';
-            tempDiv.innerHTML = `
-                <h2 style="font-size:24px; color:#0369a1; margin-bottom:10px;">${allTrips[activeIdx].name} 結算</h2>
-                <div style="background:white; padding:20px; border-radius:20px; box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1);">
-                    ${document.getElementById('d_overview').innerHTML}
-                </div>
-                <div style="margin-top:20px;">${document.getElementById('d_settleList').innerHTML}</div>
-            `;
-            document.body.appendChild(tempDiv);
-            try {
-                const canvas = await html2canvas(tempDiv, { scale: 2, useCORS: true });
-                const link = document.createElement('a');
-                link.download = `${allTrips[activeIdx].name}_結算.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } finally { document.body.removeChild(tempDiv); }
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5);
         }
 
-        function h_copyMsg() {
-            const trip = allTrips[activeIdx];
-            let msg = `💰 ${trip.name} 結算 💰\n--------------------------\n`;
-            // 簡化版的結算文字生成... (保留原有邏輯)
-            alert("已複製結算內容 (模擬)");
+        function speak(text) {
+            if(!text || !window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
         }
 
-        renderHomeList('active');
+        function startNormal(m) {
+            if(wordBank.length < 4) return alert("單字不足 4 個，無法開始！");
+            studyMode = m; studyList = shuffle(wordBank); currentWord = studyList[0]; studyList = studyList.slice(1);
+            isFlipped = false; document.getElementById('studyFeedback').innerText = '';
+            setupStudyCard(); switchView('study');
+            if(studyMode === 'card') speak(currentWord.eng);
+        }
+
+        function startRevenge() {
+            if(wrongWords.length < 4) return alert("錯題庫不足 4 個單字！快去地下城多犯點錯（誤）");
+            studyMode = 'quiz'; studyList = shuffle(wrongWords); currentWord = studyList[0]; studyList = studyList.slice(1);
+            isFlipped = false; document.getElementById('studyFeedback').innerText = '';
+            setupStudyCard(); switchView('study');
+        }
+
+        function setupStudyCard() {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            const quizOpts = document.getElementById('quizOptions');
+            const readAgainArea = document.getElementById('readAgainArea');
+
+            quizOpts.style.display = 'none'; unflipped.style.display = 'block';
+            flipped.style.display = 'none'; isFlipped = false;
+            
+            if (studyMode === 'card') {
+                unflipped.innerHTML = `<div class="card-eng">${currentWord.eng}</div><p style="color:#999; font-size:0.85rem; margin-top:5px;">點擊卡片翻面</p>`;
+                readAgainArea.style.display = 'block';
+            } else { 
+                unflipped.innerHTML = `<div class="card-chi">${currentWord.chi}</div>`;
+                quizOpts.style.display = 'grid'; readAgainArea.style.display = 'none';
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                quizOpts.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button'); btn.className = 'btn btn-outline'; btn.innerText = opt;
+                    btn.onclick = () => handleQuizSelect(opt); quizOpts.appendChild(btn);
+                });
+            }
+
+            document.getElementById('flipEng').innerText = currentWord.eng; document.getElementById('flipChi').innerText = currentWord.chi;
+            document.getElementById('flipEx').innerText = currentWord.example || '無例句';
+            document.getElementById('flipSpeakBtn').onclick = (e) => { e.stopPropagation(); speak(currentWord.eng); };
+        }
+
+        function handleCardFlip() {
+            if (studyMode !== 'card') return;
+            const unflipped = document.getElementById('card-unflipped'); const flipped = document.getElementById('card-flipped');
+            if (!isFlipped) { unflipped.style.display = 'none'; flipped.style.display = 'block';
+            } 
+            else { unflipped.style.display = 'block';
+            flipped.style.display = 'none'; }
+            isFlipped = !isFlipped;
+        }
+
+        function handleQuizSelect(selected) {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            if (selected === currentWord.eng) {
+                speak(currentWord.eng);
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
+            } else {
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
+            }
+            unflipped.style.display = 'none'; flipped.style.display = 'block';
+        }
+
+        function nextStudyWord() {
+            if (studyList.length === 0) return switchView('home');
+            currentWord = studyList[0]; studyList = studyList.slice(1);
+            document.getElementById('studyFeedback').innerText = ''; setupStudyCard();
+            if(studyMode === 'card') speak(currentWord.eng);
+        }
+
+        // --- Dungeon Mechanics ---
+
+        function startDungeon(diff) {
+            if(wordBank.length < 4) return alert("單字不足 4 個！");
+            dungeonMode = diff;
+            maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
+            // Apply Potion buffs
+            maxHp = 10 + (playerState.level > 5 ? 2 : 0);
+            // Base HP
+            if (playerState.potion > 0) { maxHp += playerState.potion;
+            playerState.potion = 0; }
+            hp = maxHp;
+            // Apply Hourglass buffs
+            extraTime = playerState.hourglass * 2;
+            playerState.hourglass = 0;
+            
+            floor = 1; combo = 0; killedWords = []; missedWords = [];
+            const matchedWrongs = wrongWords.filter(w => wordBank.some(bw => bw.eng === w.eng));
+            let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
+            while (list.length < maxFloor) {
+                const randomWords = shuffle(wordBank);
+                for (let rw of randomWords) {
+                    if (list.length >= maxFloor) break;
+                    if (!list.some(l => l.eng === rw.eng)) list.push(rw);
+                }
+            }
+            studyList = shuffle(list);
+            document.getElementById('comboDisplay').style.display = 'none';
+            document.getElementById('battleScene').classList.remove('fever-active');
+            switchView('dungeon');
+            loadDungeonLevel();
+        }
+
+        function loadDungeonLevel() {
+            clearInterval(timerInterval);
+            currentWord = studyList[floor - 1];
+            timeLeft = 100;
+            
+            // Dynamic Background based on floor
+            const bgIndex = Math.floor((floor - 1) / 5);
+            document.getElementById('dungeonBg').style.backgroundImage = `url("${bgImages[Math.min(bgIndex, bgImages.length-1)]}")`;
+            
+            document.getElementById('timerLine').style.width = '100%';
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
+            document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
+            isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
+            (dungeonMode === 'high' && (floor % 5 === 0));
+            const mImgElement = document.getElementById('monsterImg');
+            mImgElement.className = 'monster-img';
+            if (isBossCurrent) {
+                currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'none';
+                document.getElementById('dungeonBossArea').style.display = 'block';
+                document.getElementById('bossHpBar').style.display = 'block';
+                
+                // Multi-hit setup
+                bossMaxHp = 3;
+                bossCurrentHp = 3;
+                document.getElementById('bossHpFill').style.width = '100%';
+                
+                bossWords = shuffle(wordBank).slice(0, bossMaxHp);
+                if(!bossWords.some(w => w.eng === currentWord.eng)) bossWords[0] = currentWord;
+                // Ensure current word is in
+                currentWord = bossWords[bossMaxHp - bossCurrentHp];
+                // Target 1
+                
+                document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + currentWord.chi;
+                document.getElementById('bossEngHint').innerText = currentWord.eng.substring(0,2) + "..."; // Hint for boss
+                document.getElementById('bossEngHint').style.display = 'block';
+                const bossInput = document.getElementById('bossInput');
+                bossInput.value = ''; bossInput.focus();
+            } else {
+                currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'grid';
+                document.getElementById('dungeonBossArea').style.display = 'none';
+                document.getElementById('bossHpBar').style.display = 'none';
+                document.getElementById('bossEngHint').style.display = 'none';
+                document.getElementById('dungeonChi').innerText = currentWord.chi;
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                
+                const grid = document.getElementById('dungeonQuizGrid');
+                grid.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button'); btn.className = 'btn btn-outline'; btn.innerText = opt;
+                    btn.onclick = () => checkDungeonAns(opt === currentWord.eng);
+                    grid.appendChild(btn);
+                });
+            }
+            mImgElement.src = currentMImg;
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 100;
+            document.getElementById('timerLine').style.width = '100%';
+
+            let totalSeconds = isBossCurrent ? 12 : 6;
+            // Boss gets more base time
+            totalSeconds += extraTime;
+            const isFever = combo >= 5;
+            
+            if(isFever) {
+                totalSeconds *= 2;
+                // Time flows 2x slower in Fever
+                document.getElementById('battleScene').classList.add('fever-active');
+                document.getElementById('timerLine').classList.add('timer-fever');
+            } else {
+                document.getElementById('battleScene').classList.remove('fever-active');
+                document.getElementById('timerLine').classList.remove('timer-fever');
+            }
+
+            const step = (100 / (totalSeconds * 10));
+            timerInterval = setInterval(() => {
+                timeLeft -= step;
+                document.getElementById('timerLine').style.width = timeLeft + '%';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval); triggerPlayerHurt(true);
+                }
+ 
+            }, 100);
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'floating-text'; el.style.color = color; el.innerText = text;
+            document.getElementById('battleScene').appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        function showSlashFx() {
+            const fx = document.getElementById('slashFx');
+            fx.style.animation = 'none'; fx.offsetHeight; // trigger reflow
+            fx.style.animation = 'slash-anim 0.3s forwards';
+        }
+
+        function submitBossAnswer() {
+            const val = document.getElementById('bossInput').value.trim().toLowerCase();
+            const inputEl = document.getElementById('bossInput');
+            
+            if (val === currentWord.eng.toLowerCase()) {
+                bossCurrentHp--;
+                document.getElementById('bossHpFill').style.width = `${(bossCurrentHp/bossMaxHp)*100}%`;
+                showSlashFx();
+                document.getElementById('monsterImg').classList.add('anim-hit');
+                speak(currentWord.eng);
+                showFloatingText("HIT!", "#f1c40f");
+                inputEl.value = '';
+                
+                setTimeout(() => document.getElementById('monsterImg').classList.remove('anim-hit'), 400);
+                if (bossCurrentHp <= 0) {
+                    checkDungeonAns(true);
+                    // Boss defeated
+                } else {
+                    // Load next word for multi-hit
+                    currentWord = bossWords[bossMaxHp - bossCurrentHp];
+                    document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + currentWord.chi;
+                    document.getElementById('bossEngHint').innerText = currentWord.eng.substring(0,2) + "...";
+                    inputEl.focus();
+                }
+            } else {
+                inputEl.value = '';
+                // clear wrong input
+                triggerPlayerHurt(false);
+            }
+        }
+
+        function checkDungeonAns(isCorrect) {
+            clearInterval(timerInterval);
+            if (isCorrect) {
+                combo++;
+                if (combo >= 2) {
+                    const cb = document.getElementById('comboDisplay');
+                    cb.style.display = 'block'; cb.innerText = `🔥 ${combo} Combo!`;
+                }
+                killedWords.push(currentWord);
+                wrongWords = wrongWords.filter(w => w.eng !== currentWord.eng);
+                
+                showSlashFx();
+                showFloatingText(`+${10 + combo * 2} EXP`, "#2ecc71");
+
+                const mImgElement = document.getElementById('monsterImg');
+                mImgElement.classList.add('anim-hit');
+                speak(currentWord.eng);
+                if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
+                
+                setTimeout(() => {
+                    mImgElement.classList.remove('anim-hit');
+                    if (floor >= maxFloor) endGame('win');
+                    else if (isBossCurrent) showChest();
+                    else { floor++; loadDungeonLevel(); }
+ 
+                }, 600);
+            } else {
+                triggerPlayerHurt(false);
+            }
+        }
+
+        function triggerPlayerHurt(isTimeout) {
+            combo = 0;
+            document.getElementById('comboDisplay').style.display = 'none';
+            document.getElementById('battleScene').classList.remove('fever-active');
+            
+            if (!wrongWords.some(w => w.eng === currentWord.eng)) wrongWords.push(currentWord);
+            if (!missedWords.some(w => w.eng === currentWord.eng)) missedWords.push(currentWord);
+            
+            hp--;
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
+
+            const flash = document.getElementById('hurtFlash');
+            flash.classList.add('anim-flash'); setTimeout(() => flash.classList.remove('anim-flash'), 500);
+            const pImg = document.getElementById('playerImg');
+            pImg.classList.add('anim-hurt-combined');
+            setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
+
+            if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+            if (hp <= 0) setTimeout(() => endGame('lose'), 600);
+            else setTimeout(() => startTimer(), 800);
+        }
+
+        function showChest() {
+            chestStatus = 'closed';
+            document.getElementById('chestImg').src = "https://i.imgur.com/sAsVc32.png";
+            document.getElementById('chestTip').innerText = '點擊寶箱開啟獎勵！';
+            document.getElementById('chestNextBtn').style.display = 'none';
+            document.getElementById('chestModal').style.display = 'flex';
+        }
+
+        function openChest() {
+            if (chestStatus !== 'closed') return;
+            chestStatus = 'open';
+            document.getElementById('chestImg').src = "https://i.imgur.com/JNPgpc7.png";
+            
+            // Boss drops gold
+            const goldDrop = Math.floor(Math.random() * 20) + 10;
+            playerState.gold += goldDrop;
+
+            if (Math.random() < 0.5) {
+                hp++;
+                document.getElementById('chestTip').innerText = `你獲得了：❤️ 生命+1 / 🪙 金幣+${goldDrop}`;
+            } else {
+                extraTime += 2;
+                document.getElementById('chestTip').innerText = `你獲得了：⏱️ 時間+2s / 🪙 金幣+${goldDrop}`;
+            }
+            document.getElementById('chestNextBtn').style.display = 'block';
+        }
+
+        function closeChestModal() {
+            document.getElementById('chestModal').style.display = 'none';
+            floor++; loadDungeonLevel();
+        }
+
+        function endGame(result) {
+            clearInterval(timerInterval);
+            // Calculate RPG Rewards
+            const expGain = killedWords.length * 15 + (result === 'win' ? 100 : 0);
+            const goldGain = killedWords.length * 2 + (result === 'win' ? 30 : 0);
+            
+            playerState.exp += expGain;
+            playerState.gold += goldGain;
+            let levelUpMsg = "";
+            const expReq = playerState.level * 100;
+            if (playerState.exp >= expReq) {
+                playerState.level++;
+                playerState.exp -= expReq;
+                levelUpMsg = "✨ LEVEL UP! ✨";
+            }
+            
+            saveState();
+            document.getElementById('endEmoji').innerText = (result === 'win') ? '🎉' : '💀';
+            document.getElementById('endTitle').innerText = (result === 'win') ? '挑戰成功' : '你倒下了';
+            document.getElementById('endRewards').innerText = `獲得 ${expGain} EXP / 🪙 ${goldGain} ${levelUpMsg ? '\n'+levelUpMsg : ''}`;
+            
+            document.getElementById('killedCount').innerText = killedWords.length;
+            document.getElementById('missedCount').innerText = missedWords.length;
+            // Enhanced Missed List with Audio
+            const missedContainer = document.getElementById('missedListContainer');
+            missedContainer.innerHTML = '';
+            if (missedWords.length === 0) {
+                missedContainer.innerText = '太棒了，無漏網之魚！';
+            } else {
+                missedWords.forEach(w => {
+                    const d = document.createElement('div');
+                    d.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#fff; padding:5px; border-radius:5px; margin-top:5px; border:1px solid #ddd;";
+                    d.innerHTML = `<span><strong>${w.eng}</strong> <span style="font-size:0.8rem;color:#666">${w.chi}</span></span>
+                                   <button class="speaker-btn" style="width:28px; height:28px; font-size:0.8rem;" onclick="speak('${w.eng}')">🔊</button>`;
+                    missedContainer.appendChild(d);
+                });
+            }
+
+            switchView('end');
+        }
+
+        document.getElementById('bossInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitBossAnswer();
+        });
+        init();
     </script>
 </body>
 </html>
