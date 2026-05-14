@@ -3,173 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab Dungeon v33.1 - Ultimate RPG Edition</title>
+    <title>Vocab Dungeon v33.2 - Ultimate RPG Edition</title>
     <style>
         :root { 
-            --bg: #f4f7f6;
-            --primary: #0984e3; 
-            --text: #2d3436; 
-            --danger: #d63031; 
-            --success: #27ae60; 
-            --gray: #636e72;
-            --gold: #f1c40f;
+            --bg: #f4f7f6; --primary: #0984e3; --text: #2d3436; 
+            --danger: #d63031; --success: #27ae60; --gray: #636e72; --gold: #f1c40f;
         }
         body { 
-            background: var(--bg);
-            font-family: -apple-system, sans-serif; 
-            margin: 0; 
-            color: var(--text);
-            overflow-x: hidden; 
+            background: var(--bg); font-family: -apple-system, sans-serif; 
+            margin: 0; color: var(--text); overflow-x: hidden; 
         }
         .container { 
-            width: 100%;
-            max-width: 480px; 
-            min-height: 100vh;
-            margin: 0 auto; 
-            padding: 20px; 
-            box-sizing: border-box; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            z-index: 1;
+            width: 100%; max-width: 480px; min-height: 100vh;
+            margin: 0 auto; padding: 20px; box-sizing: border-box; 
+            display: flex; flex-direction: column; position: relative; z-index: 1;
         }
         
         .global-bg { 
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background-image: url("https://i.imgur.com/SwmBCNA.jpeg"); 
-            background-size: cover; 
-            background-position: center; 
-            z-index: 0;
+            background-size: cover; background-position: center; z-index: 0;
         }
         .dungeon-bg { 
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("https://i.imgur.com/6FeeRyP.jpeg"); 
-            background-size: cover; 
-            background-position: center; 
-            transition: background-image 0.5s ease;
-            z-index: 0;
-            display: none;
+            background-size: cover; background-position: center; 
+            transition: background-image 0.5s ease; z-index: 0; display: none;
         }
 
         .splash-screen { 
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000; 
-            z-index: 1000; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; z-index: 1000; display: flex; 
+            flex-direction: column; align-items: center;
         }
         .splash-img { 
-            width: 100%;
-            height: 100%; object-fit: contain; 
+            width: 100%; height: 100%; object-fit: contain; 
             position: absolute; top: 0; left: 0;
         }
         .enter-btn-container { 
-            position: absolute;
-            bottom: 15%; width: 100%; 
+            position: absolute; bottom: 15%; width: 100%; 
             display: flex; justify-content: center; 
         }
         .btn-rpg { 
-            background: #2d3436;
-            color: #fff; border: 4px solid #fff;
+            background: #2d3436; color: #fff; border: 4px solid #fff;
             padding: 12px 40px; font-size: 1.5rem; font-weight: bold; 
             cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
-            box-shadow: 0 0 0 4px #2d3436;
-            transition: 0.1s; 
+            box-shadow: 0 0 0 4px #2d3436; transition: 0.1s; 
         }
-        .btn-rpg:active { transform: scale(0.9);
-            background: #636e72; }
+        .btn-rpg:active { transform: scale(0.9); background: #636e72; }
 
         .btn { 
-            background: #fff;
-            border: 1px solid #ddd; padding: 14px;
+            background: #fff; border: 1px solid #ddd; padding: 14px;
             margin: 8px 0; cursor: pointer; font-size: 1rem; border-radius: 12px; 
-            width: 100%; font-weight: 600;
-            box-sizing: border-box; transition: 0.2s; 
+            width: 100%; font-weight: 600; box-sizing: border-box; transition: 0.2s; 
             -webkit-tap-highlight-color: transparent;
         }
-        .btn:active { transform: scale(0.96); background: #f0f0f0;
-        }
+        .btn:active { transform: scale(0.96); background: #f0f0f0; }
         .btn-primary { 
-            background: var(--primary);
-            color: white; border: none;
+            background: var(--primary); color: white; border: none;
             box-shadow: 0 4px 12px rgba(9,132,227,0.2); 
         }
         .btn-outline { 
-            color: var(--primary);
-            border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
+            color: var(--primary); border: 2px solid var(--primary); background: rgba(255,255,255,0.8); 
         }
-        .btn-small { padding: 8px; font-size: 0.85rem;
-            margin: 5px 2px; flex: 1; }
+        .btn-small { padding: 8px; font-size: 0.85rem; margin: 5px 2px; flex: 1; }
         .speaker-btn { 
-            background: #e1f0ff;
-            border: none;
-            border-radius: 50%; width: 44px; height: 44px; cursor: pointer; 
-            display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            background: #e1f0ff; border: none; border-radius: 50%; width: 44px; height: 44px; 
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
         
         /* RPG Stats Panel */
         .hero-stats {
-            background: rgba(255,255,255,0.9);
-            border-radius: 15px; padding: 15px; margin-bottom: 15px;
-            border: 2px solid #e1b12c;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.9); border-radius: 15px; padding: 15px; margin-bottom: 15px;
+            border: 2px solid #e1b12c; display: flex; justify-content: space-between; align-items: center;
         }
         .exp-bar-container {
-            flex-grow: 1;
-            height: 10px; background: #eee; border-radius: 5px; margin: 0 15px; overflow: hidden;
+            flex-grow: 1; height: 10px; background: #eee; border-radius: 5px; margin: 0 15px; overflow: hidden;
         }
-        .exp-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.3s;
-        }
+        .exp-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.3s; }
 
         /* Shop Grid */
-        .shop-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; gap: 10px;
-        }
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .shop-item {
-            background: white;
-            border: 2px solid #eee; border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: space-between;
+            background: white; border: 2px solid #eee; border-radius: 12px; padding: 10px; text-align: center; 
+            cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
         }
-        .shop-item:hover { border-color: var(--primary);
-        }
-        .shop-item.owned { border-color: var(--success); background: #f0fff4;
-        }
+        .shop-item:hover { border-color: var(--primary); }
+        .shop-item.owned { border-color: var(--success); background: #f0fff4; }
 
         .card { 
-            background: rgba(255,255,255,0.95);
-            border-radius: 24px; padding: 25px; margin: 10px 0;
+            background: rgba(255,255,255,0.95); border-radius: 24px; padding: 25px; margin: 10px 0;
             min-height: 260px; display: flex; flex-direction: column; justify-content: center; 
-            align-items: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
+            align-items: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); text-align: center; 
             position: relative; border: 1px solid #eee;
         }
-        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary);
-        }
-        .card-chi { font-size: 1.6rem; font-weight: bold; color: #444; white-space: pre-wrap; line-height: 1.4;
-        }
+        .card-eng { font-size: 2.2rem; font-weight: bold; color: var(--primary); }
+        .card-chi { font-size: 1.6rem; font-weight: bold; color: #444; white-space: pre-line; line-height: 1.4; }
         .example-box { 
-            margin-top: 15px;
-            padding: 12px; background: #f9f9f9; border-radius: 10px;
+            margin-top: 15px; padding: 12px; background: #f9f9f9; border-radius: 10px;
             border-left: 4px solid var(--primary); text-align: left; font-style: italic; 
             font-size: 0.95rem; width: 100%; box-sizing: border-box;
         }
-        .example-box p { white-space: pre-wrap; margin: 5px 0 0 0; line-height: 1.4; }
+        .example-box p { white-space: pre-line; margin: 5px 0 0 0; line-height: 1.4; }
         
         .battle-scene { 
-            position: relative;
-            width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
+            position: relative; width: 100%; height: 240px; margin: 10px 0; overflow: visible; 
             background: rgba(255, 255, 255, 0.5); border-radius: 15px; transition: 0.3s;
         }
-        .fever-active {
-            box-shadow: 0 0 20px 5px rgba(243, 156, 18, 0.8) inset;
-            border: 2px solid #f39c12;
-        }
+        .fever-active { box-shadow: 0 0 20px 5px rgba(243, 156, 18, 0.8) inset; border: 2px solid #f39c12; }
         
         .monster-box { position: absolute; top: 20px; right: 10%; text-align: center; z-index: 1; }
         .monster-img { width: 90px; height: auto; image-rendering: pixelated; transition: 0.3s; transform-origin: center bottom; }
@@ -240,9 +181,7 @@
         }
         @keyframes pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
 
-        .boss-hp-bar {
-            width: 100%; height: 8px; background: #555; border-radius: 4px; margin-bottom: 10px; overflow: hidden; display: none;
-        }
+        .boss-hp-bar { width: 100%; height: 8px; background: #555; border-radius: 4px; margin-bottom: 10px; overflow: hidden; display: none; }
         .boss-hp-fill { height: 100%; background: #e74c3c; width: 100%; transition: 0.3s; }
 
         .modal-overlay { 
@@ -321,10 +260,8 @@
                     <strong>時間沙漏</strong><br><small>單題作答時間+2秒</small><br><span style="color:var(--gold)">🪙 50</span>
                 </div>
             </div>
-
             <h4 style="margin: 20px 0 10px 0;">專屬外觀 (Skin)</h4>
-            <div class="shop-grid" id="skinGrid">
-            </div>
+            <div class="shop-grid" id="skinGrid"></div>
         </div>
 
         <div id="view-menu" class="view-section">
@@ -389,8 +326,7 @@
 
         <div id="view-dungeon" class="view-section">
             <div style="background: #2d3436; color: white; padding: 12px; border-radius: 15px; display:flex; justify-content:space-between; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
-                <span id="hpDisplay"></span>
-                <span id="floorDisplay"></span>
+                <span id="hpDisplay"></span><span id="floorDisplay"></span>
             </div>
             <div class="battle-scene" id="battleScene">
                 <div class="timer-line" id="timerLine" style="width:100%"></div>
@@ -416,14 +352,12 @@
                 <input type="text" id="bossInput" placeholder="拼寫單字..." autocomplete="off"/>
                 <button class="btn btn-primary" onclick="submitBossAnswer()">⚡ 攻擊 BOSS</button>
             </div>
-
             <button class="btn" style="color:#999; margin-top: 10px" onclick="clearInterval(timerInterval); switchView('home');">🏳️ 撤退</button>
         </div>
 
         <div id="view-end" class="view-section">
             <div style="text-align:center">
-                <h1 id="endEmoji"></h1>
-                <h2 id="endTitle"></h2>
+                <h1 id="endEmoji"></h1><h2 id="endTitle"></h2>
                 <div id="endRewards" style="color:var(--gold); font-weight:bold; font-size:1.2rem; margin-bottom: 10px;"></div>
             </div>
             
@@ -437,7 +371,6 @@
                     <div id="missedListContainer" style="margin-top: 5px;"></div>
                 </div>
             </div>
-
             <button class="btn btn-primary" style="margin-top: 20px" onclick="switchView('home')">返回基地</button>
         </div>
     </div>
@@ -452,844 +385,850 @@
     </div>
 
     <script>
-        // 確保安全執行的包裹器
-        window.onload = function() {
-            const initialWords = [
-                {eng:"Ingredient", chi:"n. 成分; 材料", example:"Flour is a main ingredient for bread."},
-                {eng:"Carrot", chi:"n. 紅蘿蔔", example:"I like to eat raw carrots."},
-                {eng:"Peas", chi:"n. 青豆", example:"We had chicken and peas for dinner."},
-                {eng:"Sweet potato", chi:"n. 番薯", example:"Roasted sweet potato is very delicious."},
-                {eng:"Onion", chi:"n. 洋蔥", example:"Cutting an onion makes me cry."},
-                {eng:"Pepper", chi:"n. 甜椒; 胡椒", example:"Add some pepper to the soup."},
-                {eng:"Aubergine", chi:"n. 茄子", example:"Aubergine is also called eggplant."},
-                {eng:"Sweetcorn", chi:"n. 粟米", example:"I love eating sweetcorn with butter."},
-                {eng:"Peel", chi:"v. 削皮; 剝皮\nn. 果皮", example:"Please peel the apple for me."},
-                {eng:"Fry", chi:"v. 煎; 炸", example:"You can fry an egg in the pan."},
-                {eng:"Roast", chi:"v. 烤; 烘", example:"We roast a chicken every Sunday."},
-                {eng:"Toaster", chi:"n. 多士爐", example:"Put the bread in the toaster."},
-                {eng:"Kettle", chi:"n. 水煲", example:"The kettle is boiling."},
-                {eng:"Coffee Machine", chi:"n. 咖啡機", example:"This coffee machine is easy to use."},
-                {eng:"Blender", chi:"n. 攪拌機", example:"I use a blender to make smoothies."},
-                {eng:"Rice Cooker", chi:"n. 電飯煲", example:"Put the rice into the rice cooker."},
-                {eng:"Hand Mixer", chi:"n. 手提攪拌器", example:"Use a hand mixer to whip the cream."},
-                {eng:"Dishwasher", chi:"n. 洗碗機", example:"Put the dirty plates in the dishwasher."},
-                {eng:"Oven", chi:"n. 焗爐", example:"The cake is baking in the oven."},
-                {eng:"Airfryer", chi:"n. 氣炸鍋", example:"An airfryer uses less oil."},
-                {eng:"Scarf", chi:"n. 圍巾", example:"I wear a scarf in winter."},
-                {eng:"Toothbrush", chi:"n. 牙刷", example:"Change your toothbrush regularly."},
-                {eng:"Shower", chi:"n. 淋浴\nv. 洗澡", example:"I take a shower every morning."},
-                {eng:"Flush", chi:"v. 沖水", example:"Don't forget to flush the toilet."},
-                {eng:"Razor", chi:"n. 剃刀", example:"He uses a sharp razor to shave."},
-                {eng:"Tap", chi:"n. 水龍頭", example:"Turn off the tap to save water."},
-                {eng:"Towel", chi:"n. 毛巾", example:"Dry your hands with a towel."},
-                {eng:"Shower Curtain", chi:"n. 浴簾", example:"Please close the shower curtain."},
-                {eng:"Bathrobe", chi:"n. 浴袍", example:"Put on your bathrobe after a bath."},
-                {eng:"Sponge", chi:"n. 海綿", example:"I use a sponge to wash the car."},
-                {eng:"Shower Cap", chi:"n. 浴帽", example:"She wears a shower cap in the shower."},
-                {eng:"Kitten", chi:"n. 小貓", example:"The kitten is playing with a ball."},
-                {eng:"Foal", chi:"n. 小馬", example:"The foal is standing next to its mother."},
-                {eng:"Chick", chi:"n. 小雞", example:"A yellow chick is very cute."},
-                {eng:"Joey", chi:"n. 小袋鼠", example:"A joey lives in its mother's pouch."},
-                {eng:"Puppy", chi:"n. 小狗", example:"My puppy loves to bark."},
-                {eng:"Piglet", chi:"n. 小豬", example:"The piglet is eating corn."},
-                {eng:"Lamb", chi:"n. 小羊", example:"A lamb has white wool."},
-                {eng:"Calf", chi:"n. 小牛", example:"The calf is drinking milk."},
-                {eng:"Helicopter", chi:"n. 直升機", example:"The helicopter flew over the city."},
-                {eng:"Lorry", chi:"n. 貨車", example:"The lorry is carrying heavy boxes."},
-                {eng:"Shuttle", chi:"n. 接駁車", example:"The shuttle picks up passengers at the airport."}
-            ].map(function(w, i) { return Object.assign({}, w, { id: Date.now() + i }); });
+        // 【防白畫面系統】自動捕捉並顯示任何導致死機的錯誤
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            document.body.innerHTML = `<div style="padding:30px; background:#fff; color:#d63031; position:absolute; z-index:99999; top:0; left:0; width:100%; height:100%; box-sizing:border-box;">
+                <h2 style="margin-top:0">系統偵測到錯誤</h2>
+                <p><strong>錯誤詳情:</strong> ${msg}</p>
+                <p>已經啟動安全模式，請檢查你的瀏覽器設定或清空網站資料。</p>
+            </div>`;
+            return false;
+        };
 
-            const monsterImages = [
-                "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
-                "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
-                "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
-            ];
-            const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
-            const bgImages = [
-                "https://i.imgur.com/6FeeRyP.jpeg", 
-                "https://i.imgur.com/SwmBCNA.jpeg", 
-                "https://i.imgur.com/8MUpGMJ.jpeg", 
-            ];
-            
-            let playerState = { level: 1, exp: 0, gold: 0, skin: 'default', potion: 0, hourglass: 0, ownedSkins: ['default'] };
-            const skins = [
-                { id: 'default', name: '預設勇者', img: 'https://i.imgur.com/gsR29ty.png', price: 0 },
-                { id: 'tofu', name: '🐱 天使貓', img: 'https://i.imgur.com/meZ4rN7.png', price: 300 }, 
-                { id: 'goma', name: '🐱 惡魔貓', img: 'https://i.imgur.com/U4Il5Eo.png', price: 300 } 
-            ];
-            
-            window.wordBank = [];
-            window.wrongWords = [];
-            let studyList = [];
-            let currentWord = null;
-            let studyMode = 'card';
-            let isFlipped = false;
-            let currentOptions = [];
+        const initialWords = [
+            {eng:"Ingredient", chi:"n. 成分; 材料", example:"Flour is a main ingredient for bread."},
+            {eng:"Carrot", chi:"n. 紅蘿蔔", example:"I like to eat raw carrots."},
+            {eng:"Peas", chi:"n. 青豆", example:"We had chicken and peas for dinner."},
+            {eng:"Sweet potato", chi:"n. 番薯", example:"Roasted sweet potato is very delicious."},
+            {eng:"Onion", chi:"n. 洋蔥", example:"Cutting an onion makes me cry."},
+            {eng:"Pepper", chi:"n. 甜椒; 胡椒", example:"Add some pepper to the soup."},
+            {eng:"Aubergine", chi:"n. 茄子", example:"Aubergine is also called eggplant."},
+            {eng:"Sweetcorn", chi:"n. 粟米", example:"I love eating sweetcorn with butter."},
+            {eng:"Peel", chi:"v. 削皮; 剝皮\nn. 果皮", example:"Please peel the apple for me."},
+            {eng:"Fry", chi:"v. 煎; 炸", example:"You can fry an egg in the pan."},
+            {eng:"Roast", chi:"v. 烤; 烘", example:"We roast a chicken every Sunday."},
+            {eng:"Toaster", chi:"n. 多士爐", example:"Put the bread in the toaster."},
+            {eng:"Kettle", chi:"n. 水煲", example:"The kettle is boiling."},
+            {eng:"Coffee Machine", chi:"n. 咖啡機", example:"This coffee machine is easy to use."},
+            {eng:"Blender", chi:"n. 攪拌機", example:"I use a blender to make smoothies."},
+            {eng:"Rice Cooker", chi:"n. 電飯煲", example:"Put the rice into the rice cooker."},
+            {eng:"Hand Mixer", chi:"n. 手提攪拌器", example:"Use a hand mixer to whip the cream."},
+            {eng:"Dishwasher", chi:"n. 洗碗機", example:"Put the dirty plates in the dishwasher."},
+            {eng:"Oven", chi:"n. 焗爐", example:"The cake is baking in the oven."},
+            {eng:"Airfryer", chi:"n. 氣炸鍋", example:"An airfryer uses less oil."},
+            {eng:"Scarf", chi:"n. 圍巾", example:"I wear a scarf in winter."},
+            {eng:"Toothbrush", chi:"n. 牙刷", example:"Change your toothbrush regularly."},
+            {eng:"Shower", chi:"n. 淋浴\nv. 洗澡", example:"I take a shower every morning."},
+            {eng:"Flush", chi:"v. 沖水", example:"Don't forget to flush the toilet."},
+            {eng:"Razor", chi:"n. 剃刀", example:"He uses a sharp razor to shave."},
+            {eng:"Tap", chi:"n. 水龍頭", example:"Turn off the tap to save water."},
+            {eng:"Towel", chi:"n. 毛巾", example:"Dry your hands with a towel."},
+            {eng:"Shower Curtain", chi:"n. 浴簾", example:"Please close the shower curtain."},
+            {eng:"Bathrobe", chi:"n. 浴袍", example:"Put on your bathrobe after a bath."},
+            {eng:"Sponge", chi:"n. 海綿", example:"I use a sponge to wash the car."},
+            {eng:"Shower Cap", chi:"n. 浴帽", example:"She wears a shower cap in the shower."},
+            {eng:"Kitten", chi:"n. 小貓", example:"The kitten is playing with a ball."},
+            {eng:"Foal", chi:"n. 小馬", example:"The foal is standing next to its mother."},
+            {eng:"Chick", chi:"n. 小雞", example:"A yellow chick is very cute."},
+            {eng:"Joey", chi:"n. 小袋鼠", example:"A joey lives in its mother's pouch."},
+            {eng:"Puppy", chi:"n. 小狗", example:"My puppy loves to bark."},
+            {eng:"Piglet", chi:"n. 小豬", example:"The piglet is eating corn."},
+            {eng:"Lamb", chi:"n. 小羊", example:"A lamb has white wool."},
+            {eng:"Calf", chi:"n. 小牛", example:"The calf is drinking milk."},
+            {eng:"Helicopter", chi:"n. 直升機", example:"The helicopter flew over the city."},
+            {eng:"Lorry", chi:"n. 貨車", example:"The lorry is carrying heavy boxes."},
+            {eng:"Shuttle", chi:"n. 接駁車", example:"The shuttle picks up passengers at the airport."}
+        ].map(function(w, i) { return Object.assign({}, w, { id: Date.now() + i }); });
 
-            let hp = 10;
-            let maxHp = 10;
-            let floor = 1;
-            let maxFloor = 10;
-            let dungeonMode = 'low';
-            let timeLeft = 100;
-            let timerInterval = null;
-            let combo = 0;
-            let extraTime = 0;
-            let isBossCurrent = false;
-            let chestStatus = 'closed';
-            let killedWords = [];
-            let missedWords = [];
-            let currentMImg = "";
-            
-            let bossWords = [];
-            let bossMaxHp = 3;
-            let bossCurrentHp = 3;
+        const monsterImages = [
+            "https://i.imgur.com/BbjA5GC.png", "https://i.imgur.com/IWc1B7P.png", "https://i.imgur.com/Y7WZlES.png",
+            "https://i.imgur.com/ToQhBZL.png", "https://i.imgur.com/72Hr4rn.png", "https://i.imgur.com/3jsF7It.png",
+            "https://i.imgur.com/4TfXx0t.png", "https://i.imgur.com/bI7Y6tX.png"
+        ];
+        const bossImages = ["https://i.imgur.com/LNZ46Uc.png", "https://i.imgur.com/ArFodUT.png"];
+        const bgImages = [
+            "https://i.imgur.com/6FeeRyP.jpeg", 
+            "https://i.imgur.com/SwmBCNA.jpeg", 
+            "https://i.imgur.com/8MUpGMJ.jpeg", 
+        ];
+        
+        let playerState = { level: 1, exp: 0, gold: 0, skin: 'default', potion: 0, hourglass: 0, ownedSkins: ['default'] };
+        const skins = [
+            { id: 'default', name: '預設勇者', img: 'https://i.imgur.com/gsR29ty.png', price: 0 },
+            { id: 'tofu', name: '🐱 天使貓', img: 'https://i.imgur.com/meZ4rN7.png', price: 300 }, 
+            { id: 'goma', name: '🐱 惡魔貓', img: 'https://i.imgur.com/U4Il5Eo.png', price: 300 } 
+        ];
+        
+        let wordBank = [];
+        let wrongWords = [];
+        let studyList = [];
+        let currentWord = null;
+        let studyMode = 'card';
+        let isFlipped = false;
+        let currentOptions = [];
 
-            function init() {
-                try {
-                    const savedBank = localStorage.getItem('vocab_v10_final_v2');
-                    const savedWrongs = localStorage.getItem('vocab_wrongs');
-                    const savedPlayer = localStorage.getItem('vocab_player');
-                    
-                    if (savedBank) { 
-                        try { 
-                            let parsed = JSON.parse(savedBank); 
-                            window.wordBank = (Array.isArray(parsed) && parsed.length > 0) ? parsed : initialWords;
-                        } catch(e) { window.wordBank = initialWords; } 
-                    } else { window.wordBank = initialWords; }
+        let hp = 10;
+        let maxHp = 10;
+        let floor = 1;
+        let maxFloor = 10;
+        let dungeonMode = 'low';
+        let timeLeft = 100;
+        let timerInterval = null;
+        let combo = 0;
+        let extraTime = 0;
+        let isBossCurrent = false;
+        let chestStatus = 'closed';
+        let killedWords = [];
+        let missedWords = [];
+        let currentMImg = "";
+        
+        let bossWords = [];
+        let bossMaxHp = 3;
+        let bossCurrentHp = 3;
 
-                    if (savedWrongs) { 
-                        try { 
-                            let parsed = JSON.parse(savedWrongs);
-                            window.wrongWords = Array.isArray(parsed) ? parsed : [];
-                        } catch(e) { window.wrongWords = []; } 
-                    }
-                    
-                    if (savedPlayer) { 
-                        try { 
-                            let parsed = JSON.parse(savedPlayer);
-                            if (parsed && typeof parsed === 'object') {
-                                playerState = Object.assign({}, playerState, parsed);
-                                if (!playerState.ownedSkins) playerState.ownedSkins = ['default']; 
-                            }
-                        } catch(e) {} 
-                    }
-                } catch(error) {
-                    // 全面防呆：萬一有無法預料的崩潰，強制重置
-                    window.wordBank = initialWords;
-                    window.wrongWords = [];
+        function init() {
+            try {
+                const savedBank = localStorage.getItem('vocab_v10_final_v2');
+                const savedWrongs = localStorage.getItem('vocab_wrongs');
+                const savedPlayer = localStorage.getItem('vocab_player');
+                
+                if (savedBank) { 
+                    try { 
+                        let parsed = JSON.parse(savedBank); 
+                        wordBank = (Array.isArray(parsed) && parsed.length > 0) ? parsed : initialWords;
+                    } catch(e) { wordBank = initialWords; } 
+                } else { wordBank = initialWords; }
+
+                if (savedWrongs) { 
+                    try { 
+                        let parsed = JSON.parse(savedWrongs);
+                        wrongWords = Array.isArray(parsed) ? parsed : [];
+                    } catch(e) { wrongWords = []; } 
                 }
-
-                updateGlobalCounts();
-                renderShop();
-                window.switchView('splash');
+                
+                if (savedPlayer) { 
+                    try { 
+                        let parsed = JSON.parse(savedPlayer);
+                        if (parsed && typeof parsed === 'object') {
+                            playerState = Object.assign({}, playerState, parsed);
+                            if (!playerState.ownedSkins) playerState.ownedSkins = ['default']; 
+                        }
+                    } catch(e) {} 
+                }
+            } catch(error) {
+                // 強制防止白畫面：載入失敗直接使用預設資料
+                wordBank = initialWords;
+                wrongWords = [];
             }
 
-            function saveState() {
-                try {
-                    localStorage.setItem('vocab_v10_final_v2', JSON.stringify(window.wordBank));
-                    localStorage.setItem('vocab_wrongs', JSON.stringify(window.wrongWords));
-                    localStorage.setItem('vocab_player', JSON.stringify(playerState));
-                } catch(e) {}
-                updateGlobalCounts();
-            }
+            updateGlobalCounts();
+            renderShop();
+            switchView('splash');
+        }
 
-            function updateGlobalCounts() {
-                document.getElementById('bankCount').innerText = window.wordBank.length || 0;
-                document.getElementById('listCount').innerText = window.wordBank.length || 0;
+        function saveState() {
+            try {
+                localStorage.setItem('vocab_v10_final_v2', JSON.stringify(wordBank));
+                localStorage.setItem('vocab_wrongs', JSON.stringify(wrongWords));
+                localStorage.setItem('vocab_player', JSON.stringify(playerState));
+            } catch(e) {}
+            updateGlobalCounts();
+        }
+
+        function updateGlobalCounts() {
+            document.getElementById('bankCount').innerText = wordBank.length || 0;
+            document.getElementById('listCount').innerText = wordBank.length || 0;
+            
+            document.getElementById('statLevel').innerText = playerState.level || 1;
+            document.getElementById('statGold').innerText = playerState.gold || 0;
+            document.getElementById('shopGold').innerText = playerState.gold || 0;
+            
+            const lvl = playerState.level || 1;
+            const expReq = lvl * 100;
+            const expPercent = Math.min(100, ((playerState.exp || 0) / expReq) * 100);
+            document.getElementById('statExpBar').style.width = expPercent + '%';
+            
+            const skinObj = skins.find(s => s.id === playerState.skin) || skins[0];
+            document.getElementById('playerImg').src = skinObj.img;
+            
+            const wrapper = document.getElementById('playerImgWrapper');
+            if (skinObj.id === 'tofu' || skinObj.id === 'goma') {
+                wrapper.style.transform = 'scale(1.5)';
+            } else {
+                wrapper.style.transform = 'scale(1)';
+            }
+        }
+
+        function renderShop() {
+            const grid = document.getElementById('skinGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            skins.forEach(skin => {
+                const isEquipped = playerState.skin === skin.id;
+                const isOwned = playerState.ownedSkins.includes(skin.id) || (skin.price === 0);
+                const btn = document.createElement('div');
                 
-                document.getElementById('statLevel').innerText = playerState.level || 1;
-                document.getElementById('statGold').innerText = playerState.gold || 0;
-                document.getElementById('shopGold').innerText = playerState.gold || 0;
+                btn.className = `shop-item ${isOwned ? 'owned' : ''}`;
                 
-                const lvl = playerState.level || 1;
-                const expReq = lvl * 100;
-                const expPercent = Math.min(100, ((playerState.exp || 0) / expReq) * 100);
-                document.getElementById('statExpBar').style.width = expPercent + '%';
-                
-                const skinObj = skins.find(s => s.id === playerState.skin) || skins[0];
-                document.getElementById('playerImg').src = skinObj.img;
-                
-                const wrapper = document.getElementById('playerImgWrapper');
-                if (skinObj.id === 'tofu' || skinObj.id === 'goma') {
-                    wrapper.style.transform = 'scale(1.5)';
+                let btnHtml = '';
+                if (isEquipped) {
+                    btnHtml = '<div style="color:var(--primary); font-weight:bold; font-size:0.9rem; margin-top:5px">✅ 裝備中</div>';
+                } else if (isOwned) {
+                    btnHtml = '<button style="background:var(--success); color:white; border:none; padding:5px 15px; border-radius:15px; cursor:pointer; font-weight:bold; margin-top:5px; width:100%">🔄 更換</button>';
                 } else {
-                    wrapper.style.transform = 'scale(1)';
+                    btnHtml = `<span style="color:var(--gold); font-weight:bold; margin-top:5px">🪙 ${skin.price}</span>`;
                 }
+
+                let imgSize = (skin.id === 'tofu' || skin.id === 'goma') ? '105px' : '70px';
+
+                btn.innerHTML = `
+                    <img src="${skin.img}" style="width:${imgSize}; height:${imgSize}; object-fit:contain; transition: 0.3s;"/>
+                    <div style="font-weight:bold; font-size:0.95rem; margin-top:10px; margin-bottom:5px;">${skin.name}</div>
+                    ${btnHtml}
+                `;
+                btn.onclick = () => buySkin(skin.id, skin.price);
+                grid.appendChild(btn);
+            });
+        }
+
+        function buyItem(type, price) {
+            if (playerState.gold >= price) {
+                playerState.gold -= price;
+                playerState[type] = (playerState[type] || 0) + 1;
+                saveState();
+                alert(`購買成功！目前持有 ${playerState[type]} 個。進入戰鬥時將自動生效！`);
+            } else {
+                alert("金幣不足！");
+            }
+        }
+
+        function buySkin(id, price) {
+            if (playerState.skin === id) return;
+            if (price === 0 || playerState.ownedSkins.includes(id)) {
+                playerState.skin = id;
+                saveState(); renderShop(); updateGlobalCounts(); 
+                alert("裝備已更換！");
+                return;
+            }
+            if (playerState.gold >= price) {
+                playerState.gold -= price;
+                playerState.skin = id;
+                playerState.ownedSkins.push(id);
+                saveState(); renderShop(); updateGlobalCounts();
+                alert("外觀解鎖並裝備成功！");
+            } else {
+                alert("金幣不足！");
+            }
+        }
+
+        function clearAllWords() {
+            if(confirm('⚠️ 警告：這將會移除所有生字，並且無法復原！\n確定要清空嗎？')) {
+                wordBank = [];
+                wrongWords = []; saveState(); renderWordList(); alert('已成功清空所有生字！');
+            }
+        }
+
+        function resetDefaultBank() {
+            if(confirm('確定要還原回預設的生字庫嗎？此動作會覆蓋您目前的單字。')) {
+                wordBank = initialWords;
+                wrongWords = []; saveState(); renderWordList();
+            }
+        }
+
+        function switchView(viewId) {
+            const sections = document.querySelectorAll('.view-section');
+            for(let i=0; i<sections.length; i++) sections[i].classList.remove('active');
+
+            const splash = document.getElementById('view-splash');
+            if (viewId === 'splash') {
+                if(splash) splash.style.setProperty('display', 'flex', 'important');
+            } else {
+                if(splash) splash.style.setProperty('display', 'none', 'important');
+                const target = document.getElementById('view-' + viewId);
+                if (target) target.classList.add('active');
             }
 
-            function renderShop() {
-                const grid = document.getElementById('skinGrid');
-                if(!grid) return;
-                grid.innerHTML = '';
-                skins.forEach(skin => {
-                    const isEquipped = playerState.skin === skin.id;
-                    const isOwned = playerState.ownedSkins.includes(skin.id) || (skin.price === 0);
-                    const btn = document.createElement('div');
-                    
-                    btn.className = `shop-item ${isOwned ? 'owned' : ''}`;
-                    
-                    let btnHtml = '';
-                    if (isEquipped) {
-                        btnHtml = '<div style="color:var(--primary); font-weight:bold; font-size:0.9rem; margin-top:5px">✅ 裝備中</div>';
-                    } else if (isOwned) {
-                        btnHtml = '<button style="background:var(--success); color:white; border:none; padding:5px 15px; border-radius:15px; cursor:pointer; font-weight:bold; margin-top:5px; width:100%">🔄 更換</button>';
-                    } else {
-                        btnHtml = `<span style="color:var(--gold); font-weight:bold; margin-top:5px">🪙 ${skin.price}</span>`;
+            const dBg = document.getElementById('dungeonBg');
+            const gBg = document.getElementById('globalBg');
+            
+            if (viewId === 'dungeon') {
+                if(dBg) dBg.style.display = 'block';
+                if(gBg) gBg.style.display = 'none';
+            } else {
+                if(dBg) dBg.style.display = 'none';
+                if(gBg) gBg.style.display = 'block';
+            }
+
+            if (viewId === 'list') renderWordList();
+            if (viewId === 'shop') renderShop();
+            if (viewId === 'home') updateGlobalCounts();
+        }
+
+        function addNewWord() {
+            const eng = document.getElementById('newEng').value.trim();
+            const chi = document.getElementById('newChi').value.trim();
+            const ex = document.getElementById('newExample').value.trim();
+            if (!eng || !chi) return alert("內容不全！");
+            wordBank.unshift({ eng: eng, chi: chi, example: ex, id: Date.now() });
+            saveState();
+            document.getElementById('newEng').value = '';
+            document.getElementById('newChi').value = '';
+            document.getElementById('newExample').value = '';
+            alert("儲存成功");
+        }
+
+        /* --- Yahoo 字典翻譯 --- */
+        async function autoFetch() {
+            const inputEl = document.getElementById('newEng');
+            if(!inputEl) return;
+            const eng = inputEl.value.trim();
+            if(!eng) return;
+            
+            const btn = document.querySelector('[onclick="autoFetch()"]');
+            const originalText = btn ? btn.innerText : '✨ Yahoo 字典翻譯';
+            if(btn) btn.innerText = "⏳ Yahoo 字典檢索中...";
+            
+            try {
+                let bestExample = "";
+                try {
+                    const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
+                    const dData = await dRes.json();
+                    let shortestLen = 999;
+                    if(Array.isArray(dData) && dData.length > 0) {
+                        dData[0].meanings.forEach(meaning => {
+                            meaning.definitions.forEach(def => {
+                                if (def.example) {
+                                    let cleanEx = def.example.replace(/(<([^>]+)>)/gi, "");
+                                    if (cleanEx.length > 10 && cleanEx.length < 80 && cleanEx.length < shortestLen) {
+                                        shortestLen = cleanEx.length;
+                                        bestExample = cleanEx;
+                                    }
+                                }
+                            });
+                        });
                     }
+                } catch(e) { }
 
-                    let imgSize = (skin.id === 'tofu' || skin.id === 'goma') ? '105px' : '70px';
+                let finalChiText = "";
+                const yahooUrl = `https://hk.dictionary.search.yahoo.com/search?p=${encodeURIComponent(eng)}`;
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(yahooUrl)}`;
+                
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, "text/html");
+                
+                const listItems = doc.querySelectorAll('.compList.p-rel li, .dictionaryWordCard ul li');
+                let dictLines = [];
+                
+                if (listItems && listItems.length > 0) {
+                    listItems.forEach(li => {
+                        const posEl = li.querySelector('.pos');
+                        const pos = posEl ? posEl.textContent.trim() : "";
+                        let text = li.innerText.replace(/\s+/g, ' ').trim();
+                        if (pos && text.startsWith(pos)) {
+                            text = text.replace(pos, pos + " "); 
+                            dictLines.push(text);
+                        } else if (text) {
+                            dictLines.push(text);
+                        }
+                    });
+                }
+                
+                if (dictLines.length > 0) {
+                    finalChiText = [...new Set(dictLines)].slice(0, 4).join('\n');
+                }
 
-                    btn.innerHTML = `
-                        <img src="${skin.img}" style="width:${imgSize}; height:${imgSize}; object-fit:contain; transition: 0.3s;"/>
-                        <div style="font-weight:bold; font-size:0.95rem; margin-top:10px; margin-bottom:5px;">${skin.name}</div>
-                        ${btnHtml}
-                    `;
-                    btn.onclick = () => window.buySkin(skin.id, skin.price);
+                if (!finalChiText) {
+                    const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&dt=bd&q=${encodeURIComponent(eng)}`;
+                    const tRes = await fetch(gUrl);
+                    const tData = await tRes.json();
+
+                    if (tData[1] && tData[1].length > 0) {
+                        const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.' };
+                        let dLines = [];
+                        tData[1].forEach(posGroup => {
+                            let posRaw = posGroup[0].toLowerCase();
+                            let pos = posMap[posRaw] || `${posRaw}.`;
+                            let meanings = posGroup[1].slice(0, 3).join('; ');
+                            dLines.push(`${pos} ${meanings}`);
+                        });
+                        finalChiText = dLines.join('\n');
+                    } else if (tData[0] && tData[0][0] && tData[0][0][0]) {
+                        finalChiText = tData[0][0][0];
+                    }
+                }
+
+                document.getElementById('newChi').value = finalChiText || "翻譯失敗，請手動嘗試";
+                document.getElementById('newExample').value = bestExample || `I need to learn how to use the word ${eng}.`;
+
+            } catch(e) { 
+                const chiBox = document.getElementById('newChi');
+                const exBox = document.getElementById('newExample');
+                if(chiBox && !chiBox.value) chiBox.value = "系統連線錯誤，請手動輸入";
+                if(exBox && !exBox.value) exBox.value = `I need to learn how to use the word ${eng}.`;
+            } finally {
+                if(btn) btn.innerText = originalText;
+            }
+        }
+
+        function renderWordList() {
+            const container = document.getElementById('wordListContainer');
+            if(!container) return;
+            container.innerHTML = '';
+            wordBank.forEach(w => {
+                const div = document.createElement('div');
+                div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
+                const shortChi = (w.chi || '').replace(/\n/g, ' ').substring(0, 20) + ((w.chi || '').length > 20 ? '...' : '');
+                div.innerHTML = `
+                    <div style="flex:1"><strong>${w.eng || ''}</strong> <br><span style="font-size:0.85rem;color:#555">${shortChi}</span></div>
+                    <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="speak('${w.eng || ''}')">🔊</button>
+                    <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="deleteWord(${w.id})">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteWord(id) {
+            wordBank = wordBank.filter(x => x.id !== id);
+            saveState(); renderWordList();
+        }
+
+        function exportCSV() {
+            try {
+                let csvContent = "\ufeff英文,中文,例句\n" + wordBank.map(w => {
+                    const safeChi = (w.chi || '').replace(/"/g, '""');
+                    const safeEx = (w.example || '').replace(/"/g, '""');
+                    return `"${w.eng || ''}","${safeChi}","${safeEx}"`;
+                }).join("\n");
+                
+                const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "my_vocab_list_v33.csv");
+                document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); 
+            } catch(e) {
+                alert('匯出時發生錯誤');
+            }
+        }
+
+        function importCSV(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const text = evt.target.result;
+                const lines = text.split("\n").slice(1);
+                const newWords = lines.map((line, i) => {
+                    const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    if (parts.length < 2) return null;
+                    return { 
+                        eng: parts[0] ? parts[0].replace(/"/g, '').trim() : '', 
+                        chi: parts[1] ? parts[1].replace(/"/g, '').trim() : '', 
+                        example: parts[2] ? parts[2].replace(/"/g, '').trim() : "", 
+                        id: Date.now() + i 
+                    };
+                }).filter(x => x && x.eng);
+                if (newWords.length > 0) {
+                    wordBank = [...newWords, ...wordBank];
+                    saveState(); alert(`成功匯入 ${newWords.length} 個單字！`);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
+
+        function speak(text) {
+            if(!text || !window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+
+        function startNormal(m) {
+            if(wordBank.length < 4) return alert("單字不足 4 個，無法開始！");
+            studyMode = m; studyList = shuffle(wordBank); currentWord = studyList[0]; studyList = studyList.slice(1);
+            isFlipped = false; document.getElementById('studyFeedback').innerText = '';
+            setupStudyCard(); switchView('study');
+            if(studyMode === 'card') speak(currentWord.eng);
+        }
+
+        function startRevenge() {
+            if(wrongWords.length < 4) return alert("錯題庫不足 4 個單字！快去地下城多犯點錯（誤）");
+            studyMode = 'quiz'; studyList = shuffle(wrongWords); currentWord = studyList[0]; studyList = studyList.slice(1);
+            isFlipped = false; document.getElementById('studyFeedback').innerText = '';
+            setupStudyCard(); switchView('study');
+        }
+
+        function setupStudyCard() {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            const quizOpts = document.getElementById('quizOptions');
+            const readAgainArea = document.getElementById('readAgainArea');
+
+            quizOpts.style.display = 'none'; unflipped.style.display = 'block';
+            flipped.style.display = 'none'; isFlipped = false;
+            
+            if (studyMode === 'card') {
+                unflipped.innerHTML = `<div class="card-eng">${currentWord.eng}</div><p style="color:#999; font-size:0.85rem; margin-top:5px;">點擊卡片翻面</p>`;
+                readAgainArea.style.display = 'block';
+            } else { 
+                const simpleChi = (currentWord.chi || '').split('\n')[0]; 
+                unflipped.innerHTML = `<div class="card-chi" style="font-size:1.3rem;">${simpleChi}</div>`;
+                quizOpts.style.display = 'grid'; readAgainArea.style.display = 'none';
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                quizOpts.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button'); btn.className = 'btn btn-outline'; btn.innerText = opt;
+                    btn.onclick = () => handleQuizSelect(opt); quizOpts.appendChild(btn);
+                });
+            }
+
+            document.getElementById('flipEng').innerText = currentWord.eng; 
+            document.getElementById('flipChi').innerText = currentWord.chi || '';
+            document.getElementById('flipEx').innerText = currentWord.example || '無例句';
+            document.getElementById('flipSpeakBtn').onclick = (e) => { e.stopPropagation(); speak(currentWord.eng); };
+        }
+
+        function handleCardFlip() {
+            if (studyMode !== 'card') return;
+            const unflipped = document.getElementById('card-unflipped'); const flipped = document.getElementById('card-flipped');
+            if (!isFlipped) { unflipped.style.display = 'none'; flipped.style.display = 'block';
+            } 
+            else { unflipped.style.display = 'block'; flipped.style.display = 'none'; }
+            isFlipped = !isFlipped;
+        }
+
+        function handleQuizSelect(selected) {
+            const unflipped = document.getElementById('card-unflipped');
+            const flipped = document.getElementById('card-flipped');
+            if (selected === currentWord.eng) {
+                speak(currentWord.eng);
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
+            } else {
+                document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
+            }
+            unflipped.style.display = 'none'; flipped.style.display = 'block';
+        }
+
+        function nextStudyWord() {
+            if (studyList.length === 0) return switchView('home');
+            currentWord = studyList[0]; studyList = studyList.slice(1);
+            document.getElementById('studyFeedback').innerText = ''; setupStudyCard();
+            if(studyMode === 'card') speak(currentWord.eng);
+        }
+
+        function startDungeon(diff) {
+            if(wordBank.length < 4) return alert("單字不足 4 個！");
+            dungeonMode = diff;
+            maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
+            
+            maxHp = 10 + (playerState.level > 5 ? 2 : 0);
+            if (playerState.potion > 0) { maxHp += playerState.potion; playerState.potion = 0; }
+            hp = maxHp;
+            
+            extraTime = playerState.hourglass * 2;
+            playerState.hourglass = 0;
+            
+            floor = 1; combo = 0; killedWords = []; missedWords = [];
+            
+            // 防護：修復「字庫少於地牢層數」導致的無限迴圈死機 Bug
+            const matchedWrongs = wrongWords.filter(w => wordBank.some(bw => bw.eng === w.eng));
+            let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
+            let loopGuard = 0;
+            while (list.length < maxFloor && loopGuard < 100) {
+                loopGuard++;
+                const randomWords = shuffle(wordBank);
+                let itemsAdded = false;
+                for (let rw of randomWords) {
+                    if (list.length >= maxFloor) break;
+                    if (!list.some(l => l.eng === rw.eng)) {
+                        list.push(rw);
+                        itemsAdded = true;
+                    }
+                }
+                // 如果字庫已經抽乾，無法再加入新字，強制跳出迴圈防止卡死
+                if(!itemsAdded) break; 
+            }
+            
+            studyList = shuffle(list);
+            document.getElementById('comboDisplay').style.display = 'none';
+            document.getElementById('battleScene').classList.remove('fever-active');
+            switchView('dungeon');
+            loadDungeonLevel();
+        }
+
+        function loadDungeonLevel() {
+            clearInterval(timerInterval);
+            currentWord = studyList[floor - 1];
+            if (!currentWord) return endGame('win'); 
+            
+            timeLeft = 100;
+            
+            const bgIndex = Math.floor((floor - 1) / 5);
+            document.getElementById('dungeonBg').style.backgroundImage = `url("${bgImages[Math.min(bgIndex, bgImages.length-1)]}")`;
+            
+            document.getElementById('timerLine').style.width = '100%';
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
+            document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
+            
+            isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
+                            (dungeonMode === 'high' && (floor % 5 === 0));
+            const mImgElement = document.getElementById('monsterImg');
+            mImgElement.className = 'monster-img';
+            
+            const primaryDungeonChi = (currentWord.chi || '').split('\n').join(' | ').substring(0, 30);
+            
+            if (isBossCurrent) {
+                currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'none';
+                document.getElementById('dungeonBossArea').style.display = 'block';
+                document.getElementById('bossHpBar').style.display = 'block';
+                
+                bossMaxHp = 3;
+                bossCurrentHp = 3;
+                document.getElementById('bossHpFill').style.width = '100%';
+                
+                bossWords = shuffle(wordBank).slice(0, bossMaxHp);
+                if(!bossWords.some(w => w.eng === currentWord.eng)) bossWords[0] = currentWord;
+                currentWord = bossWords[bossMaxHp - bossCurrentHp];
+                
+                const bossChi = (currentWord.chi || '').split('\n').join(' | ').substring(0, 30);
+                document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + bossChi;
+                document.getElementById('bossEngHint').innerText = (currentWord.eng || '').substring(0,2) + "..."; 
+                document.getElementById('bossEngHint').style.display = 'block';
+                const bossInput = document.getElementById('bossInput');
+                bossInput.value = ''; bossInput.focus();
+            } else {
+                currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
+                document.getElementById('dungeonQuizGrid').style.display = 'grid';
+                document.getElementById('dungeonBossArea').style.display = 'none';
+                document.getElementById('bossHpBar').style.display = 'none';
+                document.getElementById('bossEngHint').style.display = 'none';
+                document.getElementById('dungeonChi').innerText = primaryDungeonChi;
+                
+                const pool = shuffle(wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
+                currentOptions = shuffle([currentWord.eng, ...pool]);
+                
+                const grid = document.getElementById('dungeonQuizGrid');
+                grid.innerHTML = '';
+                currentOptions.forEach(opt => {
+                    const btn = document.createElement('button'); btn.className = 'btn btn-outline'; btn.innerText = opt;
+                    btn.onclick = () => checkDungeonAns(opt === currentWord.eng);
                     grid.appendChild(btn);
                 });
             }
+            mImgElement.src = currentMImg;
+            startTimer();
+        }
 
-            window.buyItem = function(type, price) {
-                if (playerState.gold >= price) {
-                    playerState.gold -= price;
-                    playerState[type] = (playerState[type] || 0) + 1;
-                    saveState();
-                    alert(`購買成功！目前持有 ${playerState[type]} 個。進入戰鬥時將自動生效！`);
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 100;
+            document.getElementById('timerLine').style.width = '100%';
+
+            let totalSeconds = isBossCurrent ? 12 : 6;
+            totalSeconds += extraTime;
+            const isFever = combo >= 5;
+            
+            if(isFever) {
+                totalSeconds *= 2;
+                document.getElementById('battleScene').classList.add('fever-active');
+                document.getElementById('timerLine').classList.add('timer-fever');
+            } else {
+                document.getElementById('battleScene').classList.remove('fever-active');
+                document.getElementById('timerLine').classList.remove('timer-fever');
+            }
+
+            const step = (100 / (totalSeconds * 10));
+            timerInterval = setInterval(() => {
+                timeLeft -= step;
+                document.getElementById('timerLine').style.width = timeLeft + '%';
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval); triggerPlayerHurt(true);
+                }
+            }, 100);
+        }
+
+        function showFloatingText(text, color) {
+            const el = document.createElement('div');
+            el.className = 'floating-text'; el.style.color = color; el.innerText = text;
+            document.getElementById('battleScene').appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        }
+
+        function showSlashFx() {
+            const fx = document.getElementById('slashFx');
+            fx.style.animation = 'none'; fx.offsetHeight; 
+            fx.style.animation = 'slash-anim 0.3s forwards';
+        }
+
+        function submitBossAnswer() {
+            const val = document.getElementById('bossInput').value.trim().toLowerCase();
+            const inputEl = document.getElementById('bossInput');
+            
+            if (val === (currentWord.eng || '').toLowerCase()) {
+                bossCurrentHp--;
+                document.getElementById('bossHpFill').style.width = `${(bossCurrentHp/bossMaxHp)*100}%`;
+                showSlashFx();
+                document.getElementById('monsterImg').classList.add('anim-hit');
+                speak(currentWord.eng);
+                showFloatingText("HIT!", "#f1c40f");
+                inputEl.value = '';
+                
+                setTimeout(() => document.getElementById('monsterImg').classList.remove('anim-hit'), 400);
+                if (bossCurrentHp <= 0) {
+                    checkDungeonAns(true);
                 } else {
-                    alert("金幣不足！");
+                    currentWord = bossWords[bossMaxHp - bossCurrentHp];
+                    const bossChi = (currentWord.chi || '').split('\n').join(' | ').substring(0, 30);
+                    document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + bossChi;
+                    document.getElementById('bossEngHint').innerText = (currentWord.eng || '').substring(0,2) + "...";
+                    inputEl.focus();
                 }
+            } else {
+                inputEl.value = '';
+                triggerPlayerHurt(false);
             }
+        }
 
-            window.buySkin = function(id, price) {
-                if (playerState.skin === id) return;
+        function checkDungeonAns(isCorrect) {
+            clearInterval(timerInterval);
+            if (isCorrect) {
+                combo++;
+                if (combo >= 2) {
+                    const cb = document.getElementById('comboDisplay');
+                    cb.style.display = 'block'; cb.innerText = `🔥 ${combo} Combo!`;
+                }
+                killedWords.push(currentWord);
+                wrongWords = wrongWords.filter(w => w.eng !== currentWord.eng);
                 
-                if (price === 0 || playerState.ownedSkins.includes(id)) {
-                    playerState.skin = id;
-                    saveState(); renderShop(); updateGlobalCounts(); 
-                    alert("裝備已更換！");
-                    return;
-                }
+                showSlashFx();
+                showFloatingText(`+${10 + combo * 2} EXP`, "#2ecc71");
+
+                const mImgElement = document.getElementById('monsterImg');
+                mImgElement.classList.add('anim-hit');
+                speak(currentWord.eng);
+                if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
                 
-                if (playerState.gold >= price) {
-                    playerState.gold -= price;
-                    playerState.skin = id;
-                    playerState.ownedSkins.push(id);
-                    saveState(); renderShop(); updateGlobalCounts();
-                    alert("外觀解鎖並裝備成功！");
-                } else {
-                    alert("金幣不足！");
-                }
+                setTimeout(() => {
+                    mImgElement.classList.remove('anim-hit');
+                    if (floor >= maxFloor) endGame('win');
+                    else if (isBossCurrent) showChest();
+                    else { floor++; loadDungeonLevel(); }
+                }, 600);
+            } else {
+                triggerPlayerHurt(false);
             }
+        }
 
-            window.clearAllWords = function() {
-                if(confirm('⚠️ 警告：這將會移除所有生字，並且無法復原！\n確定要清空嗎？')) {
-                    window.wordBank = [];
-                    window.wrongWords = []; saveState(); renderWordList(); alert('已成功清空所有生字！');
-                }
+        function triggerPlayerHurt(isTimeout) {
+            combo = 0;
+            document.getElementById('comboDisplay').style.display = 'none';
+            document.getElementById('battleScene').classList.remove('fever-active');
+            
+            if (!wrongWords.some(w => w.eng === currentWord.eng)) wrongWords.push(currentWord);
+            if (!missedWords.some(w => w.eng === currentWord.eng)) missedWords.push(currentWord);
+            
+            hp--;
+            document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
+
+            const flash = document.getElementById('hurtFlash');
+            flash.classList.add('anim-flash'); setTimeout(() => flash.classList.remove('anim-flash'), 500);
+            const pImg = document.getElementById('playerImg');
+            pImg.classList.add('anim-hurt-combined');
+            setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
+
+            if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+            
+            if (hp <= 0) setTimeout(() => endGame('lose'), 600);
+            else setTimeout(() => startTimer(), 800); 
+        }
+
+        function showChest() {
+            chestStatus = 'closed';
+            document.getElementById('chestImg').src = "https://i.imgur.com/sAsVc32.png";
+            document.getElementById('chestTip').innerText = '點擊寶箱開啟獎勵！';
+            document.getElementById('chestNextBtn').style.display = 'none';
+            document.getElementById('chestModal').style.display = 'flex';
+        }
+
+        function openChest() {
+            if (chestStatus !== 'closed') return;
+            chestStatus = 'open';
+            document.getElementById('chestImg').src = "https://i.imgur.com/JNPgpc7.png";
+            
+            const goldDrop = Math.floor(Math.random() * 20) + 10;
+            playerState.gold += goldDrop;
+
+            if (Math.random() < 0.5) {
+                hp++;
+                document.getElementById('chestTip').innerText = `你獲得了：❤️ 生命+1 / 🪙 金幣+${goldDrop}`;
+            } else {
+                extraTime += 2;
+                document.getElementById('chestTip').innerText = `你獲得了：⏱️ 時間+2s / 🪙 金幣+${goldDrop}`;
             }
+            document.getElementById('chestNextBtn').style.display = 'block';
+        }
 
-            window.resetDefaultBank = function() {
-                if(confirm('確定要還原回預設的生字庫嗎？此動作會覆蓋您目前的單字。')) {
-                    window.wordBank = initialWords;
-                    window.wrongWords = []; saveState(); renderWordList();
-                }
+        function closeChestModal() {
+            document.getElementById('chestModal').style.display = 'none';
+            floor++; loadDungeonLevel();
+        }
+
+        function endGame(result) {
+            clearInterval(timerInterval);
+            const expGain = killedWords.length * 15 + (result === 'win' ? 100 : 0);
+            const goldGain = killedWords.length * 2 + (result === 'win' ? 30 : 0);
+            
+            playerState.exp += expGain;
+            playerState.gold += goldGain;
+            let levelUpMsg = "";
+            const expReq = (playerState.level || 1) * 100;
+            if (playerState.exp >= expReq) {
+                playerState.level = (playerState.level || 1) + 1;
+                playerState.exp -= expReq;
+                levelUpMsg = "✨ LEVEL UP! ✨";
             }
-
-            window.switchView = function(viewId) {
-                const sections = document.querySelectorAll('.view-section');
-                for(let i=0; i<sections.length; i++) sections[i].classList.remove('active');
-
-                const splash = document.getElementById('view-splash');
-                if (viewId === 'splash') {
-                    if(splash) splash.style.setProperty('display', 'flex', 'important');
-                } else {
-                    if(splash) splash.style.setProperty('display', 'none', 'important');
-                    const target = document.getElementById('view-' + viewId);
-                    if (target) target.classList.add('active');
-                }
-
-                const dBg = document.getElementById('dungeonBg');
-                const gBg = document.getElementById('globalBg');
-                
-                if (viewId === 'dungeon') {
-                    if(dBg) dBg.style.display = 'block';
-                    if(gBg) gBg.style.display = 'none';
-                } else {
-                    if(dBg) dBg.style.display = 'none';
-                    if(gBg) gBg.style.display = 'block';
-                }
-
-                if (viewId === 'list') renderWordList();
-                if (viewId === 'shop') renderShop();
-                if (viewId === 'home') updateGlobalCounts();
-            }
-
-            window.addNewWord = function() {
-                const eng = document.getElementById('newEng').value.trim();
-                const chi = document.getElementById('newChi').value.trim();
-                const ex = document.getElementById('newExample').value.trim();
-                if (!eng || !chi) return alert("內容不全！");
-                window.wordBank.unshift({ eng: eng, chi: chi, example: ex, id: Date.now() });
-                saveState();
-                document.getElementById('newEng').value = '';
-                document.getElementById('newChi').value = '';
-                document.getElementById('newExample').value = '';
-                alert("儲存成功");
-            }
-
-            /* --- V33.1: Yahoo 字典翻譯 防護增強 --- */
-            window.autoFetch = async function() {
-                const inputEl = document.getElementById('newEng');
-                if(!inputEl) return;
-                const eng = inputEl.value.trim();
-                if(!eng) return;
-                
-                const btn = document.querySelector('[onclick="autoFetch()"]');
-                const originalText = btn ? btn.innerText : '✨ Yahoo 字典翻譯';
-                if(btn) btn.innerText = "⏳ Yahoo 字典檢索中...";
-                
-                try {
-                    let bestExample = "";
-                    try {
-                        const dRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(eng)}`);
-                        const dData = await dRes.json();
-                        let shortestLen = 999;
-                        if(Array.isArray(dData) && dData.length > 0) {
-                            dData[0].meanings.forEach(meaning => {
-                                meaning.definitions.forEach(def => {
-                                    if (def.example) {
-                                        let cleanEx = def.example.replace(/(<([^>]+)>)/gi, "");
-                                        if (cleanEx.length > 10 && cleanEx.length < 80 && cleanEx.length < shortestLen) {
-                                            shortestLen = cleanEx.length;
-                                            bestExample = cleanEx;
-                                        }
-                                    }
-                                });
-                            });
-                        }
-                    } catch(e) { }
-
-                    let finalChiText = "";
-                    const yahooUrl = `https://hk.dictionary.search.yahoo.com/search?p=${encodeURIComponent(eng)}`;
-                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(yahooUrl)}`;
-                    
-                    const response = await fetch(proxyUrl);
-                    const data = await response.json();
-                    
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data.contents, "text/html");
-                    
-                    const listItems = doc.querySelectorAll('.compList.p-rel li, .dictionaryWordCard ul li');
-                    let dictLines = [];
-                    
-                    if (listItems && listItems.length > 0) {
-                        listItems.forEach(li => {
-                            const posEl = li.querySelector('.pos');
-                            const pos = posEl ? posEl.textContent.trim() : "";
-                            let text = li.innerText.replace(/\s+/g, ' ').trim();
-                            if (pos && text.startsWith(pos)) {
-                                text = text.replace(pos, pos + " "); 
-                                dictLines.push(text);
-                            } else if (text) {
-                                dictLines.push(text);
-                            }
-                        });
-                    }
-                    
-                    if (dictLines.length > 0) {
-                        finalChiText = [...new Set(dictLines)].slice(0, 4).join('\n');
-                    }
-
-                    if (!finalChiText) {
-                        const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&dt=bd&q=${encodeURIComponent(eng)}`;
-                        const tRes = await fetch(gUrl);
-                        const tData = await tRes.json();
-
-                        if (tData[1] && tData[1].length > 0) {
-                            const posMap = { 'noun': 'n.', 'verb': 'v.', 'adjective': 'adj.', 'adverb': 'adv.', 'pronoun': 'pron.', 'preposition': 'prep.', 'conjunction': 'conj.', 'interjection': 'int.' };
-                            let dLines = [];
-                            tData[1].forEach(posGroup => {
-                                let posRaw = posGroup[0].toLowerCase();
-                                let pos = posMap[posRaw] || `${posRaw}.`;
-                                let meanings = posGroup[1].slice(0, 3).join('; ');
-                                dLines.push(`${pos} ${meanings}`);
-                            });
-                            finalChiText = dLines.join('\n');
-                        } else if (tData[0] && tData[0][0] && tData[0][0][0]) {
-                            finalChiText = tData[0][0][0];
-                        }
-                    }
-
-                    document.getElementById('newChi').value = finalChiText || "翻譯失敗，請手動嘗試";
-                    document.getElementById('newExample').value = bestExample || `I need to learn how to use the word ${eng}.`;
-
-                } catch(e) { 
-                    const chiBox = document.getElementById('newChi');
-                    const exBox = document.getElementById('newExample');
-                    if(chiBox && !chiBox.value) chiBox.value = "系統連線錯誤，請手動輸入";
-                    if(exBox && !exBox.value) exBox.value = `I need to learn how to use the word ${eng}.`;
-                } finally {
-                    if(btn) btn.innerText = originalText;
-                }
-            }
-
-            function renderWordList() {
-                const container = document.getElementById('wordListContainer');
-                if(!container) return;
-                container.innerHTML = '';
-                window.wordBank.forEach(w => {
-                    const div = document.createElement('div');
-                    div.style.cssText = "background:rgba(255,255,255,0.9); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; border:1px solid #eee;";
-                    const shortChi = (w.chi || '').replace(/\n/g, ' ').substring(0, 20) + ((w.chi || '').length > 20 ? '...' : '');
-                    div.innerHTML = `
-                        <div style="flex:1"><strong>${w.eng}</strong> <br><span style="font-size:0.85rem;color:#555">${shortChi}</span></div>
-                        <button class="speaker-btn" style="width:32px; height:32px; font-size:0.9rem" onclick="window.speak('${w.eng}')">🔊</button>
-                        <button style="color:red; border:none; background:none; margin-left:10px; font-size:1.2rem; cursor:pointer;" onclick="window.deleteWord(${w.id})">×</button>
-                    `;
-                    container.appendChild(div);
+            
+            saveState();
+            document.getElementById('endEmoji').innerText = (result === 'win') ? '🎉' : '💀';
+            document.getElementById('endTitle').innerText = (result === 'win') ? '挑戰成功' : '你倒下了';
+            document.getElementById('endRewards').innerText = `獲得 ${expGain} EXP / 🪙 ${goldGain} ${levelUpMsg ? '\n'+levelUpMsg : ''}`;
+            
+            document.getElementById('killedCount').innerText = killedWords.length;
+            document.getElementById('missedCount').innerText = missedWords.length;
+            
+            const missedContainer = document.getElementById('missedListContainer');
+            missedContainer.innerHTML = '';
+            if (missedWords.length === 0) {
+                missedContainer.innerText = '太棒了，無漏網之魚！';
+            } else {
+                missedWords.forEach(w => {
+                    const shortChi = (w.chi || '').replace(/\n/g, ' ').substring(0, 15);
+                    const d = document.createElement('div');
+                    d.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#fff; padding:5px; border-radius:5px; margin-top:5px; border:1px solid #ddd;";
+                    d.innerHTML = `<span><strong>${w.eng}</strong> <span style="font-size:0.8rem;color:#666">${shortChi}...</span></span>
+                                   <button class="speaker-btn" style="width:28px; height:28px; font-size:0.8rem;" onclick="speak('${w.eng}')">🔊</button>`;
+                    missedContainer.appendChild(d);
                 });
             }
 
-            window.deleteWord = function(id) {
-                window.wordBank = window.wordBank.filter(x => x.id !== id);
-                saveState(); renderWordList();
-            }
+            switchView('end');
+        }
 
-            window.exportCSV = function() {
-                try {
-                    let csvContent = "\ufeff英文,中文,例句\n" + window.wordBank.map(w => {
-                        const safeChi = (w.chi || '').replace(/"/g, '""');
-                        const safeEx = (w.example || '').replace(/"/g, '""');
-                        return `"${w.eng || ''}","${safeChi}","${safeEx}"`;
-                    }).join("\n");
-                    
-                    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-                    const link = document.createElement("a");
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute("href", url);
-                    link.setAttribute("download", "my_vocab_list_v33.csv");
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url); 
-                } catch(e) {
-                    alert('匯出時發生錯誤');
-                }
-            }
-
-            window.importCSV = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (evt) => {
-                    const text = evt.target.result;
-                    const lines = text.split("\n").slice(1);
-                    const newWords = lines.map((line, i) => {
-                        const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                        if (parts.length < 2) return null;
-                        return { 
-                            eng: parts[0] ? parts[0].replace(/"/g, '').trim() : '', 
-                            chi: parts[1] ? parts[1].replace(/"/g, '').trim() : '', 
-                            example: parts[2] ? parts[2].replace(/"/g, '').trim() : "", 
-                            id: Date.now() + i 
-                        };
-                    }).filter(x => x && x.eng);
-                    if (newWords.length > 0) {
-                        window.wordBank = [...newWords, ...window.wordBank];
-                        saveState(); alert(`成功匯入 ${newWords.length} 個單字！`);
-                    }
-                };
-                reader.readAsText(file);
-            }
-
-            function shuffle(a) { return [...a].sort(() => Math.random() - 0.5); }
-
-            window.speak = function(text) {
-                if(!text || !window.speechSynthesis) return;
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u);
-            }
-
-            window.startNormal = function(m) {
-                if(window.wordBank.length < 4) return alert("單字不足 4 個，無法開始！");
-                studyMode = m; studyList = shuffle(window.wordBank); currentWord = studyList[0]; studyList = studyList.slice(1);
-                isFlipped = false; document.getElementById('studyFeedback').innerText = '';
-                setupStudyCard(); window.switchView('study');
-                if(studyMode === 'card') window.speak(currentWord.eng);
-            }
-
-            window.startRevenge = function() {
-                if(window.wrongWords.length < 4) return alert("錯題庫不足 4 個單字！快去地下城多犯點錯（誤）");
-                studyMode = 'quiz'; studyList = shuffle(window.wrongWords); currentWord = studyList[0]; studyList = studyList.slice(1);
-                isFlipped = false; document.getElementById('studyFeedback').innerText = '';
-                setupStudyCard(); window.switchView('study');
-            }
-
-            function setupStudyCard() {
-                const unflipped = document.getElementById('card-unflipped');
-                const flipped = document.getElementById('card-flipped');
-                const quizOpts = document.getElementById('quizOptions');
-                const readAgainArea = document.getElementById('readAgainArea');
-
-                quizOpts.style.display = 'none'; unflipped.style.display = 'block';
-                flipped.style.display = 'none'; isFlipped = false;
-                
-                if (studyMode === 'card') {
-                    unflipped.innerHTML = `<div class="card-eng">${currentWord.eng}</div><p style="color:#999; font-size:0.85rem; margin-top:5px;">點擊卡片翻面</p>`;
-                    readAgainArea.style.display = 'block';
-                } else { 
-                    const simpleChi = (currentWord.chi || '').split('\n')[0]; 
-                    unflipped.innerHTML = `<div class="card-chi" style="font-size:1.3rem;">${simpleChi}</div>`;
-                    quizOpts.style.display = 'grid'; readAgainArea.style.display = 'none';
-                    
-                    const pool = shuffle(window.wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
-                    currentOptions = shuffle([currentWord.eng, ...pool]);
-                    quizOpts.innerHTML = '';
-                    currentOptions.forEach(opt => {
-                        const btn = document.createElement('button'); btn.className = 'btn btn-outline'; btn.innerText = opt;
-                        btn.onclick = () => window.handleQuizSelect(opt); quizOpts.appendChild(btn);
-                    });
-                }
-
-                document.getElementById('flipEng').innerText = currentWord.eng; 
-                document.getElementById('flipChi').innerText = currentWord.chi || '';
-                document.getElementById('flipEx').innerText = currentWord.example || '無例句';
-                document.getElementById('flipSpeakBtn').onclick = (e) => { e.stopPropagation(); window.speak(currentWord.eng); };
-            }
-
-            window.handleCardFlip = function() {
-                if (studyMode !== 'card') return;
-                const unflipped = document.getElementById('card-unflipped'); const flipped = document.getElementById('card-flipped');
-                if (!isFlipped) { unflipped.style.display = 'none'; flipped.style.display = 'block';
-                } 
-                else { unflipped.style.display = 'block'; flipped.style.display = 'none'; }
-                isFlipped = !isFlipped;
-            }
-
-            window.handleQuizSelect = function(selected) {
-                const unflipped = document.getElementById('card-unflipped');
-                const flipped = document.getElementById('card-flipped');
-                if (selected === currentWord.eng) {
-                    window.speak(currentWord.eng);
-                    document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--success)'>✅ 正確</span>";
-                } else {
-                    document.getElementById('studyFeedback').innerHTML = "<span style='color:var(--danger)'>❌ 錯誤</span>";
-                }
-                unflipped.style.display = 'none'; flipped.style.display = 'block';
-            }
-
-            window.nextStudyWord = function() {
-                if (studyList.length === 0) return window.switchView('home');
-                currentWord = studyList[0]; studyList = studyList.slice(1);
-                document.getElementById('studyFeedback').innerText = ''; setupStudyCard();
-                if(studyMode === 'card') window.speak(currentWord.eng);
-            }
-
-            window.startDungeon = function(diff) {
-                if(window.wordBank.length < 4) return alert("單字不足 4 個！");
-                dungeonMode = diff;
-                maxFloor = (diff === 'low') ? 10 : (diff === 'mid') ? 15 : 20;
-                
-                maxHp = 10 + (playerState.level > 5 ? 2 : 0);
-                if (playerState.potion > 0) { maxHp += playerState.potion; playerState.potion = 0; }
-                hp = maxHp;
-                
-                extraTime = playerState.hourglass * 2;
-                playerState.hourglass = 0;
-                
-                floor = 1; combo = 0; killedWords = []; missedWords = [];
-                
-                // V33.1: 防禦無限迴圈死機問題
-                const matchedWrongs = window.wrongWords.filter(w => window.wordBank.some(bw => bw.eng === w.eng));
-                let list = shuffle(matchedWrongs).slice(0, Math.floor(maxFloor / 2));
-                let loopGuard = 0;
-                while (list.length < maxFloor && loopGuard < 100) {
-                    loopGuard++;
-                    const randomWords = shuffle(window.wordBank);
-                    let itemsAdded = false;
-                    for (let rw of randomWords) {
-                        if (list.length >= maxFloor) break;
-                        if (!list.some(l => l.eng === rw.eng)) {
-                            list.push(rw);
-                            itemsAdded = true;
-                        }
-                    }
-                    if(!itemsAdded) break; // 如果字庫太少，強制跳出防止死機
-                }
-                
-                studyList = shuffle(list);
-                document.getElementById('comboDisplay').style.display = 'none';
-                document.getElementById('battleScene').classList.remove('fever-active');
-                window.switchView('dungeon');
-                loadDungeonLevel();
-            }
-
-            function loadDungeonLevel() {
-                clearInterval(timerInterval);
-                currentWord = studyList[floor - 1];
-                if (!currentWord) return endGame('win'); // 防護：無字可打直接當贏
-                
-                timeLeft = 100;
-                
-                const bgIndex = Math.floor((floor - 1) / 5);
-                document.getElementById('dungeonBg').style.backgroundImage = `url("${bgImages[Math.min(bgIndex, bgImages.length-1)]}")`;
-                
-                document.getElementById('timerLine').style.width = '100%';
-                document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
-                document.getElementById('floorDisplay').innerText = `B${floor}/${maxFloor}`;
-                
-                isBossCurrent = (dungeonMode === 'mid' && (floor === 7 || floor === 15)) ||
-                                (dungeonMode === 'high' && (floor % 5 === 0));
-                const mImgElement = document.getElementById('monsterImg');
-                mImgElement.className = 'monster-img';
-                
-                const primaryDungeonChi = (currentWord.chi || '').split('\n').join(' | ').substring(0, 30);
-                
-                if (isBossCurrent) {
-                    currentMImg = bossImages[Math.floor(Math.random() * bossImages.length)];
-                    document.getElementById('dungeonQuizGrid').style.display = 'none';
-                    document.getElementById('dungeonBossArea').style.display = 'block';
-                    document.getElementById('bossHpBar').style.display = 'block';
-                    
-                    bossMaxHp = 3;
-                    bossCurrentHp = 3;
-                    document.getElementById('bossHpFill').style.width = '100%';
-                    
-                    bossWords = shuffle(window.wordBank).slice(0, bossMaxHp);
-                    if(!bossWords.some(w => w.eng === currentWord.eng)) bossWords[0] = currentWord;
-                    currentWord = bossWords[bossMaxHp - bossCurrentHp];
-                    
-                    const bossChi = (currentWord.chi || '').split('\n').join(' | ').substring(0, 30);
-                    document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + bossChi;
-                    document.getElementById('bossEngHint').innerText = (currentWord.eng || '').substring(0,2) + "..."; 
-                    document.getElementById('bossEngHint').style.display = 'block';
-                    const bossInput = document.getElementById('bossInput');
-                    bossInput.value = ''; bossInput.focus();
-                } else {
-                    currentMImg = monsterImages[Math.floor(Math.random() * monsterImages.length)];
-                    document.getElementById('dungeonQuizGrid').style.display = 'grid';
-                    document.getElementById('dungeonBossArea').style.display = 'none';
-                    document.getElementById('bossHpBar').style.display = 'none';
-                    document.getElementById('bossEngHint').style.display = 'none';
-                    document.getElementById('dungeonChi').innerText = primaryDungeonChi;
-                    
-                    const pool = shuffle(window.wordBank.filter(x => x.eng !== currentWord.eng)).slice(0, 3).map(x => x.eng);
-                    currentOptions = shuffle([currentWord.eng, ...pool]);
-                    
-                    const grid = document.getElementById('dungeonQuizGrid');
-                    grid.innerHTML = '';
-                    currentOptions.forEach(opt => {
-                        const btn = document.createElement('button'); btn.className = 'btn btn-outline'; btn.innerText = opt;
-                        btn.onclick = () => window.checkDungeonAns(opt === currentWord.eng);
-                        grid.appendChild(btn);
-                    });
-                }
-                mImgElement.src = currentMImg;
-                startTimer();
-            }
-
-            function startTimer() {
-                clearInterval(timerInterval);
-                timeLeft = 100;
-                document.getElementById('timerLine').style.width = '100%';
-
-                let totalSeconds = isBossCurrent ? 12 : 6;
-                totalSeconds += extraTime;
-                const isFever = combo >= 5;
-                
-                if(isFever) {
-                    totalSeconds *= 2;
-                    document.getElementById('battleScene').classList.add('fever-active');
-                    document.getElementById('timerLine').classList.add('timer-fever');
-                } else {
-                    document.getElementById('battleScene').classList.remove('fever-active');
-                    document.getElementById('timerLine').classList.remove('timer-fever');
-                }
-
-                const step = (100 / (totalSeconds * 10));
-                timerInterval = setInterval(() => {
-                    timeLeft -= step;
-                    document.getElementById('timerLine').style.width = timeLeft + '%';
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval); triggerPlayerHurt(true);
-                    }
-                }, 100);
-            }
-
-            function showFloatingText(text, color) {
-                const el = document.createElement('div');
-                el.className = 'floating-text'; el.style.color = color; el.innerText = text;
-                document.getElementById('battleScene').appendChild(el);
-                setTimeout(() => el.remove(), 800);
-            }
-
-            function showSlashFx() {
-                const fx = document.getElementById('slashFx');
-                fx.style.animation = 'none'; fx.offsetHeight; 
-                fx.style.animation = 'slash-anim 0.3s forwards';
-            }
-
-            window.submitBossAnswer = function() {
-                const val = document.getElementById('bossInput').value.trim().toLowerCase();
-                const inputEl = document.getElementById('bossInput');
-                
-                if (val === (currentWord.eng || '').toLowerCase()) {
-                    bossCurrentHp--;
-                    document.getElementById('bossHpFill').style.width = `${(bossCurrentHp/bossMaxHp)*100}%`;
-                    showSlashFx();
-                    document.getElementById('monsterImg').classList.add('anim-hit');
-                    window.speak(currentWord.eng);
-                    showFloatingText("HIT!", "#f1c40f");
-                    inputEl.value = '';
-                    
-                    setTimeout(() => document.getElementById('monsterImg').classList.remove('anim-hit'), 400);
-                    if (bossCurrentHp <= 0) {
-                        window.checkDungeonAns(true);
-                    } else {
-                        currentWord = bossWords[bossMaxHp - bossCurrentHp];
-                        const bossChi = (currentWord.chi || '').split('\n').join(' | ').substring(0, 30);
-                        document.getElementById('dungeonChi').innerText = "💀 [BOSS] " + bossChi;
-                        document.getElementById('bossEngHint').innerText = (currentWord.eng || '').substring(0,2) + "...";
-                        inputEl.focus();
-                    }
-                } else {
-                    inputEl.value = '';
-                    triggerPlayerHurt(false);
-                }
-            }
-
-            window.checkDungeonAns = function(isCorrect) {
-                clearInterval(timerInterval);
-                if (isCorrect) {
-                    combo++;
-                    if (combo >= 2) {
-                        const cb = document.getElementById('comboDisplay');
-                        cb.style.display = 'block'; cb.innerText = `🔥 ${combo} Combo!`;
-                    }
-                    killedWords.push(currentWord);
-                    window.wrongWords = window.wrongWords.filter(w => w.eng !== currentWord.eng);
-                    
-                    showSlashFx();
-                    showFloatingText(`+${10 + combo * 2} EXP`, "#2ecc71");
-
-                    const mImgElement = document.getElementById('monsterImg');
-                    mImgElement.classList.add('anim-hit');
-                    window.speak(currentWord.eng);
-                    if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(300);
-                    
-                    setTimeout(() => {
-                        mImgElement.classList.remove('anim-hit');
-                        if (floor >= maxFloor) endGame('win');
-                        else if (isBossCurrent) showChest();
-                        else { floor++; loadDungeonLevel(); }
-                    }, 600);
-                } else {
-                    triggerPlayerHurt(false);
-                }
-            }
-
-            function triggerPlayerHurt(isTimeout) {
-                combo = 0;
-                document.getElementById('comboDisplay').style.display = 'none';
-                document.getElementById('battleScene').classList.remove('fever-active');
-                
-                if (!window.wrongWords.some(w => w.eng === currentWord.eng)) window.wrongWords.push(currentWord);
-                if (!missedWords.some(w => w.eng === currentWord.eng)) missedWords.push(currentWord);
-                
-                hp--;
-                document.getElementById('hpDisplay').innerText = "❤️".repeat(Math.min(hp, 15)) + (hp>15 ? `x${hp}` : "");
-
-                const flash = document.getElementById('hurtFlash');
-                flash.classList.add('anim-flash'); setTimeout(() => flash.classList.remove('anim-flash'), 500);
-                const pImg = document.getElementById('playerImg');
-                pImg.classList.add('anim-hurt-combined');
-                setTimeout(() => pImg.classList.remove('anim-hurt-combined'), 400);
-
-                if (window.navigator && window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
-                
-                if (hp <= 0) setTimeout(() => endGame('lose'), 600);
-                else setTimeout(() => startTimer(), 800); 
-            }
-
-            function showChest() {
-                chestStatus = 'closed';
-                document.getElementById('chestImg').src = "https://i.imgur.com/sAsVc32.png";
-                document.getElementById('chestTip').innerText = '點擊寶箱開啟獎勵！';
-                document.getElementById('chestNextBtn').style.display = 'none';
-                document.getElementById('chestModal').style.display = 'flex';
-            }
-
-            window.openChest = function() {
-                if (chestStatus !== 'closed') return;
-                chestStatus = 'open';
-                document.getElementById('chestImg').src = "https://i.imgur.com/JNPgpc7.png";
-                
-                const goldDrop = Math.floor(Math.random() * 20) + 10;
-                playerState.gold += goldDrop;
-
-                if (Math.random() < 0.5) {
-                    hp++;
-                    document.getElementById('chestTip').innerText = `你獲得了：❤️ 生命+1 / 🪙 金幣+${goldDrop}`;
-                } else {
-                    extraTime += 2;
-                    document.getElementById('chestTip').innerText = `你獲得了：⏱️ 時間+2s / 🪙 金幣+${goldDrop}`;
-                }
-                document.getElementById('chestNextBtn').style.display = 'block';
-            }
-
-            window.closeChestModal = function() {
-                document.getElementById('chestModal').style.display = 'none';
-                floor++; loadDungeonLevel();
-            }
-
-            function endGame(result) {
-                clearInterval(timerInterval);
-                const expGain = killedWords.length * 15 + (result === 'win' ? 100 : 0);
-                const goldGain = killedWords.length * 2 + (result === 'win' ? 30 : 0);
-                
-                playerState.exp += expGain;
-                playerState.gold += goldGain;
-                let levelUpMsg = "";
-                const expReq = (playerState.level || 1) * 100;
-                if (playerState.exp >= expReq) {
-                    playerState.level = (playerState.level || 1) + 1;
-                    playerState.exp -= expReq;
-                    levelUpMsg = "✨ LEVEL UP! ✨";
-                }
-                
-                saveState();
-                document.getElementById('endEmoji').innerText = (result === 'win') ? '🎉' : '💀';
-                document.getElementById('endTitle').innerText = (result === 'win') ? '挑戰成功' : '你倒下了';
-                document.getElementById('endRewards').innerText = `獲得 ${expGain} EXP / 🪙 ${goldGain} ${levelUpMsg ? '\n'+levelUpMsg : ''}`;
-                
-                document.getElementById('killedCount').innerText = killedWords.length;
-                document.getElementById('missedCount').innerText = missedWords.length;
-                
-                const missedContainer = document.getElementById('missedListContainer');
-                missedContainer.innerHTML = '';
-                if (missedWords.length === 0) {
-                    missedContainer.innerText = '太棒了，無漏網之魚！';
-                } else {
-                    missedWords.forEach(w => {
-                        const shortChi = (w.chi || '').replace(/\n/g, ' ').substring(0, 15);
-                        const d = document.createElement('div');
-                        d.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#fff; padding:5px; border-radius:5px; margin-top:5px; border:1px solid #ddd;";
-                        d.innerHTML = `<span><strong>${w.eng}</strong> <span style="font-size:0.8rem;color:#666">${shortChi}...</span></span>
-                                       <button class="speaker-btn" style="width:28px; height:28px; font-size:0.8rem;" onclick="window.speak('${w.eng}')">🔊</button>`;
-                        missedContainer.appendChild(d);
-                    });
-                }
-
-                window.switchView('end');
-            }
-
-            document.getElementById('bossInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') window.submitBossAnswer();
-            });
-
-            // 啟動應用
-            init();
-        };
+        document.getElementById('bossInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') submitBossAnswer();
+        });
+        
+        // 系統啟動
+        init();
     </script>
 </body>
 </html>
